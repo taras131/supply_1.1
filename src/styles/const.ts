@@ -38,6 +38,7 @@ export const CURSOR_POINTER = "pointer";
 export const FORM_CONTROL_HEIGHT_PX = "80px";
 export const TEXT_FIELD_MAX_WIDTH_PX = "390px";
 export const SECONDARY_TEXT_COLOR = "text.secondary";
+export const DRAWERWIDTH = 240;
 export const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: "#272e3d",

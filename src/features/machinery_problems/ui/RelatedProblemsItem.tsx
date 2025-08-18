@@ -33,7 +33,7 @@ const RelatedProblemsItem: FC<IProps> = ({ problem }) => {
           </ListItemIcon>
           <ListItemText primary={problem.title} />
           <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
-          <Stack sx={{ width: "65px", alignItems: "end" }}>
+          <Stack sx={{ width: "75px", alignItems: "end" }}>
             <DueDateChip
               due_date={problem.status_id === 3 ? +problem.result_date : new Date(problem.created_at).getTime()}
               isCompleted={problem.status_id === 3}

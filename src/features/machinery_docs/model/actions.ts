@@ -11,7 +11,7 @@ interface IAddData {
   file: File;
 }
 
-export const fetchAddMachineryDoc = createAsyncThunk<string, IAddData, { state: RootState }>(
+export const fetchAddMachineryDoc = createAsyncThunk<IMachineryDoc, IAddData, { state: RootState }>(
   "machinery_docs/add",
   async (addData: IAddData, { rejectWithValue, getState }) => {
     try {
@@ -30,7 +30,7 @@ export const fetchAddMachineryDoc = createAsyncThunk<string, IAddData, { state: 
   },
 );
 
-export const fetchDeleteMachineryDoc = createAsyncThunk<string, IMachineryDoc, { state: RootState }>(
+export const fetchDeleteMachineryDoc = createAsyncThunk<IMachineryDoc, IMachineryDoc, { state: RootState }>(
   "machinery_docs/delete",
   async (doc: IMachineryDoc, { rejectWithValue }) => {
     try {

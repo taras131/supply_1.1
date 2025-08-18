@@ -45,7 +45,7 @@ const ProblemAddNew: FC<IProps> = ({ isOpen, isShowMachineryInfo, onClose }) => 
         files: newFiles,
       }),
     );
-    onClose();
+   // onClose();
   };
   return (
     <Drawer anchor="right" open={isOpen} onClose={onClose}>

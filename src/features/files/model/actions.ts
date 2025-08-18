@@ -6,9 +6,9 @@ import { setMessage } from "../../messages/model/slice";
 
 export const fetchAddFile = createAsyncThunk(
   "fetch_add_file",
-  async (formData: FormData, { rejectWithValue, dispatch }) => {
+  async (file: File, { rejectWithValue, dispatch }) => {
     try {
-      const res = await filesAPI.upload(formData);
+      const res = await filesAPI.upload(file);
       return res.filename;
     } catch (e) {
       const errorMessage = e instanceof Error ? e.message : "Неизвестная ошибка";

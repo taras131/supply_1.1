@@ -103,7 +103,7 @@ const MachineryAdditionalView: FC<IProps> = ({
           }}
         >
           <CreateUpdateUserInfo
-            author={editedMachinery.author}
+            author={editedMachinery.author || null}
             updatedAuthor={editedMachinery.updated_author || null}
             createdAT={editedMachinery.created_at}
             updatedAt={editedMachinery.updated_at || null}

@@ -90,7 +90,7 @@ const ProblemDetails: FC = () => {
                 </Link>
               )}
               <CreateUpdateUserInfo
-                author={currentProblem.author}
+                author={currentProblem.author || null}
                 updatedAuthor={currentProblem.updated_author || null}
                 createdAT={currentProblem.created_at}
                 updatedAt={currentProblem.updated_at || null}

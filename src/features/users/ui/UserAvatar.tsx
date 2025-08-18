@@ -3,7 +3,6 @@ import Stack from "@mui/material/Stack";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import OptionsMenu from "../../../dashboard/components/OptionsMenu";
 import {IUser} from "../../../models/IUser";
 import {getUserRoleById} from "../utils/services";
 import Divider from "@mui/material/Divider";
@@ -16,6 +15,7 @@ import {useAppDispatch} from "../../../hooks/redux";
 import {fetchOut} from "../../auth/model/actions";
 import {useNavigate} from "react-router-dom";
 import {routes} from "../../../utils/routes";
+import OptionsMenu from "../../../components/common/OptionsMenu";
 
 interface IProps {
     user: IUser;
@@ -26,7 +26,7 @@ const MenuItem = styled(MuiMenuItem)({
     minWidth: 120,
 });
 
-const UserAvatar: FC<IProps> = ({user}) => {
+const  UserAvatar: FC<IProps> = ({user}) => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const profileClickHandler = () => {

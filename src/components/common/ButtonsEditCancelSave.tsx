@@ -1,7 +1,6 @@
 import React, { FC } from "react";
 import { IconButton, Stack } from "@mui/material";
 import Button from "@mui/material/Button";
-import LoadingButton from "@mui/lab/LoadingButton";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 
 interface IProps {
@@ -28,16 +27,15 @@ const ButtonsEditCancelSave: FC<IProps> = ({
           <Button onClick={cancelUpdateHandler} variant={"outlined"} size={"small"}>
             Отменить
           </Button>
-          <LoadingButton
+          <Button
             onClick={updateHandler}
             variant={"contained"}
-            loading={isLoading}
             disabled={!isValid}
             color={"success"}
             size={"small"}
           >
             Сохранить
-          </LoadingButton>
+          </Button>
         </>
       ) : (
         <IconButton

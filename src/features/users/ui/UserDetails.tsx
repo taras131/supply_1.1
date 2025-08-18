@@ -19,7 +19,7 @@ const UserDetails: FC<IProps> = ({ user }) => {
     if (user) {
       setEditedValue(user);
     }
-  }, [user, setEditedValue]);
+  }, [user]);
   const toggleIsEditMode = () => {
     setIsEditMode((prev) => !prev);
   };

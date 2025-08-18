@@ -1,68 +1,35 @@
 import React from "react";
-import { useAppSelector } from "../../../hooks/redux";
-import {
-  Paper,
-  Stack,
-  Table,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-  useMediaQuery,
-} from "@mui/material";
-import UserList from "./UserList";
-import { selectAllUsers, selectIsUsersLoading } from "../model/selectors";
+import {useAppSelector} from "../../../hooks/redux";
+import {Stack, Typography} from "@mui/material";
+import UsersTable from "./UsersTable";
+import {selectAllUsers, selectIsUsersLoading} from "../model/selectors";
 import AUsersMigration from "./AUsersMigration";
 import Preloader from "../../../components/common/Preloader";
+import Box from "@mui/material/Box";
 
 const UsersPage = () => {
-  const matches_650 = useMediaQuery("(min-width:500px)");
-  const matches_550 = useMediaQuery("(min-width:550px)");
-  const users = useAppSelector(selectAllUsers);
-  const isLoading = useAppSelector(selectIsUsersLoading);
-  if (isLoading) {
-    return <Preloader />;
-  }
-  if (!users) {
-    return null;
-  }
-  return (
-    <Stack style={{ minHeight: "calc(100vh - 60px" }} alignItems="center">
-      <TableContainer component={Paper} sx={{ maxWidth: 850 }}>
-        <Table aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell align="left" sx={{ padding: matches_650 ? "12px" : "4px" }}>
-                <Typography fontSize={matches_650 ? "18px" : "14px"} fontWeight={600}>
-                  {matches_550 ? "Имя" : "ФИО"}
+    const users = useAppSelector(selectAllUsers);
+    const isLoading = useAppSelector(selectIsUsersLoading);
+    if (isLoading) {
+        return <Preloader/>;
+    }
+    if (!users) {
+        return null;
+    }
+    return (
+        <Box sx={{width: '100%', maxWidth: {sm: '100%', md: '1700px'}}}>
+            <Stack direction="row" spacing={3} justifyContent="space-between" alignItems="center" sx={{mb: 2, mt: 2}}>
+                <Typography component="h2" variant="h6">
+                    Сотрудники
                 </Typography>
-              </TableCell>
-              {matches_550 && (
-                <TableCell align="left" sx={{ padding: matches_650 ? "12px" : "4px" }}>
-                  <Typography fontSize={matches_650 ? "18px" : "14px"} fontWeight={600}>
-                    Отчество
-                  </Typography>
-                </TableCell>
-              )}
-              <TableCell align="left" sx={{ padding: matches_650 ? "12px" : "4px" }}>
-                <Typography fontSize={matches_650 ? "18px" : "14px"} fontWeight={600}>
-                  Email
-                </Typography>
-              </TableCell>
-              <TableCell align="left" sx={{ padding: matches_650 ? "12px" : "4px" }}>
-                <Typography fontSize={matches_650 ? "18px" : "14px"} fontWeight={600}>
-                  Должность
-                </Typography>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <UserList users={users} />
-        </Table>
-      </TableContainer>
-      <AUsersMigration />
-    </Stack>
-  );
+                <div>
+
+                </div>
+            </Stack>
+            <UsersTable rows={users}/>
+            <AUsersMigration/>
+        </Box>
+    );
 };
 
 export default UsersPage;

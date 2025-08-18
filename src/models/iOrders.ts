@@ -1,6 +1,7 @@
 import { IUser } from "./IUser";
 import { IMachinery } from "./iMachinery";
 import { defaultOrderPosition, emptyOrderPosition, INewOrderPosition, IOrderPosition } from "./IOrdersPositions";
+import {TShipmentsType} from "./iShipments";
 
 export enum CompletionType {
   Invoice = "INVOICE",
@@ -8,24 +9,34 @@ export enum CompletionType {
   Balance = "BALANCE", // Забрана за счёт остатка средств
 }
 
-export enum ShipmentsType {
-  RAILWAY = "railway",
-  AIR = "air",
-}
-
-export enum OrderType {
-  CURRENT = "current",
-  ANNUAL = "annual",
-}
-
 export type TOrdersType = "current" | "annual";
+
+export interface IOrderType {
+  name: TOrdersType;
+  value: string;
+}
+
+export const ordersTypes: IOrderType[] = [
+  {name: "current", value: "Текущая"},
+  {name: "annual", value: "Годовая"},
+];
+
+interface IShipmentType {
+  name: TShipmentsType;
+  value: string;
+}
+
+export const shipmentTypes: IShipmentType[] = [
+  {name: "air", value: "Авиа"},
+  {name: "railway", value: "ЖД"},
+];
 
 export interface INewOrder {
   firebase_id?: string;
   title: string;
   category?: string;
-  shipments_type: ShipmentsType;
-  type: OrderType;
+  shipments_type: string;
+  type: string;
   is_approved?: boolean;
   approved_date?: number;
   approved_author_id?: string | null;
@@ -52,8 +63,8 @@ export const emptyOrder: INewOrder = {
   firebase_id: "",
   title: "",
   category: "-1",
-  shipments_type: ShipmentsType.RAILWAY,
-  type: OrderType.CURRENT,
+  shipments_type: shipmentTypes[0].name,
+  type: ordersTypes[0].name,
   is_approved: false,
   approved_date: 0,
   approved_author_id: null,
@@ -69,8 +80,8 @@ export const defaultOrder: IOrder = {
   firebase_id: "",
   title: "",
   category: "-1",
-  shipments_type: ShipmentsType.RAILWAY,
-  type: OrderType.CURRENT,
+  shipments_type: shipmentTypes[0].name,
+  type:  ordersTypes[0].name,
   is_approved: false,
   approved_date: 0,
   approved_author_id: null,

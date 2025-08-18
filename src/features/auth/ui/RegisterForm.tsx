@@ -21,7 +21,7 @@ const RegisterForm = () => {
   const isAuthLoading = useAppSelector(selectIsAuthLoading);
   const companyName = useAppSelector(selectCurrentCompanyName) || "";
   const validateRegister = useCallback((values: IRegisterData) => registerValidate(values, companyName), [companyName]);
-  const initialRegister = useMemo(() => ({ ...registerValues }), [registerValues]);
+  const initialRegister = useMemo(() => ({ ...registerValues }), []);
   const { setEditedValue, editedValue, errors, handleFieldChange } = useEditor<IRegisterData>({
     initialValue: initialRegister,
     validate: validateRegister,

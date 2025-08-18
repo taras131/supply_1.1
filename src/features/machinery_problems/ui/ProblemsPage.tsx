@@ -7,7 +7,7 @@ const ProblemsPage = () => {
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(fetchGetAllMachineryProblem());
-  }, []);
+  }, [dispatch]);
   return <Problems isShowMachineryInfo />;
 };
 

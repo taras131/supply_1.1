@@ -1,24 +1,23 @@
 import { useState } from "react";
-import { pdfjs } from "react-pdf";
-import pdfWorker from "pdfjs-dist/build/pdf.worker.entry";
 // Установка пути к рабочему потоку
-pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
+
 
 const validationFile = (file: File): boolean => {
   return file && file.name.split(".").pop() === "pdf";
 };
 const readText = async (file: File, setPaymentErrorMessage: (message: string) => void): Promise<string> => {
   try {
-    const fileBuffer = await file.arrayBuffer(); // Convert File to ArrayBuffer
+  /*  const fileBuffer = await file.arrayBuffer(); // Convert File to ArrayBuffer
     const pdf = await pdfjs.getDocument({ data: fileBuffer }).promise; // Load PDF from ArrayBuffer
-    const totalPages = pdf.numPages;
-    let fullText = "";
+    const totalPages = pdf.numPages;*/
+/*    let fullText = "";
     for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
       const page = await pdf.getPage(pageNum);
       const content = await page.getTextContent();
       const pageText = content.items.map((item) => item.str).join(" ");
       fullText += pageText + " ";
-    }
+    }*/
+    let fullText = "";
     return fullText.trim();
   } catch (error) {
     setPaymentErrorMessage("Ошибка чтения файла");

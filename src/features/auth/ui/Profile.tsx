@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import Preloader from "../../../components/Preloader";
 import { useAppSelector } from "../../../hooks/redux";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../../../utils/routes";
@@ -7,6 +6,7 @@ import Stack from "@mui/material/Stack";
 import { selectIsAuth, selectIsAuthLoading } from "../model/selectors";
 import ProfileTabs from "./ProfileTabs";
 import ProfileHeader from "./ProfileHeader";
+import Preloader from "../../../components/common/Preloader";
 
 const Profile = () => {
   const navigate = useNavigate();

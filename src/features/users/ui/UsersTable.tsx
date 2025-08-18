@@ -6,25 +6,27 @@ interface IProps {
     rows: IUser[];
 }
 
-const UserList: FC<IProps> = ({rows}) => {
+const UsersTable: FC<IProps> = ({rows}) => {
     const columns: any[] = [
-        {field: 'id', headerName: 'ID', width: 90},
         {
             field: 'first_name',
             headerName: 'Имя',
-            flexGrow: 1,
+            flex: 1,
+            disableColumnMenu: true,
         },
         {
             field: 'middle_name',
             headerName: 'Отчество',
-            flexGrow: 1,
+            flex: 1,
+            disableColumnMenu: true,
         },
         {
-            field: 'age',
-            headerName: 'Age',
-            type: 'number',
-            width: 110,
+            field: 'email',
+            headerName: 'Почта',
             editable: true,
+            flex: 1,
+            disableColumnMenu: true,
+            sortable: false,
         },
         {
             field: 'role_id',
@@ -32,12 +34,15 @@ const UserList: FC<IProps> = ({rows}) => {
             description: 'This column has a value getter and is not sortable.',
             width: 160,
             renderCell: (params: any) => userRoles[params.value].title,
+            flex: 1,
+            disableColumnMenu: true,
         },
     ];
     return (
         <DataGrid
             rows={rows}
             columns={columns}
+            disableRowSelectionOnClick
             initialState={{
                 pagination: {
                     paginationModel: {
@@ -46,10 +51,9 @@ const UserList: FC<IProps> = ({rows}) => {
                 },
             }}
             pageSizeOptions={[10]}
-            checkboxSelection
-            disableRowSelectionOnClick
+            showToolbar
         />
     );
 };
 
-export default UserList;
+export default UsersTable;

@@ -1,5 +1,4 @@
 import React, {Dispatch, FC, SetStateAction} from "react";
-import {TabContext, TabList, TabPanel} from "@mui/lab";
 import {FormControl, FormLabel, Stack, Tab, Typography} from "@mui/material";
 import Box from "@mui/material/Box";
 import FieldControl from "../../../components/common/FieldControl";
@@ -9,6 +8,9 @@ import {selectCompanyIsLoading, selectCurrentCompanyName} from "../model/selecto
 import {ValidationErrors} from "../../../utils/validators";
 import Preloader from "../../../components/common/Preloader";
 import TextField from "@mui/material/TextField";
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import {TabPanel} from "@mui/lab";
 
 interface IProps {
     editedValue: IRegisterData;

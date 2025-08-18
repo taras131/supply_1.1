@@ -15,7 +15,7 @@ const LoginForm = () => {
   const dispatch = useAppDispatch();
   const isLoading = useAppSelector(selectIsAuthLoading);
   const validateLogin = useCallback((values: ILoginData) => loginValidate(values), []);
-  const initialLogin = useMemo(() => ({ ...loginValues }), [loginValues]);
+  const initialLogin = useMemo(() => ({ ...loginValues }), []);
   const { editedValue, errors, handleFieldChange, resetValue } = useEditor<ILoginData>({
     initialValue: initialLogin,
     validate: validateLogin,

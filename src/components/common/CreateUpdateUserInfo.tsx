@@ -4,7 +4,7 @@ import { IUser } from "../../models/IUser";
 import TitleWithValue from "../TitleWithValue";
 
 interface IProps {
-  author: IUser;
+  author: IUser | null;
   updatedAuthor: IUser | null;
   createdAT: string;
   updatedAt: string | null;
@@ -16,8 +16,8 @@ const CreateUpdateUserInfo: FC<IProps> = ({ author, updatedAuthor, createdAT, up
       <TitleWithValue title={"Добавлено:"} value={formatDateDDMMYYYY(createdAT)} />
       <TitleWithValue
         title={"Автор:"}
-        value={`${author.first_name}
-                 ${author.middle_name}`}
+        value={`${author?.first_name}
+                 ${author?.middle_name}`}
       />
       {updatedAuthor && updatedAt && (
         <>

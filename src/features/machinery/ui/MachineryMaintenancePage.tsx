@@ -13,7 +13,7 @@ const MachineryMaintenancePage = () => {
     dispatch(fetchGetAllMachinery());
   }, []);
   return (
-    <Stack spacing={4}>
+    <Stack spacing={4} sx={{width: "100%"}}>
       <Typography variant={"h1"} fontSize={"26px"}>
         Календарь проведения ТО
       </Typography>

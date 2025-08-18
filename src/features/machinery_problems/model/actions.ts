@@ -18,22 +18,23 @@ export interface IAddProblem {
   files: File[];
 }
 
-export const fetchAddMachineryProblem = createAsyncThunk<string, IAddProblem, { state: RootState }>(
+export const fetchAddMachineryProblem = createAsyncThunk<IMachineryProblem, IAddProblem, { state: RootState }>(
   "machinery_problems/add",
   async (addProblemData: IAddProblem, { rejectWithValue, getState }) => {
     try {
       const { newProblem, files } = addProblemData;
       const problem_in = { ...newProblem };
       const currentMachineryId =
-        newProblem.machinery_id === "-1" ? selectCurrentMachineryId(getState()) : newProblem.machinery_id;
+        newProblem.machinery_id === "-1"
+            ? selectCurrentMachineryId(getState())
+            : newProblem.machinery_id;
       if (files.length > 0) {
         for (const file of files) {
           const uploadedFile = await filesAPI.upload(file);
           problem_in.photos.push(uploadedFile);
         }
       }
-      if (!currentMachineryId) return;
-      return await machineryProblemsAPI.add(currentMachineryId, problem_in);
+      return await machineryProblemsAPI.add(currentMachineryId || "", problem_in);
     } catch (e) {
       return rejectWithValue(handlerError(e));
     }

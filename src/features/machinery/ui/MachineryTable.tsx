@@ -1,4 +1,4 @@
-import React, {FC, useCallback, useEffect} from 'react';
+import React, {FC, useCallback, useEffect, useMemo} from 'react';
 import {IMachinery} from "../../../models/iMachinery";
 import {
     DataGrid,
@@ -46,7 +46,7 @@ interface IProps {
     rows: IMachinery [];
 }
 
-const MachineryNewTable: FC<IProps> = ({rows}) => {
+const MachineryTable: FC<IProps> = ({rows}) => {
     const navigate = useNavigate();
     const isLoading = useAppSelector(selectMachineryIsLoading)
     const [paginationModel, setPaginationModel] = React.useState<any>({page: 0, pageSize: 20});
@@ -62,7 +62,6 @@ const MachineryNewTable: FC<IProps> = ({rows}) => {
     }, []);
     const handleRowClick = useCallback<GridEventListener<"rowClick">>(
         ({row}) => {
-            console.log(row)
             navigate(`${routes.machineryDetails.replace(":machineryId", row.id)}`);
         },
         [navigate],
@@ -73,12 +72,11 @@ const MachineryNewTable: FC<IProps> = ({rows}) => {
         },
         [navigate],
     );
-    const columns = React.useMemo<any>(() => [
+    const columns = useMemo<any>(() => [
         {
             field: "photos",
             headerName: "Фото",
             renderCell: (params: any) => {
-                console.log('params:', params);
                 const photoPath = params.row.photos[0]
                     ? `${nestServerPath}/static/${params.row.photos[0]}`
                     : photoPlaceholder;
@@ -90,7 +88,6 @@ const MachineryNewTable: FC<IProps> = ({rows}) => {
             field: "type_id",
             headerName: "Категория",
             renderCell: (params: any) => {
-                console.log('params:', params);
                 const value = params.value ?? params.row.type_id;
                 return machineryTypes.find((t) => t.id === value)?.title || "";
             },
@@ -127,7 +124,6 @@ const MachineryNewTable: FC<IProps> = ({rows}) => {
             minWidth: 120,
             valueOptions: [MachineryStatus.active, MachineryStatus.repair, MachineryStatus.disActive],
             renderCell: (params: any) => renderStatus(params.value),
-            // Кастомная сортировка статусов по своему порядку (опционально)
             sortComparator: (a: any, b: any) => {
                 const order = {
                     [MachineryStatus.active]: 0,
@@ -212,4 +208,4 @@ const MachineryNewTable: FC<IProps> = ({rows}) => {
     );
 };
 
-export default MachineryNewTable;
+export default MachineryTable;

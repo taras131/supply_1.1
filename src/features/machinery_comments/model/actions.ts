@@ -29,13 +29,6 @@ export const fetchGetAllMachineryComment = createAsyncThunk(
     try {
       return await machineryCommentAPI.getAll();
     } catch (e) {
-      const errorMessage = e instanceof Error ? e.message : "Неизвестная ошибка";
-      dispatch(
-        setMessage({
-          severity: MESSAGE_SEVERITY.error,
-          text: errorMessage || "Не удалось добавить заметку.",
-        }),
-      );
       return rejectWithValue(handlerError(e));
     }
   },

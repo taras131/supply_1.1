@@ -1,28 +1,14 @@
 import React, {useEffect} from 'react';
-import Stack from '@mui/material/Stack';
-import SideMenu from '../dashboard/components/SideMenu';
-import AppNavbar from '../dashboard/components/AppNavbar';
-import Header from '../dashboard/components/Header';
-import AppTheme from '../shared-theme/AppTheme';
-import {alpha} from '@mui/material/styles';
-import {
-    datePickersCustomizations,
-    treeViewCustomizations,
-    dataGridCustomizations,
-} from '../dashboard/theme/customizations';
-import Box from "@mui/material/Box";
-import {CssBaseline} from "@mui/material";
-import {routesConfig} from "../config/routes";
-import {Routes, Route} from "react-router-dom";
+import {Routes, Route } from "react-router-dom";
 import {useAppDispatch} from "../hooks/redux";
 import {fetchCheckAuth} from "../features/auth/model/actions";
 import {fetchGetAllUsers} from "../features/users/model/actions";
-
-const xThemeComponents = {
-    ...dataGridCustomizations,
-    ...datePickersCustomizations,
-    ...treeViewCustomizations,
-};
+import {alpha, Stack} from "@mui/material";
+import Box from "@mui/material/Box";
+import {routesConfig} from "../config/routes";
+import SideMenu from "./SideMenu";
+import AppNavbar from "./AppNavbar";
+import Header from "./Header";
 
 function App() {
     const dispatch = useAppDispatch()

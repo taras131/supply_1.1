@@ -1,7 +1,5 @@
 import { RootState } from "../../../store";
-import { ICurrentMachinery, IMachinery } from "../../../models/iMachinery";
-import { useAppSelector } from "../../../hooks/redux";
-import { IOrder } from "../../../models/iOrders";
+import { ICurrentMachinery } from "../../../models/iMachinery";
 import { ITask } from "../../../models/IMachineryTasks";
 import { createSelector } from "@reduxjs/toolkit";
 
@@ -43,14 +41,6 @@ export const getMachineryIsLoading = (state: RootState): boolean => {
   return state.machinery.isLoading;
 };
 
-export const getMachinery = (state: RootState): (IMachinery | ICurrentMachinery)[] => {
-  return state.machinery.list;
-};
-
-export const getMachineryById = (state: RootState, machineryId: number): IMachinery | ICurrentMachinery => {
-  return state.machinery.list.filter((machinery) => machinery.id !== machineryId)[0];
-};
-
 export const getCurrentMachinery = (state: RootState): ICurrentMachinery | null => {
   return state.machinery.current;
 };
@@ -67,10 +57,11 @@ export const getCurrentMachineryOperatingTypeId = (state: RootState): number | n
   return state.machinery.current?.operating_type_id || null;
 };
 
-export const getTaskById = (state: RootState, taskId: number): ITask | null => {
+export const getTaskById = (state: RootState, taskId: string): ITask | null => {
   return state.machinery.current?.tasks.find((task) => task.id === taskId) || null;
 };
 
+/*
 export const getRelatedMachineryByInvoiceId = (state: RootState, invoiceId: string): IMachinery[] => {
   const relatedMachinery: IMachinery[] = [];
   const relatedOrders: IOrder[] = [];
@@ -96,3 +87,4 @@ export const getRelatedMachineryByInvoiceId = (state: RootState, invoiceId: stri
   }
   return relatedMachinery;
 };
+*/

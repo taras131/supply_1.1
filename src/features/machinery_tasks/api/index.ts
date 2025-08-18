@@ -1,13 +1,12 @@
 import { appAPI, nestServerPath } from "../../../api";
 import { INewTask, ITask } from "../../../models/IMachineryTasks";
-import { logger } from "../../../lib/default-logger";
 
 const machineryTasksPath = `${nestServerPath}/machinery-task`;
 
 const prepareTaskDto = (dto: INewTask) => {
   if (!dto.assigned_to_id || dto.assigned_to_id === "-1") delete dto.assigned_to_id;
   if (!dto.problem_id || dto.problem_id === "-1") delete dto.problem_id;
-  if (!dto.machinery_id || dto.machinery_id === "-1") delete dto.machinery_id;
+ // if (!dto.machinery_id || dto.machinery_id === "-1") delete dto.machinery_id;
   return dto;
 };
 
