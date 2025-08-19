@@ -27,7 +27,7 @@ export interface IOrderPosition extends INewOrderPosition {
 
 export const emptyOrderPosition: INewOrderPosition = {
     id: 0,
-    name: "ва",
+    name: "",
     catalog_number: "",
     count: 1,
     comment: "",

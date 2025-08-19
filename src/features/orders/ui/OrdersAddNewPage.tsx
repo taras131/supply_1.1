@@ -15,7 +15,7 @@ import {
 import OrderPositionsTable from "../../orders_positions/ui/OrderPositionsTable";
 import {useAppSelector} from "../../../hooks/redux";
 import {selectOrdersIsLoading} from "../model/selectors";
-import {INewOrderPosition} from "../../../models/IOrdersPositions";
+import {emptyOrderPosition, INewOrderPosition} from "../../../models/IOrdersPositions";
 
 const OrdersAddNewPage = () => {
     const shipmentTypeRadioId = useId();
@@ -23,7 +23,7 @@ const OrdersAddNewPage = () => {
     const isLoading = useAppSelector(selectOrdersIsLoading)
     const memoizedInitialValue = useMemo(() => JSON.parse(JSON.stringify(emptyOrder)),
         []);
-    const {editedValue, errors, handleFieldChange, resetValue} = useEditor<INewOrder>({
+    const {editedValue, errors, handleFieldChange, resetValue, setEditedValue} = useEditor<INewOrder>({
         initialValue: memoizedInitialValue,
         validate: orderValidate,
     });
@@ -31,14 +31,24 @@ const OrdersAddNewPage = () => {
         (newRows: INewOrderPosition[]) => {
             // Если handleFieldChange принимает event-подобный объект:
             handleFieldChange({
-                target: { name: 'positions', value: newRows },
+                target: {name: 'positions', value: newRows},
             } as any);
         },
         [handleFieldChange]
     );
+    const getNextId = React.useCallback(() => {
+        if (!editedValue.positions.length) return 1;
+        const nums = editedValue.positions
+            .map(r => (Number(r.id)))
+            .filter(n => Number.isFinite(n));
+        return nums.length ? Math.max(...nums) + 1 : Date.now();
+    }, [editedValue.positions]);
+    const handleAddRow = () => {
+        setEditedValue(prev => ({...prev, positions: [...prev.positions, {...emptyOrderPosition, id: getNextId()}]}));
+    }
     return (
         <Stack spacing={4} sx={{width: '100%'}}>
-            <Card sx={{p: 4,}}>
+            <Card sx={{p: 4}}>
                 <Stack spacing={2}>
                     <FieldControl
                         label="Название заявки"
@@ -50,6 +60,7 @@ const OrdersAddNewPage = () => {
                         onChange={handleFieldChange}
                         isRequired
                     />
+
                     <Stack direction={"row"} alignItems={"center"} justifyContent={"space-between"}>
                         <FormControl>
                             <FormLabel id={shipmentTypeRadioId}>Срочность:</FormLabel>
@@ -82,12 +93,14 @@ const OrdersAddNewPage = () => {
                             </RadioGroup>
                         </FormControl>
                     </Stack>
-                    <OrderPositionsTable rows={editedValue.positions}
-                                         onChange={handlePositionsChange}
-                                         loading={isLoading}/>
                 </Stack>
             </Card>
-        </Stack>);
+            <OrderPositionsTable rows={editedValue.positions}
+                                 onRowsChange={handlePositionsChange}
+                                 loading={isLoading}
+                                 handleAddRow={handleAddRow}/>
+        </Stack>
+    );
 };
 
 export default OrdersAddNewPage;
