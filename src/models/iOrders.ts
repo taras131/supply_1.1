@@ -45,9 +45,10 @@ export interface INewOrder {
   cancel_author_id?: string | null;
   machinery_id?: string | null;
   positions: INewOrderPosition[];
+  created_at?: Date | string;
 }
 
-export interface IOrder extends INewOrder {
+export interface IOrder extends Omit<INewOrder, 'positions'> {
   id: string;
   approved_author?: IUser | null;
   cancel_author?: IUser | null;
@@ -56,7 +57,10 @@ export interface IOrder extends INewOrder {
   machinery?: IMachinery | null;
   created_at: Date | string;
   updated_at: Date | string;
-  positions: IOrderPosition[];
+  completion_percent?: number;
+  positions_done?: number;
+  positions_total?: number;
+  items_total?: number;
 }
 
 export const emptyOrder: INewOrder = {
@@ -93,7 +97,6 @@ export const defaultOrder: IOrder = {
   machinery: null,
   approved_author: null,
   cancel_author: null,
-  positions: [defaultOrderPosition],
   created_at: new Date(),
   updated_at: new Date(),
 };

@@ -7,30 +7,29 @@ import {
 } from '@mui/x-data-grid';
 import {Button, IconButton,} from '@mui/material';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import CustomToolbar from "./CustomToolbar";
-import {INewOrderPosition} from "../../../models/IOrdersPositions";
+import {INewOrderPosition, IOrderPosition} from "../../../models/IOrdersPositions";
 import {GridToolbar} from "@mui/x-data-grid/internals";
+import {FC, useCallback, useEffect, useState} from "react";
+import {getNumberColumn} from "../../../components/dataGrid/numberColumn";
 
-type Id = string | number;
-
-type OrderPositionsTableProps = {
-    rows: INewOrderPosition[];
+interface IProps {
+    rows: INewOrderPosition[] | IOrderPosition[];
     onRowsChange: (newRows: INewOrderPosition[]) => void;
     handleAddRow: () => void;
     loading?: boolean;
-};
+}
 
-const OrderPositionsTable: React.FC<OrderPositionsTableProps> = ({
-                                                                     rows,
-                                                                     onRowsChange,
-                                                                     handleAddRow,
-                                                                     loading
-                                                                 }) => {
+const OrderPositionsTable: FC<IProps> = ({
+                                             rows,
+                                             onRowsChange,
+                                             handleAddRow,
+                                             loading
+                                         }) => {
     const apiRef = useGridApiRef();
-    const [cellModesModel, setCellModesModel] = React.useState<GridCellModesModel>({});
-    const [pendingEdit, setPendingEdit] = React.useState<{ id: string | number; field: string } | null>(null);
+    const [cellModesModel, setCellModesModel] = useState<GridCellModesModel>({});
+    const [pendingEdit, setPendingEdit] = useState<{ id: string | number; field: string } | null>(null);
     const initialEditDoneRef = React.useRef(false);
-    React.useEffect(() => {
+    useEffect(() => {
         if (!initialEditDoneRef.current && rows.length) {
             initialEditDoneRef.current = true;
             setCellModesModel({
@@ -44,45 +43,39 @@ const OrderPositionsTable: React.FC<OrderPositionsTableProps> = ({
         }
     }, [rows, apiRef]);
     const awaitingFocusRef = React.useRef(false);
-// 2) набор предыдущих id
     const prevIdsRef = React.useRef<Set<GridRowId>>(new Set());
-// 3) враппер на добавление, ставим флаг
     const handleAddClick = React.useCallback(() => {
         awaitingFocusRef.current = true;
         handleAddRow();
     }, [handleAddRow]);
-// 4) эффект: находим добавленный id и выставляем pendingEdit
-    React.useEffect(() => {
+    useEffect(() => {
         const prev = prevIdsRef.current;
         const curr = new Set<GridRowId>(rows.map(r => r.id as GridRowId));
         if (prev.size && awaitingFocusRef.current) {
             const added = rows.find(r => !prev.has(r.id as GridRowId));
             if (added) {
-                setPendingEdit({ id: added.id, field: 'name' });
+                setPendingEdit({id: added.id, field: 'name'});
                 awaitingFocusRef.current = false;
             }
         }
         prevIdsRef.current = curr;
     }, [rows]);
-// 5) уже существующий эффект фокусировки — чуть усилим защиту
-    React.useEffect(() => {
+    useEffect(() => {
         if (!pendingEdit) return;
-        const { id, field } = pendingEdit;
+        const {id, field} = pendingEdit;
         const rowIndex = rows.findIndex(r => r.id === id);
         if (rowIndex === -1) return;
-        // даём гриду дорендериться
         requestAnimationFrame(() => {
             const api = apiRef.current;
             if (!api) return;
-            // если метода нет в вашей сборке — просто пропустим
-            (api as any).scrollToIndexes?.({ rowIndex });
-            // порядок: сначала открыть редактор, затем сфокусировать
-            api.startCellEditMode({ id, field });
+            (api as any).scrollToIndexes?.({rowIndex});
+            api.startCellEditMode({id, field});
             api.setCellFocus(id, field);
         });
         setPendingEdit(null);
     }, [rows, pendingEdit, apiRef]);
     const columns = React.useMemo<any>(() => [
+        getNumberColumn(apiRef),
         {
             field: 'name',
             headerName: 'Наименование',
@@ -129,7 +122,7 @@ const OrderPositionsTable: React.FC<OrderPositionsTableProps> = ({
             cellClassName: 'editable-cell',
         },
     ], [rows, onRowsChange]);
-    const processRowUpdate = React.useCallback((newRow: INewOrderPosition, oldRow: INewOrderPosition) => {
+    const processRowUpdate = useCallback((newRow: INewOrderPosition, oldRow: INewOrderPosition) => {
         if (!newRow.name?.trim()) throw new Error('Наименование обязательно');
         if ((newRow.count ?? 0) <= 0) throw new Error('Количество должно быть > 0');
 
@@ -144,11 +137,9 @@ const OrderPositionsTable: React.FC<OrderPositionsTableProps> = ({
 
     return (
         <div style={{position: "relative"}}>
-
             <DataGrid
                 apiRef={apiRef}
                 rows={rows}
-
                 getRowId={(row) => row.id}
                 columns={columns}
                 loading={loading}

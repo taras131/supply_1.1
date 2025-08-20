@@ -1,21 +1,25 @@
 import React, {useEffect} from "react";
-import {useAppDispatch, useAppSelector} from "../../../hooks/redux";
+import {useAppDispatch} from "../../../hooks/redux";
 import {fetchGetAllOrders} from "../model/actions";
-import {selectAllOrders} from "../model/selectors";
 import OrdersTable from "./OrdersTable";
 import OrdersPageHeader from "./OrdersPageHeader";
 import {Stack} from "@mui/material";
+import AOrdersMigration from "./AOrderMigration";
 
 const OrdersPage = () => {
     const dispatch = useAppDispatch();
     useEffect(() => {
         dispatch(fetchGetAllOrders());
     }, [dispatch]);
-    const orders = useAppSelector(selectAllOrders);
     return (
-        <Stack spacing={4} sx={{width: "100%"}}>
+        <Stack sx={{
+            width: '100%',
+            maxWidth: {sm: '100%', md: '1700px'},
+            pt: 1.5,
+        }}>
             <OrdersPageHeader/>
-            <OrdersTable rows={orders}/>
+            <OrdersTable/>
+            <AOrdersMigration/>
         </Stack>
     );
 };

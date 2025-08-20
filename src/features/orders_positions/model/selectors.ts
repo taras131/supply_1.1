@@ -7,3 +7,8 @@ export const selectAllOrdersPositions = createSelector(
   [selectOrdersPositionsState],
   (ordersPositionsState) => ordersPositionsState.list,
 );
+
+export const selectOrdersPositionsIsLoading = createSelector(
+    [selectOrdersPositionsState],
+    (ordersPositionsState) => ordersPositionsState.isLoading,
+);

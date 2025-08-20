@@ -4,8 +4,12 @@ import {IOrder} from "../../../models/iOrders";
 
 const selectOrdersState = (state: RootState) => state.orders;
 
-export const selectAllOrders = createSelector([selectOrdersState],
+export const selectOrders = createSelector([selectOrdersState],
     (ordersState) => ordersState.list);
+
+export const selectCurrentOrder = createSelector([selectOrdersState],
+    (ordersState) => ordersState.current);
+
 export const selectOrdersIsLoading = createSelector([selectOrdersState],
     (ordersState) => ordersState.isLoading);
 

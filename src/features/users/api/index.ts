@@ -14,6 +14,10 @@ export const userAPI = {
       );
     }
   },
+  getByFirebaseId: async (firebase_id: string) => {
+    const res = await appAPI.get(`${usersPath}/firebase/${firebase_id}`);
+    return res.data;
+  },
   update: async (updateData: IUser) => {
     try {
       const res = await appAPI.put(usersPath, updateData);

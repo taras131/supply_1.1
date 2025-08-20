@@ -13,11 +13,18 @@ import {
     RadioGroup,
 } from "@mui/material";
 import OrderPositionsTable from "../../orders_positions/ui/OrderPositionsTable";
-import {useAppSelector} from "../../../hooks/redux";
+import {useAppDispatch, useAppSelector} from "../../../hooks/redux";
 import {selectOrdersIsLoading} from "../model/selectors";
 import {emptyOrderPosition, INewOrderPosition} from "../../../models/IOrdersPositions";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import {Link} from "react-router-dom";
+import {routes} from "../../../utils/routes";
+import AddIcon from "@mui/icons-material/Add";
+import {fetchAddOrder} from "../model/actions";
 
 const OrdersAddNewPage = () => {
+    const dispatch = useAppDispatch()
     const shipmentTypeRadioId = useId();
     const orderTypeRadioId = useId();
     const isLoading = useAppSelector(selectOrdersIsLoading)
@@ -46,8 +53,25 @@ const OrdersAddNewPage = () => {
     const handleAddRow = () => {
         setEditedValue(prev => ({...prev, positions: [...prev.positions, {...emptyOrderPosition, id: getNextId()}]}));
     }
+    const saveClickHandler = () => {
+        dispatch(fetchAddOrder(editedValue));
+    }
     return (
         <Stack spacing={4} sx={{width: '100%'}}>
+            <Stack direction="row" spacing={3} justifyContent="space-between" alignItems="center" sx={{mb: 2, mt: 2}}>
+                <Typography component="h2" variant="h6">
+                    Новая заявка
+                </Typography>
+                <div>
+                    <Button
+                        onClick={saveClickHandler}
+                        startIcon={<AddIcon sx={{fontSize: "var(--icon-fontSize-md)"}}/>}
+                        variant="contained"
+                    >
+                        Сохранить
+                    </Button>
+                </div>
+            </Stack>
             <Card sx={{p: 4}}>
                 <Stack spacing={2}>
                     <FieldControl
@@ -60,7 +84,6 @@ const OrdersAddNewPage = () => {
                         onChange={handleFieldChange}
                         isRequired
                     />
-
                     <Stack direction={"row"} alignItems={"center"} justifyContent={"space-between"}>
                         <FormControl>
                             <FormLabel id={shipmentTypeRadioId}>Срочность:</FormLabel>

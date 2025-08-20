@@ -10,6 +10,8 @@ import MachineryReport from "./report/MachineryReport";
 import { useLocation, useNavigate } from "react-router-dom";
 import { a11yProps, CustomTabPanel } from "../../../components/common/CustomTabPanel";
 import MachineryComments from "../../machinery_comments/ui/MachineryComments";
+import OrdersTable from "../../orders/ui/OrdersTable";
+import {MyTab, MyTabs} from "../../../styles/theme/customizations/MyTabs";
 
 const MachineryDetailsTabs: FC = () => {
   const machinery = useAppSelector(selectCurrentMachinery);
@@ -31,14 +33,14 @@ const MachineryDetailsTabs: FC = () => {
   return (
     <Box sx={{ width: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-          <Tab label="Обзор" {...a11yProps(0)} />
-          <Tab label="Документы" {...a11yProps(1)} />
-          <Tab label="Проблемы" {...a11yProps(2)} />
-          <Tab label="Задачи" {...a11yProps(3)} />
-          <Tab label="Заявки" {...a11yProps(4)} />
-          <Tab label="Заметки" {...a11yProps(5)} />
-        </Tabs>
+        <MyTabs value={value} onChange={handleChange} aria-label="basic tabs example">
+          <MyTab label="Обзор" {...a11yProps(0)} />
+          <MyTab label="Документы" {...a11yProps(1)} />
+          <MyTab label="Проблемы" {...a11yProps(2)} />
+          <MyTab label="Задачи" {...a11yProps(3)} />
+          <MyTab label="Заявки" {...a11yProps(4)} />
+          <MyTab label="Заметки" {...a11yProps(5)} />
+        </MyTabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
         <MachineryReport />
@@ -53,7 +55,7 @@ const MachineryDetailsTabs: FC = () => {
         <TaskList />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={4}>
-        Заявки
+        <OrdersTable/>
       </CustomTabPanel>
       <CustomTabPanel value={value} index={5}>
         <MachineryComments />

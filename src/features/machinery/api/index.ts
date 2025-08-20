@@ -28,6 +28,10 @@ export const machineryAPI = {
     const res = await appAPI.get(`${machineryPath}/${machinery_id}`);
     return res.data;
   },
+  getByFirebaseId: async (firebase_id: string) => {
+    const res = await appAPI.get(`${machineryPath}/firebase/${firebase_id}`);
+    return res.data.id;
+  },
   update: async (machinery: IMachinery) => {
     try {
       const res = await appAPI.put(`${machineryPath}/${machinery.id}/`, {

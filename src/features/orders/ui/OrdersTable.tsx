@@ -6,19 +6,19 @@ import {
     GridEventListener,
 } from "@mui/x-data-grid";
 import {routes} from "../../../utils/routes";
-import {IOrder} from "../../../models/iOrders";
 import {GridToolbar} from "@mui/x-data-grid/internals";
 import {useAppSelector} from "../../../hooks/redux";
-import {selectOrdersIsLoading} from "../model/selectors";
+import {selectOrders, selectOrdersIsLoading} from "../model/selectors";
 import {formatDateDDMMYYYY} from "../../../utils/services";
+import AirplanemodeActiveIcon from "@mui/icons-material/AirplanemodeActive";
+import DirectionsSubwayIcon from "@mui/icons-material/DirectionsSubway";
+import CompletionBar from "./CompletionBar";
+import IconWrapper from "../../../components/common/IconWrapper";
+import {MyDataGrid} from "../../../styles/theme/customizations/MyDataGrid";
 
-
-interface IProps {
-    rows: IOrder[];
-}
-
-const OrdersTable: FC<IProps> = ({rows}) => {
+const OrdersTable: FC = () => {
     const navigate = useNavigate();
+    const rows = useAppSelector(selectOrders)
     const isLoading = useAppSelector(selectOrdersIsLoading)
     const handleRowClick = useCallback<GridEventListener<"rowClick">>(
         ({row}) => {
@@ -33,35 +33,52 @@ const OrdersTable: FC<IProps> = ({rows}) => {
                 headerName: "Дата",
                 disableColumnMenu: true,
                 renderCell: (params: any) => (formatDateDDMMYYYY(params.row.created_at)),
-                flex: 0.3,
+                flex: 0.1,
             },
-            {field: "title", headerName: "Название"},
-
+            {
+                field: "title",
+                headerName: "Название",
+                disableColumnMenu: true,
+                flex: 1,
+            },
+            {
+                field: 'completion_percent',
+                headerName: 'Выполнение',
+                flex: 0.4,
+                type: 'number',
+                sortable: true,
+                disableColumnMenu: true,
+                renderCell: (params: any) => (
+                    <CompletionBar
+                        percent={params.row.completion_percent}
+                        done={params.row.positions_done}
+                        total={params.row.positions_total}
+                        itemsDone={params.row.items_done}
+                        itemsTotal={params.row.items_total}
+                    />
+                ),
+            },
+            {
+                field: "shipment_type",
+                headerName: "",
+                disableColumnMenu: true,
+                renderCell: (params: any) => (
+                    <IconWrapper tooltipTitle="Авиа доставка">
+                        {params.row.shipments_type === "air"
+                            ? <AirplanemodeActiveIcon/>
+                            : <DirectionsSubwayIcon/>}
+                    </IconWrapper>
+                ),
+            },
         ],
         [],
     );
     return (
-        <DataGrid
+        <MyDataGrid
             rows={rows}
             columns={columns}
-            pagination
-            pageSizeOptions={[10, 20, 50]}
-            slots={{toolbar: GridToolbar}}
-            slotProps={{
-                toolbar: {showQuickFilter: true, quickFilterProps: {debounceMs: 500}},
-                baseIconButton: {size: 'small'},
-            }}
-            density="compact"
-            rowHeight={90}
-            columnHeaderHeight={70}
             loading={isLoading}
-            sx={{
-                [`& .${gridClasses.columnHeader}, & .${gridClasses.cell}`]: {outline: 'transparent'},
-                [`& .${gridClasses.columnHeader}:focus-within, & .${gridClasses.cell}:focus-within`]: {outline: 'none'},
-                [`& .${gridClasses.row}:hover`]: {cursor: 'pointer'},
-            }}
             onRowClick={handleRowClick}
-            showToolbar
         />
     );
 };
