@@ -29,6 +29,7 @@ export const machineryAPI = {
     return res.data;
   },
   getByFirebaseId: async (firebase_id: string) => {
+    console.log(firebase_id);
     const res = await appAPI.get(`${machineryPath}/firebase/${firebase_id}`);
     return res.data.id;
   },

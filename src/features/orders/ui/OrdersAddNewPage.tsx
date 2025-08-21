@@ -15,7 +15,7 @@ import {
 import OrderPositionsTable from "../../orders_positions/ui/OrderPositionsTable";
 import {useAppDispatch, useAppSelector} from "../../../hooks/redux";
 import {selectOrdersIsLoading} from "../model/selectors";
-import {emptyOrderPosition, INewOrderPosition} from "../../../models/IOrdersPositions";
+import {emptyOrderPosition, INewOrderPosition, IOrderPosition} from "../../../models/IOrdersPositions";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import {Link} from "react-router-dom";
@@ -35,13 +35,13 @@ const OrdersAddNewPage = () => {
         validate: orderValidate,
     });
     const handlePositionsChange = useCallback(
-        (newRows: INewOrderPosition[]) => {
-            // Если handleFieldChange принимает event-подобный объект:
-            handleFieldChange({
-                target: {name: 'positions', value: newRows},
-            } as any);
+        (newRow: INewOrderPosition | IOrderPosition) => {
+            setEditedValue(prev => ({
+                ...prev, positions:
+                    [...prev.positions.map(position => position.id === newRow.id ? newRow : position)]
+            }))
         },
-        [handleFieldChange]
+        [setEditedValue]
     );
     const getNextId = React.useCallback(() => {
         if (!editedValue.positions.length) return 1;
@@ -121,7 +121,8 @@ const OrdersAddNewPage = () => {
             <OrderPositionsTable rows={editedValue.positions}
                                  onRowsChange={handlePositionsChange}
                                  loading={isLoading}
-                                 handleAddRow={handleAddRow}/>
+                                 handleAddRow={handleAddRow}
+            />
         </Stack>
     );
 };

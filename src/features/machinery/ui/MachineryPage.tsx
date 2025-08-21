@@ -14,7 +14,11 @@ const MachineryPage = () => {
         dispatch(fetchGetAllMachinery());
     }, [dispatch]);
     return (
-        <Stack spacing={4} sx={{width: "100%"}}>
+        <Stack spacing={4} sx={{
+            width: '100%',
+            maxWidth: {sm: '100%', md: '1700px'},
+            pt: 1.5,
+        }}>
             <MachineryPageHeader/>
             <MachineryTable rows={machinery}/>
             <AMachineryMigration/>

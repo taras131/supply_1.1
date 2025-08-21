@@ -15,13 +15,11 @@ const MachineryDetailsPage = () => {
         }
     }, [dispatch, machineryId]);
     return (
-        <Stack sx={{
-            maxWidth: "1350px",
-            width: "100%",
-            marginLeft: "auto",
-            marginRight: "auto",
-        }}
-               spacing={4}>
+        <Stack spacing={4} sx={{
+            width: '100%',
+            maxWidth: {sm: '100%', md: '1700px'},
+            pt: 1.5,
+        }}>
             <MachineryDetailsHeader/>
             <MachineryDetailsTabs/>
         </Stack>

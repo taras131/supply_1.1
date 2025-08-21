@@ -1,6 +1,6 @@
 export const getNumberColumn = (apiRef: any) => ({
     field: '__rowNumber__',
-    headerName: '#',
+    headerName: '№',
     width: 64,
     sortable: false,
     filterable: false,

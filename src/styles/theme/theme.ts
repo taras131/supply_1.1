@@ -1,5 +1,5 @@
 import { createTheme } from '@mui/material/styles';
-import { colorSchemes } from './themePrimitives';
+import {colorSchemes, typography} from './themePrimitives';
 
 declare module '@mui/material/styles' {
     interface Palette {

@@ -1,7 +1,7 @@
-import { collection, getDocs, query } from "firebase/firestore";
-import { db } from "../../../firebase";
+import {collection, getDocs, query} from "firebase/firestore";
+import {db} from "../../../firebase";
 import {machineryAPI} from "../../machinery/api";
-import {INewOrderPosition} from "../../../models/IOrdersPositions";
+import {INewOrderPosition, unitMeasures} from "../../../models/IOrdersPositions";
 import {INewOrder} from "../../../models/iOrders";
 import {useAppDispatch} from "../../../hooks/redux";
 import {Button} from "@mui/material";
@@ -25,7 +25,7 @@ async function resolveMachineryUuid(firebaseMachineryId?: string): Promise<strin
         const m = await machineryAPI.getByFirebaseId(fid);
         const uuid = typeof m?.id === 'string' && isUUID(m.id) ? m.id : null;
         machineryCache.set(fid, uuid);
-        if (!uuid) console.warn('Machinery found but invalid id format', { fid, m });
+        if (!uuid) console.warn('Machinery found but invalid id format', {fid, m});
         return uuid;
     } catch (e) {
         console.warn('Machinery not found by firebase id', fid, e);
@@ -33,18 +33,6 @@ async function resolveMachineryUuid(firebaseMachineryId?: string): Promise<strin
         return null;
     }
 }
-
-const normalizeShipmentType = (s?: string): string => {
-    const allowed = new Set(['air', 'sea', 'road', 'rail']);
-    const v = (s || '').toLowerCase();
-    return allowed.has(v) ? v : 'air';
-};
-
-const normalizeOrderType = (t?: string): string => {
-    const allowed = new Set(['current', 'future', 'other']);
-    const v = (t || '').toLowerCase();
-    return allowed.has(v) ? v : 'current';
-};
 
 function mapFirebaseItemToPosition(item: any, idx: number): INewOrderPosition {
     return {
@@ -58,6 +46,7 @@ function mapFirebaseItemToPosition(item: any, idx: number): INewOrderPosition {
         photos: [],
         link: '',
         invoice_id: item?.invoiceId ?? null,
+        unit_measure: unitMeasures[0],
         assigned_to_id: null,
     };
 }
@@ -66,14 +55,13 @@ async function mapDocToNewOrderAsync(doc: any): Promise<INewOrder> {
     const data = doc.data() ?? {};
     const approved = data.approved ?? {};
     const cancel = data.cancel ?? {};
-
     const fbCreated = Number(data?.author?.dateCreating ?? 0);
     const createdAtIso =
         fbCreated > 0 ? new Date(fbCreated).toISOString() : new Date().toISOString();
-
-    // Резолвим UUID техники по firebase machineryId
-    const machinery_id = await machineryAPI.getByFirebaseId(data.machineryId);
-
+    let machinery_id = "";
+    if (data.machineryId) {
+        machinery_id = await machineryAPI.getByFirebaseId(data.machineryId);
+    }
     const positions: INewOrderPosition[] = Array.isArray(data.orderItems)
         ? data.orderItems.map((it: any, idx: number) => mapFirebaseItemToPosition(it, idx))
         : [];
@@ -84,37 +72,17 @@ async function mapDocToNewOrderAsync(doc: any): Promise<INewOrder> {
         category: '-1', // при отправке на сервер не включаем (если бэк не ждёт)
         shipments_type: data?.shipmentType,
         type: data?.orderType,
-
-        is_approved: Boolean(approved?.isApproved),
-        approved_date: Number(approved?.date ?? 0),
+        is_approved: Boolean(data?.approved?.isApproved),
+        approved_date: Number(data?.approved?.date ?? 0),
         approved_author_id: null, // при необходимости замапьте через словарь uid->uuid
-
-        is_cancel: Boolean(cancel?.isCancel ?? false),
-        cancel_date: Number(cancel?.date ?? 0),
+        is_cancel: Boolean(data?.cancel?.isCancel ?? false),
+        cancel_date: Number(data?.cancel?.date ?? 0),
         cancel_author_id: null, // при необходимости замапьте через словарь uid->uuid
 
-        machinery_id: machinery_id,
+        machinery_id: machinery_id ?? null,
 
         created_at: createdAtIso,
         positions,
-    };
-}
-
-// Если очистка payload происходит не в API-слое, можно использовать этот помощник
-function toServerPayload(o: INewOrder) {
-    return {
-        firebase_id: o.firebase_id || undefined,
-        title: o.title,
-        shipments_type: o.shipments_type,
-        type: o.type,
-        is_approved: o.is_approved ?? undefined,
-        approved_date: o.approved_date ?? undefined,
-        approved_author_id: isUUID(o.approved_author_id || '') ? o.approved_author_id : undefined,
-        is_cancel: o.is_cancel ?? undefined,
-        cancel_date: o.cancel_date ?? undefined,
-        cancel_author_id: isUUID(o.cancel_author_id || '') ? o.cancel_author_id : undefined,
-        machinery_id: isUUID(o.machinery_id || '') ? o.machinery_id : undefined,
-        positions: (o.positions ?? []).map(({ id, ...rest }) => rest), // убираем временный id
     };
 }
 
@@ -146,8 +114,11 @@ const AOrdersMigration = () => {
 
             // 4) Отправляем по одному, с паузой
             for (let i = 0; i < orders.length; i++) {
-                const order = orders[i];
-
+                let order: INewOrder = orders[i];
+                if (!order.machinery_id) {
+                    const {machinery_id, ...tempOrder} = order;
+                    order = tempOrder;
+                }
                 // Если ваш ordersAPI.add уже чистит payload (удаляет positions.id и пр.), то просто:
                 await dispatch(fetchAddOrder(order)).unwrap().catch((err: any) => {
                     console.error('Failed to migrate order', order.firebase_id, err);

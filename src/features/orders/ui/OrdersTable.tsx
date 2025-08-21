@@ -1,12 +1,7 @@
 import React, {FC, useCallback, useMemo} from "react";
 import {useNavigate} from "react-router-dom";
-import {
-    DataGrid,
-    gridClasses,
-    GridEventListener,
-} from "@mui/x-data-grid";
+import {GridEventListener} from "@mui/x-data-grid";
 import {routes} from "../../../utils/routes";
-import {GridToolbar} from "@mui/x-data-grid/internals";
 import {useAppSelector} from "../../../hooks/redux";
 import {selectOrders, selectOrdersIsLoading} from "../model/selectors";
 import {formatDateDDMMYYYY} from "../../../utils/services";
@@ -75,6 +70,7 @@ const OrdersTable: FC = () => {
     );
     return (
         <MyDataGrid
+            tableName={"orders"}
             rows={rows}
             columns={columns}
             loading={isLoading}

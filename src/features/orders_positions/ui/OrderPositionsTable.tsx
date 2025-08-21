@@ -1,79 +1,59 @@
 import * as React from 'react';
 import {
-    DataGrid,
-    GridCellModes,
-    GridCellModesModel, GridRowId,
+    GridCellModesModel,
     useGridApiRef,
 } from '@mui/x-data-grid';
-import {Button, IconButton,} from '@mui/material';
+import {IconButton, Tooltip, Badge} from '@mui/material';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import {INewOrderPosition, IOrderPosition} from "../../../models/IOrdersPositions";
-import {GridToolbar} from "@mui/x-data-grid/internals";
-import {FC, useCallback, useEffect, useState} from "react";
+import {INewOrderPosition, IOrderPosition, unitMeasures} from "../../../models/IOrdersPositions";
+import {FC, useCallback, useState} from "react";
 import {getNumberColumn} from "../../../components/dataGrid/numberColumn";
+import {MyDataGrid} from "../../../styles/theme/customizations/MyDataGrid";
+import MyButton from "../../../styles/theme/customizations/MyButton";
+import AddIcon from "@mui/icons-material/Add";
+import PhotoDialog from "./PhotoDialog";
+import PhotoLibraryOutlinedIcon from '@mui/icons-material/PhotoLibraryOutlined';
+
 
 interface IProps {
     rows: INewOrderPosition[] | IOrderPosition[];
-    onRowsChange: (newRows: INewOrderPosition[]) => void;
+    onRowsChange: (newRow: INewOrderPosition | IOrderPosition) => void;
     handleAddRow: () => void;
     loading?: boolean;
+    addPhotoHandler?: (file: File, orderPositionId: string) => void;
 }
 
 const OrderPositionsTable: FC<IProps> = ({
                                              rows,
                                              onRowsChange,
                                              handleAddRow,
-                                             loading
+                                             loading,
+                                             addPhotoHandler,
                                          }) => {
+    const [photoDialogOpen, setPhotoDialogOpen] = React.useState(false);
+    const [activeRowId, setActiveRowId] = React.useState<null>(null);
+    const openPhotosDialog = (row: any) => {
+        setActiveRowId(row.id);
+        setPhotoDialogOpen(true);
+    };
+    const closeDialog = () => {
+        setPhotoDialogOpen(false);
+        setActiveRowId(null);
+    };
+    const handleAddFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.currentTarget.files?.[0];
+        if (!file || !addPhotoHandler || !activeRowId) return;
+        addPhotoHandler(file, activeRowId)
+    };
+    const handleDeletePhoto = (idx: number) => {
+
+    };
+    const handleSavePhotos = async () => {
+
+        closeDialog();
+    };
     const apiRef = useGridApiRef();
     const [cellModesModel, setCellModesModel] = useState<GridCellModesModel>({});
-    const [pendingEdit, setPendingEdit] = useState<{ id: string | number; field: string } | null>(null);
-    const initialEditDoneRef = React.useRef(false);
-    useEffect(() => {
-        if (!initialEditDoneRef.current && rows.length) {
-            initialEditDoneRef.current = true;
-            setCellModesModel({
-                [rows[0].id]: {name: {mode: GridCellModes.Edit}},
-            });
-            requestAnimationFrame(() => {
-                const api = apiRef.current;
-                if (!api) return; // грид ещё не смонтирован
-                api.setCellFocus(rows[0].id, 'name');
-            });
-        }
-    }, [rows, apiRef]);
-    const awaitingFocusRef = React.useRef(false);
-    const prevIdsRef = React.useRef<Set<GridRowId>>(new Set());
-    const handleAddClick = React.useCallback(() => {
-        awaitingFocusRef.current = true;
-        handleAddRow();
-    }, [handleAddRow]);
-    useEffect(() => {
-        const prev = prevIdsRef.current;
-        const curr = new Set<GridRowId>(rows.map(r => r.id as GridRowId));
-        if (prev.size && awaitingFocusRef.current) {
-            const added = rows.find(r => !prev.has(r.id as GridRowId));
-            if (added) {
-                setPendingEdit({id: added.id, field: 'name'});
-                awaitingFocusRef.current = false;
-            }
-        }
-        prevIdsRef.current = curr;
-    }, [rows]);
-    useEffect(() => {
-        if (!pendingEdit) return;
-        const {id, field} = pendingEdit;
-        const rowIndex = rows.findIndex(r => r.id === id);
-        if (rowIndex === -1) return;
-        requestAnimationFrame(() => {
-            const api = apiRef.current;
-            if (!api) return;
-            (api as any).scrollToIndexes?.({rowIndex});
-            api.startCellEditMode({id, field});
-            api.setCellFocus(id, field);
-        });
-        setPendingEdit(null);
-    }, [rows, pendingEdit, apiRef]);
     const columns = React.useMemo<any>(() => [
         getNumberColumn(apiRef),
         {
@@ -103,6 +83,53 @@ const OrderPositionsTable: FC<IProps> = ({
             cellClassName: 'editable-cell',
         },
         {
+            field: 'unit_measure',
+            headerName: 'Ед. изм.',
+            width: 140,
+            editable: true,
+            type: 'singleSelect',
+            valueOptions: unitMeasures,
+            renderCell: (params: any) => params.row.unit_measure,
+            disableColumnMenu: true,
+            cellClassName: 'editable-cell',
+        },
+        {
+            field: 'photos',
+            headerName: 'Фото',
+            width: 90,
+            sortable: false,
+            filterable: false,
+            align: 'center',
+            headerAlign: 'center',
+            disableColumnMenu: true,
+            editable: false,
+            renderCell: (params: any) => {
+                const count = params.row.photos?.length ?? 0;
+                return (
+                    <Tooltip title="Открыть фото">
+                        {/* span нужен, чтобы Tooltip работал и чтобы стопнуть всплытие */}
+                        <span onClick={(e) => e.stopPropagation()}>
+              <IconButton
+                  size="small"
+                  aria-label="Фото"
+                  onClick={() => openPhotosDialog(params.row)}
+              >
+                <Badge
+                    color="primary"
+                    badgeContent={count}
+                    showZero
+                    max={99}
+                >
+                  <PhotoLibraryOutlinedIcon fontSize="small"/>
+                </Badge>
+              </IconButton>
+            </span>
+                    </Tooltip>
+                );
+            },
+            cellClassName: 'editable-cell',
+        },
+        {
             field: 'delete',
             headerName: '',
             width: 60,
@@ -113,7 +140,6 @@ const OrderPositionsTable: FC<IProps> = ({
             renderCell: (params: any) => (
                 <IconButton
                     size="small"
-                    onClick={() => onRowsChange(rows.filter(r => r.id !== params.id))}
                     aria-label="Удалить"
                 >
                     <DeleteOutlineIcon fontSize="small"/>
@@ -123,21 +149,21 @@ const OrderPositionsTable: FC<IProps> = ({
         },
     ], [rows, onRowsChange]);
     const processRowUpdate = useCallback((newRow: INewOrderPosition, oldRow: INewOrderPosition) => {
-        if (!newRow.name?.trim()) throw new Error('Наименование обязательно');
-        if ((newRow.count ?? 0) <= 0) throw new Error('Количество должно быть > 0');
-
-        const updated = rows.map(r =>
-            r.id === oldRow.id
-                ? {...oldRow, ...newRow, count: Number(newRow.count) || 0}
-                : r
-        );
-        onRowsChange(updated);
-        return newRow;
-    }, [rows, onRowsChange]);
-
+        const normalized: INewOrderPosition = {
+            ...oldRow,
+            ...newRow,
+            count: Number(newRow.count) || 0, // если нужно
+        };
+        onRowsChange(normalized);
+        return normalized;
+    }, [onRowsChange]);
+    const photos = rows.filter(row => row.id === activeRowId)[0]
+        ? rows.filter(row => row.id === activeRowId)[0].photos
+        : []
     return (
         <div style={{position: "relative"}}>
-            <DataGrid
+            <MyDataGrid
+                tableName={"orderPositions"}
                 apiRef={apiRef}
                 rows={rows}
                 getRowId={(row) => row.id}
@@ -147,26 +173,21 @@ const OrderPositionsTable: FC<IProps> = ({
                 cellModesModel={cellModesModel}
                 onCellModesModelChange={setCellModesModel}
                 processRowUpdate={processRowUpdate}
-                onProcessRowUpdateError={(err) => console.error(err)}
-                checkboxSelection
                 disableRowSelectionOnClick
-                pageSizeOptions={[10, 20, 50]}
-                slots={{toolbar: GridToolbar}}
-                slotProps={{
-                    toolbar: {showQuickFilter: true, quickFilterProps: {debounceMs: 500}},
-                    baseIconButton: {size: 'small'},
-                }}
-                sx={{
-                    '& .MuiDataGrid-columnHeader, & .MuiDataGrid-cell': {outline: 'transparent'},
-                    '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within': {outline: 'none'},
-                    '& .editable-cell': {transition: 'background 0.2s, color 0.2s'},
-                    '& .editable-cell:hover': {background: 'rgba(56, 144, 226, 0.08)', cursor: 'pointer'},
-                    '& .editable-cell:focus-within': {background: 'rgba(30,126,216,0.16)'},
-                }}
             />
-            <Button sx={{position: "absolute", left: "10px", bottom: "10px"}} onClick={handleAddClick}>
-                Добавить строку
-            </Button>
+            <MyButton
+                onClick={handleAddRow}
+                startIcon={<AddIcon sx={{fontSize: "var(--icon-fontSize-md)"}}/>}
+                sx={{position: "absolute", left: "10px", bottom: "10px"}}
+            >
+                Строка
+            </MyButton>
+            <PhotoDialog photoDialogOpen={photoDialogOpen}
+                         closeDialog={closeDialog}
+                         handleAddFiles={handleAddFiles}
+                         handleDeletePhoto={handleDeletePhoto}
+                         handleSavePhotos={handleSavePhotos}
+                         photos={photos}/>
         </div>
     );
 };

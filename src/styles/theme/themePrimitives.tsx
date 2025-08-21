@@ -150,7 +150,7 @@ export const getDesignTokens = (mode: PaletteMode) => {
             },
             success: {
                 light: green[300],
-                main: green[400],
+                main: green[500],
                 dark: green[800],
                 ...(mode === 'dark' && {
                     light: green[400],
@@ -182,55 +182,7 @@ export const getDesignTokens = (mode: PaletteMode) => {
                 }),
             },
         },
-        typography: {
-            fontFamily: 'Inter, sans-serif',
-            h1: {
-                fontSize: defaultTheme.typography.pxToRem(48),
-                fontWeight: 600,
-                lineHeight: 1.2,
-                letterSpacing: -0.5,
-            },
-            h2: {
-                fontSize: defaultTheme.typography.pxToRem(36),
-                fontWeight: 600,
-                lineHeight: 1.2,
-            },
-            h3: {
-                fontSize: defaultTheme.typography.pxToRem(30),
-                lineHeight: 1.2,
-            },
-            h4: {
-                fontSize: defaultTheme.typography.pxToRem(24),
-                fontWeight: 600,
-                lineHeight: 1.5,
-            },
-            h5: {
-                fontSize: defaultTheme.typography.pxToRem(20),
-                fontWeight: 600,
-            },
-            h6: {
-                fontSize: defaultTheme.typography.pxToRem(18),
-                fontWeight: 600,
-            },
-            subtitle1: {
-                fontSize: defaultTheme.typography.pxToRem(18),
-            },
-            subtitle2: {
-                fontSize: defaultTheme.typography.pxToRem(14),
-                fontWeight: 500,
-            },
-            body1: {
-                fontSize: defaultTheme.typography.pxToRem(14),
-            },
-            body2: {
-                fontSize: defaultTheme.typography.pxToRem(14),
-                fontWeight: 400,
-            },
-            caption: {
-                fontSize: defaultTheme.typography.pxToRem(12),
-                fontWeight: 400,
-            },
-        },
+
         shape: {
             borderRadius: 8,
         },
@@ -324,11 +276,11 @@ export const colorSchemes = {
             divider: alpha(gray[700], 0.6),
             background: {
                 default: gray[900],
-                paper: 'hsl(220, 30%, 7%)',
+                paper: 'hsl(220, 30%, 14%)',
             },
             text: {
                 primary: 'hsl(0, 0%, 100%)',
-                secondary: gray[400],
+                secondary: '#A9B7C6',
             },
             action: {
                 hover: alpha(gray[600], 0.2),
@@ -341,7 +293,7 @@ export const colorSchemes = {
 };
 
 export const typography = {
-    fontFamily: 'Inter, sans-serif',
+    fontFamily: 'Roboto, sans-serif',
     h1: {
         fontSize: defaultTheme.typography.pxToRem(48),
         fontWeight: 600,
