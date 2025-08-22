@@ -52,17 +52,7 @@ const RelatedTasks: FC<IProps> = ({ tasks, machineryId, problemId, title, isMain
       </Stack>
       {tasksList && tasksList.length > 0 ? (
         <List>
-          {tasksList.map((item, i) => (
-            <React.Fragment key={item.key || i}>
-              {item}
-              {i < tasksList.length - 1 && (
-                <Divider
-                  component="li"
-                  sx={{ borderColor: "white", borderWidth: 1 }} // 1px разделитель, светло-серый
-                />
-              )}
-            </React.Fragment>
-          ))}
+          {tasksList}
         </List>
       ) : (
         <Typography variant={"subtitle2"}>

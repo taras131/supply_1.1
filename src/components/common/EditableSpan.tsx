@@ -1,59 +1,79 @@
-import React, { useState, useRef, useEffect, FC } from "react";
+import React, {useState, FC, useEffect} from "react";
+import TextField from "@mui/material/TextField";
 
 type IProps = {
-  value: number;
-  onChange: (newValue: number) => void;
+    value: number | string;
+    onChange: (newValue: number | string) => void;
+    fieldName?: string;
+    label?: string;
 };
 
-export const EditableSpan: FC<IProps> = ({ value, onChange }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [inputValue, setInputValue] = useState(String(value));
-  const inputRef = useRef<HTMLInputElement>(null);
-  useEffect(() => {
-    setInputValue(String(value));
-  }, [value]);
-  useEffect(() => {
-    if (isEditing && inputRef.current) {
-      inputRef.current.focus();
-      inputRef.current.select();
-    }
-  }, [isEditing]);
-  const handleSpanClick = () => {
-    setIsEditing(true);
-  };
-  const handleBlur = () => {
-    const parsed = Number(inputValue);
-    if (!isNaN(parsed)) {
-      onChange(parsed);
-    } else {
-      setInputValue(String(value));
-    }
-    setIsEditing(false);
-  };
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-  };
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      (e.target as HTMLInputElement).blur();
-    } else if (e.key === "Escape") {
-      setInputValue(String(value));
-      setIsEditing(false);
-    }
-  };
-  return isEditing ? (
-    <input
-      type="text"
-      ref={inputRef}
-      value={inputValue}
-      onChange={handleChange}
-      onBlur={handleBlur}
-      onKeyDown={handleKeyDown}
-      style={{ width: "60px" }}
-    />
-  ) : (
-    <span onClick={handleSpanClick} style={{ cursor: "pointer" }}>
-      {value}
+export const EditableSpan: FC<IProps> = ({ value, onChange, fieldName, label ="Добавить комментарий" }) => {
+    const [isEditing, setIsEditing] = useState(false);
+    const [inputValue, setInputValue] = useState(String(value ?? ""));
+
+    useEffect(() => {
+        if (!isEditing) setInputValue(String(value ?? ""));
+    }, [value, isEditing]);
+
+    const handleSpanClick = () => setIsEditing(true);
+
+    const handleBlur = () => {
+        onChange(inputValue);
+        setIsEditing(false);
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setInputValue(e.target.value);
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            (e.target as HTMLInputElement).blur();
+        } else if (e.key === "Escape") {
+            setInputValue(String(value ?? ""));
+            setIsEditing(false);
+        }
+    };
+
+    const isEmpty = String(value ?? "").length === 0;
+
+    return isEditing ? (
+        <TextField
+            autoFocus
+            type="text"
+            value={inputValue}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
+            style={{ width: "100%" }}
+            name={fieldName ?? "EditableSpan"}
+        />
+    ) : (
+        <span
+            onClick={handleSpanClick}
+            onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleSpanClick();
+                }
+            }}
+            role="button"
+            tabIndex={0}
+            style={{
+                cursor: "pointer",
+                display: "inline-block",
+                minWidth: 200,
+                minHeight: 28,
+                padding: "4px 8px",
+                borderRadius: 4,
+                border: isEmpty ? "1px solid #ccc" : "1px solid transparent",
+                color: isEmpty ? "#9e9e9e" : "inherit",
+                userSelect: "none",
+            }}
+            title={isEmpty ? "Кликните, чтобы добавить" : "Кликните, чтобы редактировать"}
+        >
+      {isEmpty ? label : String(value)}
     </span>
-  );
+    );
 };

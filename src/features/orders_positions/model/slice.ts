@@ -1,6 +1,11 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {IOrderPosition} from "../../../models/IOrdersPositions";
-import {fetchCreateOrdersPositions, fetchGetAllOrdersPositions, fetchUpdateOrdersPositions} from "./actions";
+import {
+    fetchCreateOrdersPositions,
+    fetchDeleteOrdersPositions,
+    fetchGetAllOrdersPositions,
+    fetchUpdateOrdersPositions
+} from "./actions";
 
 interface IOrdersPositionsState {
     list: IOrderPosition[];
@@ -37,6 +42,23 @@ export const OrderPositionsSlice = createSlice({
             .addCase(fetchCreateOrdersPositions.fulfilled, (state, action: PayloadAction<IOrderPosition>) => {
                 state.list = [...state.list, action.payload]
                 state.isLoading = false;
+            })
+            .addCase(fetchDeleteOrdersPositions.fulfilled, (state, action: PayloadAction<string>) => {
+                state.list = [...state.list.filter(position => `${position.id}` !== action.payload)]
+                state.isLoading = false;
+            })
+            .addCase(fetchGetAllOrdersPositions.pending, (state) => {
+                state.list = []
+                state.isLoading = true;
+            })
+            .addCase(fetchUpdateOrdersPositions.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(fetchCreateOrdersPositions.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(fetchDeleteOrdersPositions.pending, (state) => {
+                state.isLoading = true;
             })
     },
 });

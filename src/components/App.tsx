@@ -10,6 +10,8 @@ import SideMenu from "./SideMenu";
 import AppNavbar from "./AppNavbar";
 import Header from "./Header";
 import {theme} from "../styles/theme/theme";
+import ModalWindow from "./ModalWindow";
+import MessageWindow from "../features/messages/ui/MessageWindow";
 
 function App() {
     const dispatch = useAppDispatch()
@@ -52,6 +54,7 @@ function App() {
                         </Routes>
                     </Stack>
                 </Box>
+                <MessageWindow />
             </Box>
         </ThemeProvider>
     );

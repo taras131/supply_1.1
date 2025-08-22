@@ -5,6 +5,8 @@ import {INewOrderPosition, IOrderPosition} from "../../../models/IOrdersPosition
 import {filesAPI} from "../../files/api";
 import {selectOrdersPositionById} from "./selectors";
 import {RootState} from "../../../store";
+import {selectCurrentProblem} from "../../machinery_problems/model/selectors";
+import {fetchUpdateMachineryProblem} from "../../machinery_problems/model/actions";
 
 export const fetchCreateOrdersPositions = createAsyncThunk(
     "orders_positions/create",
@@ -40,18 +42,18 @@ export const fetchUpdateOrdersPositions = createAsyncThunk(
     },
 );
 
-interface IUploadPhotoData {
+export interface IPositionUploadPhotoData {
     file: File;
     orderPositionId: string;
 }
 
 export const fetchUploadOrdersPositionsPhoto = createAsyncThunk<
     string,
-    IUploadPhotoData,
+    IPositionUploadPhotoData,
     { state: RootState }
 >(
-    "orders_positions/update",
-    async (data_in: IUploadPhotoData, {dispatch, getState, rejectWithValue}) => {
+    "orders_positions/upload_photo",
+    async (data_in: IPositionUploadPhotoData, {dispatch, getState, rejectWithValue}) => {
 
         try {
             const {file, orderPositionId} = data_in;
@@ -64,6 +66,45 @@ export const fetchUploadOrdersPositionsPhoto = createAsyncThunk<
             };
             return dispatch(fetchUpdateOrdersPositions(updatedOrdersPosition)).unwrap();
         } catch (e) {
+            return rejectWithValue(handlerError(e));
+        }
+    },
+);
+
+export interface IPositionDeletePhotoData {
+    deletePhotoName: string;
+    orderPositionId: string;
+}
+
+export const fetchDeleteOrdersPositionPhoto = createAsyncThunk<
+    string, IPositionDeletePhotoData, { state: RootState }
+>(
+    "orders_positions/delete_photo",
+    async (data_in: IPositionDeletePhotoData, {rejectWithValue, dispatch, getState}) => {
+        const {deletePhotoName, orderPositionId} = data_in;
+        try {
+            const position = selectOrdersPositionById(getState(), orderPositionId);
+            if (!position) return;
+            const updatedPosition = {
+                ...position,
+                photos: [...position.photos.filter((photo) => photo !== deletePhotoName)],
+            };
+            await filesAPI.delete(deletePhotoName);
+            return dispatch(fetchUpdateOrdersPositions(updatedPosition)).unwrap();
+        } catch (e) {
+            return rejectWithValue(handlerError(e));
+        }
+    },
+);
+
+export const fetchDeleteOrdersPositions = createAsyncThunk(
+    "orders_positions/delete",
+    async (id: string, {rejectWithValue}) => {
+        try {
+            await ordersPositionsAPI.delete(id);
+            return id
+        } catch (e) {
+            console.log(e);
             return rejectWithValue(handlerError(e));
         }
     },

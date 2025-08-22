@@ -1,5 +1,5 @@
 import React, {FC} from "react";
-import {ListItem, ListItemIcon, ListItemText, Stack, Typography} from "@mui/material";
+import {ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, Typography} from "@mui/material";
 import StatusIcon from "./StatusIcon";
 import {ITask} from "../../../models/IMachineryTasks";
 import Divider from "@mui/material/Divider";
@@ -16,7 +16,7 @@ const RelatedTasksItem: FC<IProps> = ({task, taskClickHandler, isMaintenanceMode
     const maintenanceText = getMaintenanceText(task);
     return (
         <ListItem key={task.id} disablePadding>
-            <StyledListItemButton onClick={taskClickHandler}>
+            <ListItemButton onClick={taskClickHandler}>
                 {!isMaintenanceMode && (
                     <ListItemIcon>
                         <StatusIcon statusId={task.status_id}/>
@@ -35,7 +35,7 @@ const RelatedTasksItem: FC<IProps> = ({task, taskClickHandler, isMaintenanceMode
                     />
                     <Typography fontSize={"14px"}>{maintenanceText}</Typography>
                 </Stack>
-            </StyledListItemButton>
+            </ListItemButton>
         </ListItem>
     );
 };

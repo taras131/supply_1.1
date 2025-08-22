@@ -1,14 +1,26 @@
 import { AppDispatch } from "./index";
 import { MESSAGE_SEVERITY } from "../utils/const";
 import { setMessage, setModalMessage } from "../features/messages/model/slice";
+import axios, {AxiosError} from "axios";
 
-export const handlerError = (e: unknown): string => {
-  if (e instanceof Error) return e.message;
-  if (typeof e === "string") return e;
-  if (typeof e === "object" && e !== null && "message" in e && typeof (e as any).message === "string") {
-    return (e as any).message;
+export const handlerError = (err: unknown): string => {
+  // Axios
+  if (axios.isAxiosError(err)) {
+    const e = err as AxiosError<any>;
+    // нет ответа -> сеть/сервер недоступен
+    if (!e.response) return "Сервер недоступен. Проверьте соединение и попробуйте снова.";
+    const { status, statusText, data } = e.response;
+    // data может быть строкой, объектом, массивом строк (class-validator)
+    if (typeof data === "string") return data;
+    const msg = data?.message ?? data?.error ?? data?.detail;
+    if (Array.isArray(msg)) return msg.join(", ");
+    if (typeof msg === "string" && msg.trim()) return msg;
+    return `Ошибка ${status}${statusText ? `: ${statusText}` : ""}`;
   }
-  return "неизвестная ошибка";
+  // Обычный Error
+  if (err instanceof Error) return err.message;
+  if (typeof err === "string") return err;
+  return "Неизвестная ошибка";
 };
 
 export const thunkHandlers = {

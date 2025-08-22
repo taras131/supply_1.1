@@ -1,6 +1,6 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {IOrder} from "../../../models/iOrders";
-import {fetchAddOrder, fetchGetAllOrders, fetchGetOrderById} from "./actions";
+import {fetchAddOrder, fetchGetAllOrders, fetchGetOrderById, fetchUpdateOrder} from "./actions";
 
 interface IOrdersState {
     list: IOrder[];
@@ -42,8 +42,11 @@ export const OrdersSlice = createSlice({
                 state.current = action.payload;
                 state.isLoading = false;
             })
+            .addCase(fetchUpdateOrder.fulfilled, (state, action: PayloadAction<IOrder>) => {
+                state.current = action.payload;
+                state.isLoading = false;
+            })
     },
-
 });
 
 export const {

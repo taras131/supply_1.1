@@ -1,5 +1,5 @@
 import {appAPI, nestServerPath} from "../../../api";
-import {INewOrder} from "../../../models/iOrders";
+import {INewOrder, IOrder} from "../../../models/iOrders";
 
 const ordersPath = `${nestServerPath}/order`;
 
@@ -7,9 +7,8 @@ export const ordersAPI = {
     add: async (order: INewOrder) => {
         const payload = {
             ...order,
-            positions: (order.positions ?? []).map(({ id, ...pos }) => pos),
+            positions: (order.positions ?? []).map(({id, ...pos}) => pos),
         };
-        console.log(payload)
         const res = await appAPI.post(ordersPath, payload);
         return res.data;
     },
@@ -21,6 +20,15 @@ export const ordersAPI = {
         const res = await appAPI.get(`${ordersPath}/${orderId}`);
         return await res.data;
     },
+    update: async (order: IOrder) => {
+        console.log(order)
+        const res = await appAPI.put(ordersPath, {
+            ...order,
+            approved_date: order.approved_date ? +order.approved_date : 0,
+            cancel_date: order.cancel_date ? +order.cancel_date : 0,
+        });
+        return res.data;
+    }
     /*  updateOrder: async (order: IOrder) => {
         const res = await updateDoc(doc(db, "orders", order.id), {
           title: order.title,

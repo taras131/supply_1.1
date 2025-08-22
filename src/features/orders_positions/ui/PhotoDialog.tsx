@@ -1,35 +1,35 @@
 import React, {FC} from 'react';
 import Dialog from "@mui/material/Dialog";
-import {Button, DialogActions, DialogContent, DialogTitle, ImageList, ImageListItem, Tooltip} from "@mui/material";
+import {DialogActions, DialogContent, DialogTitle, ImageList, ImageListItem, Tooltip} from "@mui/material";
 import Box from "@mui/material/Box";
 import {nestServerPath} from "../../../api";
 import IconButton from "@mui/material/IconButton";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import AddPhotoAlternateOutlinedIcon from '@mui/icons-material/AddPhotoAlternateOutlined';
+import MyButton from "../../../styles/theme/customizations/MyButton";
 
 
 interface IProps {
-    photoDialogOpen: boolean,
+    dialogOpen: boolean,
     closeDialog: () => void,
-    handleDeletePhoto: (idx: number) => void,
+    handleDeletePhoto: (src: string) => void,
     handleAddFiles: (e: React.ChangeEvent<HTMLInputElement>)=>void,
     photos: string[]
-    handleSavePhotos: () => void,
 }
 const PhotoDialog:FC<IProps> = ({
-                                    photoDialogOpen,
+                                    dialogOpen,
                                     closeDialog,
                                     handleDeletePhoto,
                                     handleAddFiles,
                                     photos,
-                                    handleSavePhotos
+
                                 }) => {
 
     const fileInputRef = React.useRef<HTMLInputElement | null>(null);
 
     return (
         <Dialog
-            open={photoDialogOpen}
+            open={dialogOpen}
             onClose={closeDialog}
             fullWidth
             maxWidth="md"
@@ -60,7 +60,7 @@ const PhotoDialog:FC<IProps> = ({
                                     <Tooltip title="Удалить">
                                         <IconButton
                                             size="small"
-                                            onClick={() => handleDeletePhoto(idx)}
+                                            onClick={() => handleDeletePhoto(src)}
                                         >
                                             <DeleteOutlineIcon htmlColor="#fff" fontSize="small" />
                                         </IconButton>
@@ -72,6 +72,7 @@ const PhotoDialog:FC<IProps> = ({
                 )}
             </DialogContent>
             <DialogActions>
+                <MyButton onClick={closeDialog} variant={"outlined"}>Закрыть</MyButton>
                 <input
                     ref={fileInputRef}
                     type="file"
@@ -80,17 +81,14 @@ const PhotoDialog:FC<IProps> = ({
                     hidden
                     onChange={handleAddFiles}
                 />
-                <Button
-                    startIcon={<AddPhotoAlternateOutlinedIcon />}
+                <Box flex={1}/>
+                <MyButton
+                    startIcon={<AddPhotoAlternateOutlinedIcon/>}
+                    variant={"contained"}
                     onClick={() => fileInputRef.current?.click()}
                 >
                     Добавить фото
-                </Button>
-                <Box flex={1} />
-                <Button onClick={closeDialog}>Отмена</Button>
-                <Button variant="contained" onClick={handleSavePhotos}>
-                    Сохранить
-                </Button>
+                </MyButton>
             </DialogActions>
         </Dialog>
     );

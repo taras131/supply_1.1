@@ -1,4 +1,4 @@
-import React, {useCallback, useId, useMemo} from "react";
+import React, {useCallback, useEffect, useId, useMemo} from "react";
 import {Stack} from "@mui/material";
 import Card from "@mui/material/Card";
 import {useEditor} from "../../../hooks/useEditor";
@@ -16,15 +16,17 @@ import OrderPositionsTable from "../../orders_positions/ui/OrderPositionsTable";
 import {useAppDispatch, useAppSelector} from "../../../hooks/redux";
 import {selectOrdersIsLoading} from "../model/selectors";
 import {emptyOrderPosition, INewOrderPosition, IOrderPosition} from "../../../models/IOrdersPositions";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import {Link} from "react-router-dom";
-import {routes} from "../../../utils/routes";
-import AddIcon from "@mui/icons-material/Add";
 import {fetchAddOrder} from "../model/actions";
+import {filesAPI} from "../../files/api";
+import OrdersAddNewPageHeader from "./OrdersAddNewPageHeader";
+import {useNavigate} from "react-router-dom";
+
+const LOCAL_STORAGE_NEW_ORDER_KEY = "new_order"
 
 const OrdersAddNewPage = () => {
+    const isFirst = React.useRef(true);
     const dispatch = useAppDispatch()
+    const navigate = useNavigate();
     const shipmentTypeRadioId = useId();
     const orderTypeRadioId = useId();
     const isLoading = useAppSelector(selectOrdersIsLoading)
@@ -43,6 +45,23 @@ const OrdersAddNewPage = () => {
         },
         [setEditedValue]
     );
+    useEffect(() => {
+        if (isFirst.current) {
+            isFirst.current = false;
+            const raw = localStorage.getItem(LOCAL_STORAGE_NEW_ORDER_KEY);
+            if (raw) {
+                try {
+                    setEditedValue(JSON.parse(raw));
+                } catch {
+                }
+            }
+            return;
+        }
+        const t = setTimeout(() => {
+            localStorage.setItem(LOCAL_STORAGE_NEW_ORDER_KEY, JSON.stringify(editedValue));
+        }, 300);
+        return () => clearTimeout(t);
+    }, [editedValue, setEditedValue]);
     const getNextId = React.useCallback(() => {
         if (!editedValue.positions.length) return 1;
         const nums = editedValue.positions
@@ -50,78 +69,152 @@ const OrdersAddNewPage = () => {
             .filter(n => Number.isFinite(n));
         return nums.length ? Math.max(...nums) + 1 : Date.now();
     }, [editedValue.positions]);
+    const commentChangeHandler = useCallback(
+        (newValue: string | number, orderPositionId: string) => {
+            setEditedValue(prev => ({
+                ...prev,
+                positions: prev.positions.map(p =>
+                    `${p.id}` === orderPositionId ? {...p, comment: String(newValue)} : p
+                ),
+            }));
+        },
+        [setEditedValue]
+    );
+    const addPhotoHandler = useCallback(
+        async (file: File, orderPositionId: string) => {
+            const photoName = await filesAPI.upload(file);
+            setEditedValue(prev => ({
+                ...prev,
+                positions: prev.positions.map(p =>
+                    `${p.id}` === orderPositionId
+                        ? {...p, photos: [...(p.photos ?? []), photoName]}
+                        : p
+                ),
+            }));
+        },
+        [setEditedValue]
+    );
+    const deletePhotoHandler = useCallback(
+        async (deletePhoto: string, orderPositionId: string) => {
+            await filesAPI.delete(deletePhoto);
+            setEditedValue(prev => ({
+                ...prev,
+                positions: prev.positions.map(p =>
+                    `${p.id}` === orderPositionId
+                        ? {...p, photos: (p.photos ?? []).filter(photo => photo !== deletePhoto)}
+                        : p
+                ),
+            }));
+
+        },
+        [setEditedValue]
+    );
+    const deletePositionHandler = useCallback(
+        async (id: string) => {
+            const pos = editedValue.positions.find(p => `${p.id}` === id);
+            if (pos && pos.photos) {
+                for (const photo of pos.photos) {
+                    try {
+                        await filesAPI.delete(photo);
+                    } catch (e) {
+                        console.warn("Failed to delete photo:", photo, e);
+                    }
+                }
+            }
+            setEditedValue(prev => ({
+                ...prev,
+                positions: prev.positions.filter(p => `${p.id}` !== id),
+            }));
+        },
+        [editedValue.positions, setEditedValue]
+    );
     const handleAddRow = () => {
         setEditedValue(prev => ({...prev, positions: [...prev.positions, {...emptyOrderPosition, id: getNextId()}]}));
     }
-    const saveClickHandler = () => {
-        dispatch(fetchAddOrder(editedValue));
+    const resetOrder = async () => {
+        const positions = editedValue.positions
+        if (positions.length > 0) {
+            for (const position of positions) {
+                if (position.photos.length > 0) {
+                    for (const photo of position.photos) {
+                        try {
+                            await filesAPI.delete(photo);
+                        } catch (e) {
+                            console.warn("Failed to delete photo:", photo, e);
+                        }
+                    }
+                }
+            }
+        }
+        resetValue();
+        localStorage.removeItem(LOCAL_STORAGE_NEW_ORDER_KEY);
     }
+    const titleChangeHandler = (newValue: string | number) => {
+        setEditedValue(prev => ({...prev, title: `${newValue}`}))
+    }
+    const saveClickHandler = async () => {
+        try {
+            await dispatch(fetchAddOrder(editedValue)).unwrap();
+            localStorage.removeItem(LOCAL_STORAGE_NEW_ORDER_KEY);
+            resetValue();
+            navigate(-1);
+        } catch (err: any) {
+
+        }
+    };
     return (
-        <Stack spacing={4} sx={{width: '100%'}}>
-            <Stack direction="row" spacing={3} justifyContent="space-between" alignItems="center" sx={{mb: 2, mt: 2}}>
-                <Typography component="h2" variant="h6">
-                    Новая заявка
-                </Typography>
-                <div>
-                    <Button
-                        onClick={saveClickHandler}
-                        startIcon={<AddIcon sx={{fontSize: "var(--icon-fontSize-md)"}}/>}
-                        variant="contained"
-                    >
-                        Сохранить
-                    </Button>
-                </div>
-            </Stack>
-            <Card sx={{p: 4}}>
-                <Stack spacing={2}>
-                    <FieldControl
-                        label="Название заявки"
-                        name="title"
-                        id="title"
-                        value={editedValue.title}
-                        error={errors?.title}
-                        isEditMode={true}
+        <Stack sx={{
+            width: '100%',
+            maxWidth: {sm: '100%', md: '1700px'},
+            pt: 1.5,
+        }}
+        spacing={3}>
+            <OrdersAddNewPageHeader saveClickHandler={saveClickHandler}
+                                    resetOrder={resetOrder}
+                                    isLoading={isLoading}/>
+            <Stack direction={"row"} alignItems={"center"} justifyContent={"space-between"}>
+                <FormControl>
+                    <FormLabel id={shipmentTypeRadioId}>Срочность:</FormLabel>
+                    <RadioGroup
+                        name={"shipments_type"}
+                        row
+                        aria-labelledby={shipmentTypeRadioId}
+                        value={editedValue.shipments_type}
                         onChange={handleFieldChange}
-                        isRequired
-                    />
-                    <Stack direction={"row"} alignItems={"center"} justifyContent={"space-between"}>
-                        <FormControl>
-                            <FormLabel id={shipmentTypeRadioId}>Срочность:</FormLabel>
-                            <RadioGroup
-                                name={"shipments_type"}
-                                row
-                                aria-labelledby={shipmentTypeRadioId}
-                                value={editedValue.shipments_type}
-                                onChange={handleFieldChange}
-                            >
-                                <FormControlLabel value={shipmentTypes[0].name} control={<Radio/>}
-                                                  label={shipmentTypes[0].value}/>
-                                <FormControlLabel value={shipmentTypes[1].name} control={<Radio/>}
-                                                  label={shipmentTypes[1].value}/>
-                            </RadioGroup>
-                        </FormControl>
-                        <FormControl>
-                            <FormLabel id={orderTypeRadioId}>Тип заявки:</FormLabel>
-                            <RadioGroup
-                                row
-                                name={"type"}
-                                aria-labelledby={orderTypeRadioId}
-                                value={editedValue.type}
-                                onChange={handleFieldChange}
-                            >
-                                <FormControlLabel value={ordersTypes[1].name} control={<Radio/>}
-                                                  label={ordersTypes[1].value}/>
-                                <FormControlLabel value={ordersTypes[0].name} control={<Radio/>}
-                                                  label={ordersTypes[0].value}/>
-                            </RadioGroup>
-                        </FormControl>
-                    </Stack>
-                </Stack>
-            </Card>
-            <OrderPositionsTable rows={editedValue.positions}
-                                 onRowsChange={handlePositionsChange}
-                                 loading={isLoading}
-                                 handleAddRow={handleAddRow}
+                    >
+                        <FormControlLabel value={shipmentTypes[0].name} control={<Radio/>}
+                                          label={shipmentTypes[0].value}/>
+                        <FormControlLabel value={shipmentTypes[1].name} control={<Radio/>}
+                                          label={shipmentTypes[1].value}/>
+                    </RadioGroup>
+                </FormControl>
+                <FormControl>
+                    <FormLabel id={orderTypeRadioId}>Тип заявки:</FormLabel>
+                    <RadioGroup
+                        row
+                        name={"type"}
+                        aria-labelledby={orderTypeRadioId}
+                        value={editedValue.type}
+                        onChange={handleFieldChange}
+                    >
+                        <FormControlLabel value={ordersTypes[1].name} control={<Radio/>}
+                                          label={ordersTypes[1].value}/>
+                        <FormControlLabel value={ordersTypes[0].name} control={<Radio/>}
+                                          label={ordersTypes[0].value}/>
+                    </RadioGroup>
+                </FormControl>
+            </Stack>
+            <OrderPositionsTable
+                rows={editedValue.positions}
+                onRowsChange={handlePositionsChange}
+                loading={isLoading}
+                handleAddRow={handleAddRow}
+                addPhotoHandler={addPhotoHandler}
+                deletePhotoHandler={deletePhotoHandler}
+                commentChangeHandler={commentChangeHandler}
+                deletePositionHandler={deletePositionHandler}
+                titleChangeHandler={titleChangeHandler}
+                title={editedValue.title}
             />
         </Stack>
     );

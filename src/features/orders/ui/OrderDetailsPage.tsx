@@ -1,21 +1,23 @@
 import React, {useCallback, useEffect} from "react";
 import {useAppDispatch, useAppSelector} from "../../../hooks/redux";
 import {useParams} from "react-router-dom";
-import {fetchGetOrderById} from "../model/actions";
+import {fetchGetOrderById, fetchUpdateOrder} from "../model/actions";
 import {Stack} from "@mui/material";
 import OrderPositionsTable from "../../orders_positions/ui/OrderPositionsTable";
 import {selectAllOrdersPositions, selectOrdersPositionsIsLoading} from "../../orders_positions/model/selectors";
 import {
-    fetchCreateOrdersPositions,
+    fetchCreateOrdersPositions, fetchDeleteOrdersPositionPhoto, fetchDeleteOrdersPositions,
     fetchUpdateOrdersPositions,
-    fetchUploadOrdersPositionsPhoto
+    fetchUploadOrdersPositionsPhoto, IPositionDeletePhotoData, IPositionUploadPhotoData
 } from "../../orders_positions/model/actions";
 import {emptyOrderPosition, INewOrderPosition, IOrderPosition} from "../../../models/IOrdersPositions";
 import OrderDetailsPageHeader from "./OrderDetailsPageHeader";
+import {selectCurrentOrder} from "../model/selectors";
 
 const OrderDetailsPage = () => {
     const dispatch = useAppDispatch();
     const orderId = useParams().orderId || "0";
+    const order = useAppSelector(selectCurrentOrder)
     const positions = useAppSelector(selectAllOrdersPositions)
     const isLoading = useAppSelector(selectOrdersPositionsIsLoading)
     useEffect(() => {
@@ -33,21 +35,45 @@ const OrderDetailsPage = () => {
         dispatch(fetchCreateOrdersPositions({...emptyOrderPosition, order_id: orderId}))
     }
     const addPhotoHandler = (file: File, orderPositionId: string) => {
-        dispatch(fetchUploadOrdersPositionsPhoto({file, orderPositionId}))
+        const data_in: IPositionUploadPhotoData = {file, orderPositionId}
+        dispatch(fetchUploadOrdersPositionsPhoto(data_in))
     }
+    const deletePhotoHandler = (deletePhotoName: string, orderPositionId: string) => {
+        const data_in: IPositionDeletePhotoData = {deletePhotoName, orderPositionId}
+        dispatch(fetchDeleteOrdersPositionPhoto(data_in))
+    }
+    const commentChangeHandler = (newValue: string | number, orderPositionId: string) => {
+        if (!positions) return
+        const position = positions.filter(p => `${p.id}` === orderPositionId)[0]
+        if (position) {
+            dispatch(fetchUpdateOrdersPositions({...position, comment: `${newValue}`}))
+        }
+    }
+    const deletePositionHandler = (id: string) => {
+        dispatch(fetchDeleteOrdersPositions(id));
+    }
+    const titleChangeHandler = (newValue: string | number) => {
+        if (order) {
+            dispatch(fetchUpdateOrder({...order, title: `${newValue}`}))
+        }
+    };
     return (
-        <Stack spacing={4}
-               sx={{
-                   width: '100%',
-                   maxWidth: {sm: '100%', md: '1700px'},
-                   pt: 1.5,
-               }}>
+        <Stack sx={{
+            width: '100%',
+            maxWidth: {sm: '100%', md: '1700px'},
+            pt: 1.5,
+        }}>
             <OrderDetailsPageHeader/>
             <OrderPositionsTable rows={positions}
                                  onRowsChange={handlePositionsChange}
                                  loading={isLoading}
                                  handleAddRow={handleAddRow}
                                  addPhotoHandler={addPhotoHandler}
+                                 deletePhotoHandler={deletePhotoHandler}
+                                 commentChangeHandler={commentChangeHandler}
+                                 deletePositionHandler={deletePositionHandler}
+                                 title={order?.title || ""}
+                                 titleChangeHandler={titleChangeHandler}
             />
         </Stack>
     );

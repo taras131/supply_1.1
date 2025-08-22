@@ -14,7 +14,6 @@ const MyButton = ({sx, ...props}: ButtonProps) => {
                 ...(sx as any),
             }}
         />
-
     );
 };
 

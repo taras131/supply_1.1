@@ -10,6 +10,7 @@ import DirectionsSubwayIcon from "@mui/icons-material/DirectionsSubway";
 import CompletionBar from "./CompletionBar";
 import IconWrapper from "../../../components/common/IconWrapper";
 import {MyDataGrid} from "../../../styles/theme/customizations/MyDataGrid";
+import Box from "@mui/material/Box";
 
 const OrdersTable: FC = () => {
     const navigate = useNavigate();
@@ -69,13 +70,30 @@ const OrdersTable: FC = () => {
         [],
     );
     return (
-        <MyDataGrid
-            tableName={"orders"}
-            rows={rows}
-            columns={columns}
-            loading={isLoading}
-            onRowClick={handleRowClick}
-        />
+        <Box
+            sx={{
+                // Убрать «синюю рамку» на клик
+                "& .MuiDataGrid-cell:focus, & .MuiDataGrid-cell:focus-within": {
+                    outline: "none",
+                },
+                "& .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-columnHeader:focus-within": {
+                    outline: "none",
+                },
+                // Опционально: оставить читабельную рамку для навигации с клавиатуры
+                "& .MuiDataGrid-cell:focus-visible, & .MuiDataGrid-columnHeader:focus-visible": (theme) => ({
+                    outline: `2px solid ${theme.palette.primary.main}`,
+                    outlineOffset: -1,
+                }),
+            }}
+        >
+            <MyDataGrid
+                tableName={"orders"}
+                rows={rows}
+                columns={columns}
+                loading={isLoading}
+                onRowClick={handleRowClick}
+            />
+        </Box>
     );
 };
 

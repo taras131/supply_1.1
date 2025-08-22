@@ -10,7 +10,11 @@ const OrderDetailsPageHeader = () => {
         navigate(-1);
     }
     return (
-        <Stack direction="row" spacing={3} justifyContent="space-between" alignItems="center" sx={{mb: 2, mt: 2}}>
+        <Stack direction="row"
+               spacing={3}
+               justifyContent="space-between"
+               alignItems="center"
+               sx={{mb: 2, mt: 2}}>
             <MyButton onClick={backClickHandler} variant={"outlined"}>
                 Назад
             </MyButton>

@@ -18,7 +18,9 @@ export const ordersPositionsAPI = {
         return await res.data;
     },
     delete: async (positionId: string) => {
+        console.log(positionId)
         const res = await appAPI.delete(`${ordersPositionsPath}/${positionId}`);
+        console.log(res)
         return await res.data;
     },
 };

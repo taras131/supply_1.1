@@ -16,6 +16,7 @@ import {nestServerPath} from "../../../api";
 import photoPlaceholder from "../../../assets/images/placeholder.png";
 import {styled} from "@mui/material/styles";
 import {MyDataGrid} from "../../../styles/theme/customizations/MyDataGrid";
+import Box from "@mui/material/Box";
 
 const StyledImage = styled("img")({
     width: "100%",
@@ -143,6 +144,20 @@ const MachineryTable: FC<IProps> = ({rows}) => {
     ], [handleRowEdit]);
 
     return (
+        <Box
+            sx={{
+                "& .MuiDataGrid-cell:focus, & .MuiDataGrid-cell:focus-within": {
+                    outline: "none",
+                },
+                "& .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-columnHeader:focus-within": {
+                    outline: "none",
+                },
+                "& .MuiDataGrid-cell:focus-visible, & .MuiDataGrid-columnHeader:focus-visible": (theme) => ({
+                    outline: `2px solid ${theme.palette.primary.main}`,
+                    outlineOffset: -1,
+                }),
+            }}
+        >
         <MyDataGrid
             tableName={"machinery"}
             rows={rows}
@@ -157,6 +172,7 @@ const MachineryTable: FC<IProps> = ({rows}) => {
             loading={isLoading}
             onRowClick={handleRowClick}
         />
+        </Box>
     );
 };
 

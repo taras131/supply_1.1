@@ -4,6 +4,7 @@ import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Grid from "@mui/material/Grid";
+import Dialog from "@mui/material/Dialog";
 
 
 interface IProps {
@@ -27,7 +28,7 @@ const modalStyle = {
 
 const ModalWindow: FC<IProps> = ({ isOpenModal, title, handleToggleOpen, children }) => {
   return (
-    <Modal
+    <Dialog
       open={isOpenModal}
       onClose={handleToggleOpen}
       aria-labelledby="modal-modal-title"
@@ -53,7 +54,7 @@ const ModalWindow: FC<IProps> = ({ isOpenModal, title, handleToggleOpen, childre
           {children}
         </Box>
       </Box>
-    </Modal>
+    </Dialog>
   );
 };
 

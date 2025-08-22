@@ -1,29 +1,42 @@
-import React, { FC } from "react";
-import Button from "@mui/material/Button";
+import React, {FC} from "react";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
-import ModalWindow from "../../../components/ModalWindow";
-import { useAppDispatch, useAppSelector } from "../../../hooks/redux";
-import { selectIsOpenModalMessage, selectModalMessage } from "../model/selectors";
-import { resetModalMessage } from "../model/slice";
+import {useAppDispatch, useAppSelector} from "../../../hooks/redux";
+import {selectIsOpenModalMessage, selectModalMessage} from "../model/selectors";
+import {resetModalMessage} from "../model/slice";
+import Dialog from "@mui/material/Dialog";
+import {DialogActions, DialogContent, DialogTitle} from "@mui/material";
+import MyButton from "../../../styles/theme/customizations/MyButton";
 
 const MessageWindow: FC = () => {
-  const dispatch = useAppDispatch();
-  const isOpen = useAppSelector(selectIsOpenModalMessage);
-  const message = useAppSelector(selectModalMessage);
-  const handleOkClick = () => {
-    dispatch(resetModalMessage());
-  };
-  return (
-    <ModalWindow handleToggleOpen={handleOkClick} isOpenModal={isOpen} title={"Внимание"}>
-      <Stack spacing={6}>
-        <Typography fontSize="20px" textAlign="center">
-          {message}
-        </Typography>
-        <Button onClick={handleOkClick}>Хорошо</Button>
-      </Stack>
-    </ModalWindow>
-  );
+    const dispatch = useAppDispatch();
+    const isOpen = useAppSelector(selectIsOpenModalMessage);
+    const message = useAppSelector(selectModalMessage);
+    const handleOkClick = () => {
+        dispatch(resetModalMessage());
+    };
+    return (
+        <Dialog
+            open={isOpen}
+            onClose={handleOkClick}
+            fullWidth
+            maxWidth="md"
+        >
+            <DialogTitle color={'warning'}>Ошибка</DialogTitle>
+            <DialogContent dividers>
+                <Stack sx={{minHeight: 100, height: "100%"}} justifyContent="center">
+                    <Typography fontSize="20px" textAlign="center">
+                        {message}
+                    </Typography>
+                </Stack>
+            </DialogContent>
+            <DialogActions>
+                <MyButton onClick={handleOkClick} variant={"outlined"}>
+                    Закрыть
+                </MyButton>
+            </DialogActions>
+        </Dialog>
+    );
 };
 
 export default MessageWindow;
