@@ -72,14 +72,12 @@ const OrdersTable: FC = () => {
     return (
         <Box
             sx={{
-                // Убрать «синюю рамку» на клик
                 "& .MuiDataGrid-cell:focus, & .MuiDataGrid-cell:focus-within": {
                     outline: "none",
                 },
                 "& .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-columnHeader:focus-within": {
                     outline: "none",
                 },
-                // Опционально: оставить читабельную рамку для навигации с клавиатуры
                 "& .MuiDataGrid-cell:focus-visible, & .MuiDataGrid-columnHeader:focus-visible": (theme) => ({
                     outline: `2px solid ${theme.palette.primary.main}`,
                     outlineOffset: -1,

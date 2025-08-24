@@ -20,6 +20,8 @@ import {fetchAddOrder} from "../model/actions";
 import {filesAPI} from "../../files/api";
 import OrdersAddNewPageHeader from "./OrdersAddNewPageHeader";
 import {useNavigate} from "react-router-dom";
+import OrderDetailsForm from "./OrderDetailsForm";
+import {fetchGetAllMachinery} from "../../machinery/model/actions";
 
 const LOCAL_STORAGE_NEW_ORDER_KEY = "new_order"
 
@@ -27,8 +29,6 @@ const OrdersAddNewPage = () => {
     const isFirst = React.useRef(true);
     const dispatch = useAppDispatch()
     const navigate = useNavigate();
-    const shipmentTypeRadioId = useId();
-    const orderTypeRadioId = useId();
     const isLoading = useAppSelector(selectOrdersIsLoading)
     const memoizedInitialValue = useMemo(() => JSON.parse(JSON.stringify(emptyOrder)),
         []);
@@ -62,6 +62,9 @@ const OrdersAddNewPage = () => {
         }, 300);
         return () => clearTimeout(t);
     }, [editedValue, setEditedValue]);
+    useEffect(() => {
+        dispatch(fetchGetAllMachinery());
+    }, []);
     const getNextId = React.useCallback(() => {
         if (!editedValue.positions.length) return 1;
         const nums = editedValue.positions
@@ -168,42 +171,14 @@ const OrdersAddNewPage = () => {
             maxWidth: {sm: '100%', md: '1700px'},
             pt: 1.5,
         }}
-        spacing={3}>
+               spacing={3}>
             <OrdersAddNewPageHeader saveClickHandler={saveClickHandler}
                                     resetOrder={resetOrder}
                                     isLoading={isLoading}/>
-            <Stack direction={"row"} alignItems={"center"} justifyContent={"space-between"}>
-                <FormControl>
-                    <FormLabel id={shipmentTypeRadioId}>Срочность:</FormLabel>
-                    <RadioGroup
-                        name={"shipments_type"}
-                        row
-                        aria-labelledby={shipmentTypeRadioId}
-                        value={editedValue.shipments_type}
-                        onChange={handleFieldChange}
-                    >
-                        <FormControlLabel value={shipmentTypes[0].name} control={<Radio/>}
-                                          label={shipmentTypes[0].value}/>
-                        <FormControlLabel value={shipmentTypes[1].name} control={<Radio/>}
-                                          label={shipmentTypes[1].value}/>
-                    </RadioGroup>
-                </FormControl>
-                <FormControl>
-                    <FormLabel id={orderTypeRadioId}>Тип заявки:</FormLabel>
-                    <RadioGroup
-                        row
-                        name={"type"}
-                        aria-labelledby={orderTypeRadioId}
-                        value={editedValue.type}
-                        onChange={handleFieldChange}
-                    >
-                        <FormControlLabel value={ordersTypes[1].name} control={<Radio/>}
-                                          label={ordersTypes[1].value}/>
-                        <FormControlLabel value={ordersTypes[0].name} control={<Radio/>}
-                                          label={ordersTypes[0].value}/>
-                    </RadioGroup>
-                </FormControl>
-            </Stack>
+            <Card sx={{padding: "16px"}}>
+                <OrderDetailsForm editedValue={editedValue}
+                                  handleFieldChange={handleFieldChange}/>
+            </Card>
             <OrderPositionsTable
                 rows={editedValue.positions}
                 onRowsChange={handlePositionsChange}

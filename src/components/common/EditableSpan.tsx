@@ -1,7 +1,24 @@
 import React, {useState, FC, useEffect} from "react";
-import TextField from "@mui/material/TextField";
 
-type IProps = {
+const baseStyle: React.CSSProperties = {
+    display: "inline-block",
+    width: "100%",
+    minWidth: 200,
+    height: 34,
+    boxSizing: "border-box",
+    padding: "4px 8px",
+    borderRadius: 4,
+    border: "1px solid transparent",
+    font: "inherit",
+    lineHeight: "20px",
+    color: "inherit",
+    verticalAlign: "middle",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+};
+
+interface IProps  {
     value: number | string;
     onChange: (newValue: number | string) => void;
     fieldName?: string;
@@ -39,15 +56,20 @@ export const EditableSpan: FC<IProps> = ({ value, onChange, fieldName, label ="�
     const isEmpty = String(value ?? "").length === 0;
 
     return isEditing ? (
-        <TextField
+        <input
             autoFocus
             type="text"
             value={inputValue}
             onChange={handleChange}
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
-            style={{ width: "100%" }}
             name={fieldName ?? "EditableSpan"}
+            placeholder={isEmpty ? label : undefined}
+            style={{
+                ...baseStyle,
+                borderColor: "background.paper",
+                outline: "none",
+            }}
         />
     ) : (
         <span
@@ -61,15 +83,11 @@ export const EditableSpan: FC<IProps> = ({ value, onChange, fieldName, label ="�
             role="button"
             tabIndex={0}
             style={{
+                ...baseStyle,
                 cursor: "pointer",
-                display: "inline-block",
-                minWidth: 200,
-                minHeight: 28,
-                padding: "4px 8px",
-                borderRadius: 4,
-                border: isEmpty ? "1px solid #ccc" : "1px solid transparent",
-                color: isEmpty ? "#9e9e9e" : "inherit",
                 userSelect: "none",
+                borderColor: isEmpty ? "text.primary" : "transparent",
+                color: isEmpty ? "#9e9e9e" : "inherit",
             }}
             title={isEmpty ? "Кликните, чтобы добавить" : "Кликните, чтобы редактировать"}
         >

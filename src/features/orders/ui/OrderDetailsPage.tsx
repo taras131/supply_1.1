@@ -13,6 +13,7 @@ import {
 import {emptyOrderPosition, INewOrderPosition, IOrderPosition} from "../../../models/IOrdersPositions";
 import OrderDetailsPageHeader from "./OrderDetailsPageHeader";
 import {selectCurrentOrder} from "../model/selectors";
+import OrderDetailsView from "./OrderDetailsView";
 
 const OrderDetailsPage = () => {
     const dispatch = useAppDispatch();
@@ -64,6 +65,9 @@ const OrderDetailsPage = () => {
             pt: 1.5,
         }}>
             <OrderDetailsPageHeader/>
+            {order && (
+                <OrderDetailsView order={order} />
+            )}
             <OrderPositionsTable rows={positions}
                                  onRowsChange={handlePositionsChange}
                                  loading={isLoading}

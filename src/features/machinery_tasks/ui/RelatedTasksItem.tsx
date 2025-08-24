@@ -4,7 +4,6 @@ import StatusIcon from "./StatusIcon";
 import {ITask} from "../../../models/IMachineryTasks";
 import Divider from "@mui/material/Divider";
 import DueDateChip from "./DueDateChip";
-import {StyledListItemButton} from "../../../styles/const";
 
 interface IProps {
     task: ITask;
