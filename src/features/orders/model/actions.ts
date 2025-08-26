@@ -48,6 +48,18 @@ export const fetchGetOrderById = createAsyncThunk("orders/get_by_id",
         }
     });
 
+export const fetchGetOrdersForNewInvoice = createAsyncThunk("orders/get_all", async (_, {
+    rejectWithValue, dispatch
+}) => {
+    try {
+        return await ordersAPI.getForInvoice();
+    } catch (e) {
+        const msg = handlerError(e);
+        dispatch(setModalMessage(msg));
+        return rejectWithValue(msg);
+    }
+});
+
 export interface IUpdateApprovedOrderData {
     orderId: string;
     newApproved: boolean;

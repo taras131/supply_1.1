@@ -1,17 +1,9 @@
-import React, {useCallback, useEffect, useId, useMemo} from "react";
+import React, {useCallback, useEffect, useMemo} from "react";
 import {Stack} from "@mui/material";
 import Card from "@mui/material/Card";
 import {useEditor} from "../../../hooks/useEditor";
 import {orderValidate} from "../../../utils/validators";
-import {emptyOrder, INewOrder, ordersTypes, shipmentTypes} from "../../../models/iOrders";
-import FieldControl from "../../../components/common/FieldControl";
-import {
-    FormControl,
-    FormControlLabel,
-    FormLabel,
-    Radio,
-    RadioGroup,
-} from "@mui/material";
+import {emptyOrder, INewOrder} from "../../../models/iOrders";
 import OrderPositionsTable from "../../orders_positions/ui/OrderPositionsTable";
 import {useAppDispatch, useAppSelector} from "../../../hooks/redux";
 import {selectOrdersIsLoading} from "../model/selectors";

@@ -53,8 +53,6 @@ function mapFirebaseItemToPosition(item: any, idx: number): INewOrderPosition {
 
 async function mapDocToNewOrderAsync(doc: any): Promise<INewOrder> {
     const data = doc.data() ?? {};
-    const approved = data.approved ?? {};
-    const cancel = data.cancel ?? {};
     const fbCreated = Number(data?.author?.dateCreating ?? 0);
     const createdAtIso =
         fbCreated > 0 ? new Date(fbCreated).toISOString() : new Date().toISOString();

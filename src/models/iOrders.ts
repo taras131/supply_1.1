@@ -72,6 +72,7 @@ export interface IOrder extends Omit<INewOrder, 'positions'> {
     positions_done?: number;
     positions_total?: number;
     items_total?: number;
+    positions?: IOrderPosition [];
 }
 
 export const emptyOrder: INewOrder = {

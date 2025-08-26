@@ -3,7 +3,7 @@ import {
     GridCellModesModel,
     useGridApiRef,
 } from '@mui/x-data-grid';
-import {IconButton, Tooltip} from '@mui/material';
+import {IconButton, Tooltip, Typography} from '@mui/material';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import {INewOrderPosition, IOrderPosition, unitMeasures} from "../../../models/IOrdersPositions";
 import {FC, useCallback, useState} from "react";
@@ -23,14 +23,14 @@ import Box from "@mui/material/Box";
 interface IProps {
     title: string;
     rows: INewOrderPosition[] | IOrderPosition[];
-    onRowsChange: (newRow: INewOrderPosition | IOrderPosition) => void;
-    handleAddRow: () => void;
+    onRowsChange?: (newRow: INewOrderPosition | IOrderPosition) => void;
+    handleAddRow?: () => void;
     loading?: boolean;
     addPhotoHandler?: (file: File, orderPositionId: string) => void;
     deletePhotoHandler?: (deletePhotoName: string, orderPositionId: string) => void;
     commentChangeHandler?: (newValue: string | number, orderPositionId: string) => void;
     deletePositionHandler?: (id: string) => void;
-    titleChangeHandler: (newValue: string | number) => void;
+    titleChangeHandler?: (newValue: string | number) => void;
 }
 
 const OrderPositionsTable: FC<IProps> = ({
@@ -99,7 +99,7 @@ const OrderPositionsTable: FC<IProps> = ({
             field: 'name',
             headerName: 'Наименование',
             flex: 1,
-            editable: true,
+            editable: !!onRowsChange,
             disableColumnMenu: true,
             cellClassName: 'editable-cell',
         },
@@ -107,7 +107,7 @@ const OrderPositionsTable: FC<IProps> = ({
             field: 'catalog_number',
             headerName: 'Каталожный номер',
             flex: 1,
-            editable: true,
+            editable: !!onRowsChange,
             disableColumnMenu: true,
             cellClassName: 'editable-cell',
         },
@@ -116,7 +116,7 @@ const OrderPositionsTable: FC<IProps> = ({
             headerName: 'Количество',
             width: 140,
             type: 'number',
-            editable: true,
+            editable: !!onRowsChange,
             disableColumnMenu: true,
             renderCell: (params: any) => params.row.count,
             cellClassName: 'editable-cell',
@@ -125,7 +125,7 @@ const OrderPositionsTable: FC<IProps> = ({
             field: 'unit_measure',
             headerName: 'Ед. изм.',
             width: 60,
-            editable: true,
+            editable: !!onRowsChange,
             type: 'singleSelect',
             valueOptions: unitMeasures,
             renderCell: (params: any) => params.row.unit_measure,
@@ -141,7 +141,7 @@ const OrderPositionsTable: FC<IProps> = ({
             align: 'center',
             headerAlign: 'center',
             disableColumnMenu: true,
-            editable: false,
+            editable: !!onRowsChange,
             renderCell: (params: any) => {
                 const isComment = params.row.comment.length > 0
                 return (
@@ -219,7 +219,9 @@ const OrderPositionsTable: FC<IProps> = ({
             ...newRow,
             count: Number(newRow.count) || 0,
         };
-        onRowsChange(normalized);
+        if(onRowsChange) {
+            onRowsChange(normalized);
+        }
         return normalized;
     }, [onRowsChange]);
     const photos = rows.filter(row => row.id === activeRow?.id)[0]
@@ -231,11 +233,16 @@ const OrderPositionsTable: FC<IProps> = ({
     return (
         <div style={{position: "relative"}}>
             <Box sx={{position: "absolute", left: "10px", top: "10px", zIndex: 3}}>
-                <EditableSpan
-                    onChange={titleChangeHandler}
-                    value={title}
-                    label={"Добавить заголовок"}
-                />
+                {titleChangeHandler
+                    ? (<EditableSpan
+                        onChange={titleChangeHandler}
+                        value={title}
+                        label={"Добавить заголовок"}
+                    />)
+                    : (<Typography variant={"subtitle1"}>
+                        {title}
+                    </Typography>)}
+
             </Box>
             <MyDataGrid
                 tableName={"orderPositions"}
@@ -250,13 +257,15 @@ const OrderPositionsTable: FC<IProps> = ({
                 processRowUpdate={processRowUpdate}
                 disableRowSelectionOnClick
             />
-            <MyButton
-                onClick={handleAddRow}
-                startIcon={<AddIcon sx={{fontSize: "var(--icon-fontSize-md)"}}/>}
-                sx={{position: "absolute", left: "10px", bottom: "10px"}}
-            >
-                Строка
-            </MyButton>
+            {handleAddRow && (
+                <MyButton
+                    onClick={handleAddRow}
+                    startIcon={<AddIcon sx={{fontSize: "var(--icon-fontSize-md)"}}/>}
+                    sx={{position: "absolute", left: "10px", bottom: "10px"}}
+                >
+                    Строка
+                </MyButton>
+            )}
             <PhotoDialog dialogOpen={photoDialogOpen}
                          closeDialog={closePhotoDialog}
                          handleAddFiles={handleAddFiles}

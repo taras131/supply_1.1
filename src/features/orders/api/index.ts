@@ -20,6 +20,10 @@ export const ordersAPI = {
         const res = await appAPI.get(`${ordersPath}/${orderId}`);
         return await res.data;
     },
+    getForInvoice: async () => {
+        const res = await appAPI.get(`${ordersPath}/for_new_invoice`);
+        return await res.data;
+    },
     update: async (order: IOrder) => {
         console.log(order)
         const res = await appAPI.put(ordersPath, {

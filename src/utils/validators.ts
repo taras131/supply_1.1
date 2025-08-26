@@ -8,6 +8,7 @@ import {INewMachineryComment} from "../models/IMachineryComment";
 import {INewSupplier, ISupplier} from "../models/iSuppliers";
 import {IMachineryProblem, INewMachineryProblem} from "../models/IMachineryProblems";
 import {INewOrder, IOrder} from "../models/iOrders";
+import {IInvoice, INewInvoice} from "../models/iInvoices";
 
 export type ValidationErrors = { [key: string]: string | null };
 
@@ -175,5 +176,13 @@ export const supplierValidate = (supplier: ISupplier | INewSupplier) => {
 export const orderValidate = (order: INewOrder | IOrder) => {
     const errors: ValidationErrors = {};
     if (order.title.length === 0) errors.title = "Название заявки должно быть";
+    return errors;
+}
+
+export const invoiceValidate = (invoice: INewInvoice | IInvoice) => {
+    const errors: ValidationErrors = {};
+    if(invoice.supplier_id === "-1") errors.supplier_id = "выберите поставщика";
+    if(invoice.number.length < 1) errors.number = "введите номер счёта";
+    if(+invoice.amount < 1) errors.amount = "введите сумму";
     return errors;
 }

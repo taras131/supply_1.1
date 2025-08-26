@@ -35,6 +35,10 @@ import MachineryAddNewPage from "../features/machinery/ui/MachineryAddNewPage";
 import TaskAddNewPage from "../features/machinery_tasks/ui/TaskAddNewPage";
 import TasksPage from "../features/machinery_tasks/ui/TasksPage";
 import MachineryMaintenancePage from "../features/machinery/ui/MachineryMaintenancePage";
+import SuppliersPage from "../features/suppliers/ui/SuppliersPage";
+import InvoicesPage from "../features/invoices/ui/InvoicesPage";
+import InvoiceAddNewPage from "../features/invoices/ui/InvoiceAddNewPage";
+import InvoiceDetailsPage from "../features/invoices/ui/InvoiceDetailsPage";
 
 export interface IRouteConfig {
     icon: React.ReactNode;
@@ -47,10 +51,28 @@ export interface IRouteConfig {
 
 export const routesConfig: IRouteConfig[] = [
     /* {icon: <HomeRoundedIcon />, path: routes.main, element:  <MainGrid />, label: "Главная", showInMenu: true},*/
-    /*  {icon: <HomeRoundedIcon />, path: routes.invoices, element: <Invoices/>, label: "Счета", showInMenu: true},*/
-    /*   {icon: <HomeRoundedIcon />, path: routes.invoicesDetails, element: <InvoiceDetails/>, label: "Подробности", showInMenu: false},
-       {icon: <HomeRoundedIcon />, path: routes.invoicesAddNew, element: <InvoicesAddNew/>, label: "Новый счёт", showInMenu: false},*/
-    /*    {icon: <HomeRoundedIcon />, path: routes.suppliers, element: <SuppliersPage/>, label: "Поставщики", showInMenu: true},*/
+    {icon: <HomeRoundedIcon/>, path: routes.invoices, element: <InvoicesPage/>, label: "Счета", showInMenu: true},
+    {
+        icon: <HomeRoundedIcon/>,
+        path: routes.invoicesDetails,
+        element: <InvoiceDetailsPage/>,
+        label: "Подробности",
+        showInMenu: false
+    },
+    {
+        icon: <HomeRoundedIcon/>,
+        path: routes.invoicesAddNew,
+        element: <InvoiceAddNewPage/>,
+        label: "Новый счёт",
+        showInMenu: false
+    },
+    {
+        icon: <HomeRoundedIcon/>,
+        path: routes.suppliers,
+        element: <SuppliersPage/>,
+        label: "Поставщики",
+        showInMenu: true
+    },
     /*  {path: routes.shipments, element: <Shipments/>, label: "Отгрузки", showInMenu: true},*/
     /*   {path: routes.addNewShipments, element: <ShipmentsAddNew/>, label: "Новая отгрузка", showInMenu: false},*/
     {icon: <HomeRoundedIcon/>, path: routes.orders, element: <OrdersPage/>, label: "Заявки", showInMenu: true},

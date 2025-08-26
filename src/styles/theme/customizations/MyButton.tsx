@@ -6,11 +6,7 @@ const MyButton = ({sx, ...props}: ButtonProps) => {
         <Button
             {...props}
             sx={{
-                color: 'text.secondary',
                 textTransform: 'none',
-                '&:hover': {
-                    color: 'text.primary',
-                },
                 ...(sx as any),
             }}
         />
