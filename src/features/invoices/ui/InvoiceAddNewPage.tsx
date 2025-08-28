@@ -1,6 +1,6 @@
-import React, {ChangeEvent, useEffect} from 'react';
+import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from 'react';
 import InvoiceAddNewPageHeader from "./InvoiceAddNewPageHeader";
-import {FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, Typography} from "@mui/material";
+import {FormControl, InputLabel, MenuItem, Select, Stack, Typography} from "@mui/material";
 import Card from "@mui/material/Card";
 import {useAppDispatch, useAppSelector} from "../../../hooks/redux";
 import {fetchGetSuppliers} from "../../suppliers/model/actions";
@@ -16,13 +16,17 @@ import Box from "@mui/material/Box";
 import {fetchAddInvoice} from "../model/actions";
 import {fetchGetOrdersForNewInvoice} from "../../orders/model/actions";
 import {selectOrders} from "../../orders/model/selectors";
-import OrderPositionsTable from "../../orders_positions/ui/OrderPositionsTable";
+import OrdersSection from "./OrdersSection";
+
+export type SelectedByOrder = Record<string, string[]>; // { [orderId]: [positionId, ...] }
+
 
 const InvoiceAddNewPage = () => {
     const dispatch = useAppDispatch();
     const suppliers = useAppSelector(selectSuppliersForOptions);
     const orders = useAppSelector(selectOrders);
-    const [file, setFile] = React.useState<File | null>(null);
+    const [file, setFile] = useState<File | null>(null);
+    const [selectedByOrder, setSelectedByOrder] = useState<SelectedByOrder>({});
     const {editedValue, errors, handleFieldChange, setEditedValue, resetValue} = useEditor<INewInvoice>({
         initialValue: JSON.parse(JSON.stringify(emptyInvoice)),
         validate: invoiceValidate,
@@ -31,6 +35,23 @@ const InvoiceAddNewPage = () => {
         dispatch(fetchGetSuppliers())
         dispatch(fetchGetOrdersForNewInvoice())
     }, [dispatch]);
+    const handleOrderSelectionChange = useCallback((orderId: string, positionId: string) => {
+        setSelectedByOrder(prev => {
+            const current = prev[orderId] ?? [];
+            const exists = current.includes(positionId);
+            const nextForOrder = exists
+                ? current.filter(id => id !== positionId)
+                : [...current, positionId];
+            if (nextForOrder.length === 0) {
+                const { [orderId]: _removed, ...rest } = prev;
+                return rest; // без пустого массива
+            }
+            return { ...prev, [orderId]: nextForOrder };
+        });
+    }, []);
+    const selectedPositionIds = useMemo(() => {
+        return Object.values(selectedByOrder).flatMap(ids => ids.map(String));
+    }, [selectedByOrder]);
     const handleWithVatChange = () => {
         setEditedValue(prev => ({...prev, is_with_vat: !prev.is_with_vat}));
     }
@@ -42,11 +63,10 @@ const InvoiceAddNewPage = () => {
     }
     const saveClickHandler = async () => {
         try {
-            await dispatch(fetchAddInvoice({invoice: editedValue, file: file}));
+            await dispatch(fetchAddInvoice({invoice: {...editedValue, positions_id: selectedPositionIds}, file: file}));
             resetValue();
             setFile(null)
         } catch (e) {
-
         }
     }
     return (
@@ -140,13 +160,9 @@ const InvoiceAddNewPage = () => {
                     </Box>
                 </Box>
             </Card>
-            <Stack spacing={2} mt={2}>
-                {orders.filter(order => !!order.positions).map(order => (
-                    <OrderPositionsTable key={order.id}
-                                         title={order.title}
-                                         rows={order.positions || []}/>
-                ))}
-            </Stack>
+            <OrdersSection orders={orders}
+                           selectedByOrder={selectedByOrder}
+                           onPositionsSelectionChange={handleOrderSelectionChange}/>
         </Stack>
     );
 };

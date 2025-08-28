@@ -1,13 +1,20 @@
 import {DataGrid, DataGridProps, gridClasses} from "@mui/x-data-grid";
-import {GridToolbar} from "@mui/x-data-grid/internals";
-import {tablePaginationClasses} from "@mui/material";
 import React, {useEffect} from "react";
 
 interface IProps extends DataGridProps {
     tableName: string;
+    showToolbar?: boolean;
 }
 
-export const MyDataGrid = ({tableName,...props}: IProps) => {
+export const MyDataGrid = ({
+                               tableName,
+                               showToolbar = true,
+                               slots: slotsProp,
+                               slotProps: slotPropsProp,
+                               columns,
+                               ...rest
+                           }: IProps) => {
+    const STORAGE_KEY = `my-grid:${tableName}/columnVisibility`;
     const [columnVisibilityModel, setColumnVisibilityModel] = React.useState<Record<string, boolean>>({});
     const handleVisibilityChange = React.useCallback((newModel: Record<string, boolean>) => {
         setColumnVisibilityModel(newModel);
@@ -16,66 +23,45 @@ export const MyDataGrid = ({tableName,...props}: IProps) => {
         } catch { /* ignore */
         }
     }, []);
-    const STORAGE_KEY = 'my-grid:columnVisibility';
     useEffect(() => {
         try {
-            const saved = localStorage.getItem(`my-grid:${tableName}/columnVisibility`);
+            const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) {
                 setColumnVisibilityModel(JSON.parse(saved));
             }
         } catch { /* ignore */
         }
-    }, [tableName]);
+    }, [tableName, STORAGE_KEY]);
     useEffect(() => {
         setColumnVisibilityModel(prev => {
             const next = {...prev};
-            for (const col of props.columns) {
+            for (const col of columns) {
                 if (next[col.field] === undefined) next[col.field] = true;
             }
             return next;
         });
-    }, [props.columns]);
+    }, [columns]);
     return (
         <DataGrid
-            {...props}
+            {...rest}
+            columns={columns}
             rowHeight={70}
             columnHeaderHeight={90}
             density="compact"
             pagination
-            pageSizeOptions={[50, 25]}
-            slots={{toolbar: GridToolbar}}
+            showToolbar={showToolbar}
             columnVisibilityModel={columnVisibilityModel}
             onColumnVisibilityModelChange={handleVisibilityChange}
-            slotProps={{
-                toolbar: {showQuickFilter: true, quickFilterProps: {debounceMs: 500}},
-                baseIconButton: {size: 'small'},
-            }}
-            showToolbar
+            pageSizeOptions={[25, 50, 100]}
+            initialState={{pagination: {paginationModel: {pageSize: 50, page: 0}}}}
             sx={(theme) => ({
                 [`& .${gridClasses.row}:hover > .${gridClasses.cell}`]: {
                     backgroundColor: 'background.paper',
-                    boxShadow: `
-                        inset 0 1px 0 rgba(255,255,255,0.2), 
-                        inset 0 -1px 0 rgba(255,255,255,0.2)  
-                        `,
+                    boxShadow: `inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(255,255,255,0.2)`,
                     zIndex: 2,
                 },
-                [`& .${gridClasses.columnHeader}`]: {
-                    backgroundColor: 'background.paper',
-                },
-                [`& .${gridClasses.footerContainer}`]: {
-                    backgroundColor: 'background.paper',
-                },
-                [`& .${tablePaginationClasses.root}`]: {
-                    marginRight: theme.spacing(1),
-                    '& .MuiIconButton-root': {
-                        maxHeight: 45,
-                        maxWidth: 45,
-                        '& > svg': {
-                            fontSize: '1.5rem',
-                        },
-                    },
-                },
+                [`& .${gridClasses.columnHeader}`]: {backgroundColor: 'background.paper'},
+                [`& .${gridClasses.footerContainer}`]: {backgroundColor: 'background.paper'},
                 borderColor: 'divider',
                 fontWeight: 500,
                 color: 'text.secondary',
@@ -83,8 +69,8 @@ export const MyDataGrid = ({tableName,...props}: IProps) => {
                 overflow: 'clip',
                 [`& .${gridClasses.columnHeader}, & .${gridClasses.cell}`]: {outline: 'transparent'},
                 [`& .${gridClasses.columnHeader}:focus-within,
-                 & .${gridClasses.cell}:focus-within`]: {background: 'rgba(30,126,216,0.16)'},
-                '& .editable-cell:focus-within': {background: 'rgba(30,126,216,0.16)'}
+          & .${gridClasses.cell}:focus-within`]: {background: 'rgba(30,126,216,0.16)'},
+                '& .editable-cell:focus-within': {background: 'rgba(30,126,216,0.16)'},
             })}
         />
     );

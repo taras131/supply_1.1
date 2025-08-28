@@ -40,8 +40,20 @@ export const fetchGetAllInvoices = createAsyncThunk(
     "invoices/get_all",
     async (_, {dispatch, rejectWithValue}) => {
         try {
-            console.log("invoices/get_all")
             return await invoicesAPI.getAll();
+        } catch (e) {
+            const msg = handlerError(e);
+            dispatch(setModalMessage(msg));
+            return rejectWithValue(msg);
+        }
+    },
+);
+
+export const fetchGetInvoiceById = createAsyncThunk(
+    "invoices/get_by_id",
+    async (id: string, {dispatch, rejectWithValue}) => {
+        try {
+            return await invoicesAPI.getById(id);
         } catch (e) {
             const msg = handlerError(e);
             dispatch(setModalMessage(msg));

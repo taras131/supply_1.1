@@ -63,21 +63,24 @@ const OrderDetailsPage = () => {
             width: '100%',
             maxWidth: {sm: '100%', md: '1700px'},
             pt: 1.5,
-        }}>
+        }}
+               spacing={2}>
             <OrderDetailsPageHeader/>
             {order && (
-                <OrderDetailsView order={order} />
+                <OrderDetailsView order={order}/>
             )}
-            <OrderPositionsTable rows={positions}
-                                 onRowsChange={handlePositionsChange}
-                                 loading={isLoading}
-                                 handleAddRow={handleAddRow}
-                                 addPhotoHandler={addPhotoHandler}
-                                 deletePhotoHandler={deletePhotoHandler}
-                                 commentChangeHandler={commentChangeHandler}
-                                 deletePositionHandler={deletePositionHandler}
-                                 title={order?.title || ""}
-                                 titleChangeHandler={titleChangeHandler}
+            <OrderPositionsTable
+                orderId={order?.id || "-1"}
+                rows={positions}
+                onRowsChange={handlePositionsChange}
+                loading={isLoading}
+                handleAddRow={handleAddRow}
+                addPhotoHandler={addPhotoHandler}
+                deletePhotoHandler={deletePhotoHandler}
+                commentChangeHandler={commentChangeHandler}
+                deletePositionHandler={deletePositionHandler}
+                title={order?.title || ""}
+                titleChangeHandler={titleChangeHandler}
             />
         </Stack>
     );

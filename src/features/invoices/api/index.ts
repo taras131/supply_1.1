@@ -12,8 +12,11 @@ export const invoicesAPI = {
     return res.data;
   },
   getAll: async () => {
-    console.log(invoicePath)
     const res = await appAPI.get(invoicePath);
+    return res.data;
+  },
+  getById: async (id: string) => {
+    const res = await appAPI.get(`${invoicePath}/${id}`);
     return res.data;
   },
   update: async (invoice: IInvoice) => {

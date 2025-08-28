@@ -13,7 +13,6 @@ import {filesAPI} from "../../files/api";
 import OrdersAddNewPageHeader from "./OrdersAddNewPageHeader";
 import {useNavigate} from "react-router-dom";
 import OrderDetailsForm from "./OrderDetailsForm";
-import {fetchGetAllMachinery} from "../../machinery/model/actions";
 
 const LOCAL_STORAGE_NEW_ORDER_KEY = "new_order"
 
@@ -54,9 +53,6 @@ const OrdersAddNewPage = () => {
         }, 300);
         return () => clearTimeout(t);
     }, [editedValue, setEditedValue]);
-    useEffect(() => {
-        dispatch(fetchGetAllMachinery());
-    }, []);
     const getNextId = React.useCallback(() => {
         if (!editedValue.positions.length) return 1;
         const nums = editedValue.positions
@@ -167,11 +163,12 @@ const OrdersAddNewPage = () => {
             <OrdersAddNewPageHeader saveClickHandler={saveClickHandler}
                                     resetOrder={resetOrder}
                                     isLoading={isLoading}/>
-            <Card sx={{padding: "16px"}}>
+            <Card sx={{padding: "24px"}}>
                 <OrderDetailsForm editedValue={editedValue}
                                   handleFieldChange={handleFieldChange}/>
             </Card>
             <OrderPositionsTable
+                orderId={"-1"}
                 rows={editedValue.positions}
                 onRowsChange={handlePositionsChange}
                 loading={isLoading}

@@ -99,8 +99,20 @@ export const routesConfig: IRouteConfig[] = [
         label: "Регистрация",
         showInMenu: false
     },
-    {icon: <HomeRoundedIcon/>, path: routes.profile, element: <Profile/>, label: "Профиль", showInMenu: false},
-    {icon: <HomeRoundedIcon/>, path: routes.machinery, element: <MachineryPage/>, label: "Техника", showInMenu: true},
+    {
+        icon: <HomeRoundedIcon/>,
+        path: routes.profile,
+        element: <Profile/>,
+        label: "Профиль",
+        showInMenu: false
+    },
+    {
+        icon: <HomeRoundedIcon/>,
+        path: routes.machinery,
+        element: <MachineryPage/>,
+        label: "Техника",
+        showInMenu: true
+    },
     {
         icon: <HomeRoundedIcon/>,
         path: routes.machineryMaintenance,
@@ -115,7 +127,13 @@ export const routesConfig: IRouteConfig[] = [
         label: "Проблемы",
         showInMenu: true
     },
-    {icon: <HomeRoundedIcon/>, path: routes.machineryTasks, element: <TasksPage/>, label: "Задачи", showInMenu: true,},
+    {
+        icon: <HomeRoundedIcon/>,
+        path: routes.machineryTasks,
+        element: <TasksPage/>,
+        label: "Задачи",
+        showInMenu: true,
+    },
     {
         icon: <HomeRoundedIcon/>,
         path: routes.machineryComments,

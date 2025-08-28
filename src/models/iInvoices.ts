@@ -1,5 +1,6 @@
 import {IUser} from "./IUser";
 import {ISupplier} from "./iSuppliers";
+import {IShipments} from "./iShipments";
 
 export interface INewInvoice {
   firebase_id?: string;
@@ -28,6 +29,8 @@ export interface INewInvoice {
   paid_user_id?: string | null;
   paid_user?: IUser;
   paid_payment_order_file_link: string;
+
+  positions_id?: string [];
 }
 
 export interface IInvoice extends INewInvoice {
@@ -35,6 +38,8 @@ export interface IInvoice extends INewInvoice {
   updated_at?: number;
   updated_author_id?: string | null;
   updated_author?: IUser | null;
+  shipments?: IShipments[];
+  approved_user?: IUser | null,
 }
 
 export const emptyInvoice: INewInvoice = {
@@ -61,6 +66,7 @@ export const emptyInvoice: INewInvoice = {
   paid_user_id: null,
   paid_payment_order_file_link: "",
 
+  positions_id: []
 };
 
 export const defaultInvoice: IInvoice =  {

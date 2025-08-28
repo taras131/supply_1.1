@@ -1,6 +1,6 @@
 import {IUser} from "./IUser";
 import {IMachinery} from "./iMachinery";
-import {defaultOrderPosition, emptyOrderPosition, INewOrderPosition, IOrderPosition} from "./IOrdersPositions";
+import {emptyOrderPosition, INewOrderPosition, IOrderPosition} from "./IOrdersPositions";
 import {TShipmentsType} from "./iShipments";
 
 export enum CompletionType {
@@ -65,6 +65,8 @@ export interface IOrder extends Omit<INewOrder, 'positions'> {
     cancel_author?: IUser | null;
     author_id: string;
     author?: IUser;
+    updated_author_id?: string | null;
+    updated_author?: IUser | null;
     machinery?: IMachinery | null;
     created_at: Date | string;
     updated_at: Date | string;

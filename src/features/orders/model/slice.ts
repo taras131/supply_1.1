@@ -35,7 +35,9 @@ export const OrdersSlice = createSlice({
                 state.isLoading = false;
             })
             .addCase(fetchGetAllOrders.fulfilled, (state, action: PayloadAction<IOrder []>) => {
-                state.list = action.payload;
+                state.list = action.payload.slice().sort((a, b) => (
+                    new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+                ));
                 state.isLoading = false;
             })
             .addCase(fetchGetOrderById.fulfilled, (state, action: PayloadAction<IOrder>) => {

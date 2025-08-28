@@ -17,18 +17,19 @@ interface IProps {
 const OrderDetailsView: FC<IProps> = ({order}) => {
     const [isEdit, setIsEdit] = useState(false);
     const dispatch = useAppDispatch();
-    const { editedValue, handleFieldChange } = useEditor<IOrder>({
+    const {editedValue, handleFieldChange} = useEditor<IOrder>({
         initialValue: order ?? defaultOrder,
         validate: orderValidate,
     });
-    const updateHandler = () => {
-        dispatch(fetchUpdateOrder(editedValue));
-    }
     const toggleIsBasicEditMode = () => {
         setIsEdit(prev => !prev)
     }
+    const updateHandler = () => {
+        dispatch(fetchUpdateOrder(editedValue));
+        toggleIsBasicEditMode();
+    }
     return (
-        <Card sx={{padding: "26px", position: "relative"}}>
+        <Card sx={{position: "relative", pr: isEdit ? 2 : 10, pb: isEdit ? 2 : 0}}>
             {isEdit
                 ? (<OrderDetailsForm editedValue={editedValue}
                                      handleFieldChange={handleFieldChange}/>)

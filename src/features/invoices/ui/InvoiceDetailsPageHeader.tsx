@@ -1,14 +1,10 @@
-import React, {FC} from "react";
+import React from 'react';
 import {Stack, Typography} from "@mui/material";
 import {useNavigate} from "react-router-dom";
-import {useAppSelector} from "../../../hooks/redux";
-import {getCurrentMachineryTitle} from "../model/selectors";
-import MachineryStatusButtons from "./MachineryStatusButtons";
 import MyButton from "../../../styles/theme/customizations/MyButton";
 
-const MachineryDetailsHeader: FC = () => {
+const InvoiceDetailsPageHeader = () => {
     const navigate = useNavigate();
-    const title = useAppSelector(getCurrentMachineryTitle);
     const handleBackClick = () => {
         navigate(-1);
     };
@@ -18,15 +14,15 @@ const MachineryDetailsHeader: FC = () => {
                justifyContent="space-between"
                alignItems="center"
                sx={{mb: 2, mt: 2}}>
+
             <Typography component="h2" variant="h6">
-                {title}
+                Счёт
             </Typography>
             <MyButton onClick={handleBackClick} variant={"outlined"}>
                 Назад
             </MyButton>
-            <MachineryStatusButtons/>
         </Stack>
     );
 };
 
-export default MachineryDetailsHeader;
+export default InvoiceDetailsPageHeader;

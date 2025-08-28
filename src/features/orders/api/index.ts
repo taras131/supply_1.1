@@ -25,7 +25,7 @@ export const ordersAPI = {
         return await res.data;
     },
     update: async (order: IOrder) => {
-        console.log(order)
+        console.log(order.machinery_id)
         const res = await appAPI.put(ordersPath, {
             ...order,
             approved_date: order.approved_date ? +order.approved_date : 0,

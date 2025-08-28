@@ -11,6 +11,10 @@ import CompletionBar from "./CompletionBar";
 import IconWrapper from "../../../components/common/IconWrapper";
 import {MyDataGrid} from "../../../styles/theme/customizations/MyDataGrid";
 import Box from "@mui/material/Box";
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import DateRangeIcon from '@mui/icons-material/DateRange';
+import Tooltip from '@mui/material/Tooltip';
+import {ordersTypes} from "../../../models/iOrders";
 
 const OrdersTable: FC = () => {
     const navigate = useNavigate();
@@ -30,6 +34,21 @@ const OrdersTable: FC = () => {
                 disableColumnMenu: true,
                 renderCell: (params: any) => (formatDateDDMMYYYY(params.row.created_at)),
                 flex: 0.1,
+            },
+            {
+                field: "type",
+                headerName: "Тип",
+                disableColumnMenu: true,
+                width: 40,
+                renderCell: (params: any) => (<Box sx={{display: "flex", height: "100%", alignItems: "center"}}>
+                    {params.row.type === ordersTypes[0].name
+                        ? (<Tooltip title="Текущая заявка">
+                            <AccessTimeIcon/>
+                        </Tooltip>)
+                        : (<Tooltip title="Годовая заявка">
+                            <DateRangeIcon/>
+                        </Tooltip>)}
+                </Box>),
             },
             {
                 field: "title",

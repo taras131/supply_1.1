@@ -15,12 +15,13 @@ const OrderDetailsPageHeader = () => {
                justifyContent="space-between"
                alignItems="center"
                sx={{mb: 2, mt: 2}}>
-            <MyButton onClick={backClickHandler} variant={"outlined"}>
-                Назад
-            </MyButton>
             <Typography component="h2" variant="h6">
                 Заявка
             </Typography>
+            <MyButton onClick={backClickHandler}
+                      variant={"outlined"}>
+                Назад
+            </MyButton>
         </Stack>
     );
 };

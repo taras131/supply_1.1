@@ -1,7 +1,7 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {IInvoice} from "../../../models/iInvoices";
 import {ISelectedOrderPosition} from "../../../models/IOrdersPositions";
-import {fetchAddInvoice, fetchGetAllInvoices, fetchUpdateInvoice} from "./actions";
+import {fetchAddInvoice, fetchGetAllInvoices, fetchGetInvoiceById, fetchUpdateInvoice} from "./actions";
 
 interface ISelectedOrderPositionData {
     orderId: string;
@@ -66,6 +66,10 @@ export const InvoicesSlice = createSlice({
             })
             .addCase(fetchUpdateInvoice.fulfilled, (state, action: PayloadAction<IInvoice>) => {
                 state.list = [...state.list.map(invoice => invoice.id === action.payload.id ? action.payload : invoice)];
+                state.isLoading = false;
+            })
+            .addCase(fetchGetInvoiceById.fulfilled, (state, action: PayloadAction<IInvoice>) => {
+                state.current = action.payload;
                 state.isLoading = false;
             })
             .addCase(fetchAddInvoice.pending, (state) => {

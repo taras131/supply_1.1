@@ -1,4 +1,4 @@
-import React, {FC, useId} from 'react';
+import React, {FC, useEffect, useId} from 'react';
 import {
     FormControl,
     FormControlLabel,
@@ -11,8 +11,9 @@ import {
     Stack
 } from "@mui/material";
 import {INewOrder, IOrder, orderCategories, ordersTypes, shipmentTypes} from "../../../models/iOrders";
-import {useAppSelector} from "../../../hooks/redux";
+import {useAppDispatch, useAppSelector} from "../../../hooks/redux";
 import {selectAllMachineryForOptions} from "../../machinery/model/selectors";
+import {fetchGetAllMachinery} from "../../machinery/model/actions";
 
 interface IProps {
     editedValue: INewOrder | IOrder,
@@ -22,13 +23,20 @@ interface IProps {
 }
 
 const OrderDetailsForm: FC<IProps> = ({editedValue, isNewOrder, handleFieldChange}) => {
+    const dispatch = useAppDispatch()
     const shipmentTypeRadioId = useId();
     const orderTypeRadioId = useId();
     const categorySelectId = useId();
     const machinerySelectId = useId();
-    const machinery = useAppSelector(selectAllMachineryForOptions)
+    const machinery = useAppSelector(selectAllMachineryForOptions);
+    useEffect(() => {
+        dispatch(fetchGetAllMachinery());
+    }, [dispatch]);
     return (
-        <Stack direction={"row"} alignItems={"center"} justifyContent={"space-between"}>
+        <Stack direction={"row"}
+               alignItems={"center"}
+               justifyContent={"space-between"}
+               sx={{p: 4}}>
             <FormControl>
                 <FormLabel id={shipmentTypeRadioId}>Срочность:</FormLabel>
                 <RadioGroup
