@@ -14,8 +14,8 @@ export const getDateInMilliseconds = () => {
     return Date.now();
 };
 
-export const convertMillisecondsToDate = (milliseconds: number) => {
-    return formatDate(new Date(milliseconds));
+export const convertMillisecondsToDate = (milliseconds: number | string) => {
+    return formatDate(new Date(+milliseconds));
 };
 
 const MONTHS_RU_SHORT = ["Янв", "Фев", "Мар", "Апр", "Май", "Июн", "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек"];

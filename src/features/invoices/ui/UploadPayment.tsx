@@ -1,83 +1,104 @@
-import {FC, useEffect, useState} from "react";
+import React, {FC, useCallback, useEffect, useState} from "react";
 import {IInvoice} from "../../../models/iInvoices";
 import {useAppDispatch, useAppSelector} from "../../../hooks/redux";
 import {getDateInMilliseconds} from "../../../utils/services";
+import {LABEL} from "../../../styles/const";
+import {FILE_TYPE} from "../../../utils/const";
+import {useUploadPaymentFile} from "../../../hooks/useUploadPaymentFile";
 import {selectCurrentUser} from "../../users/model/selectors";
-import {useUploadFile} from "../../../hooks/useUploadFile";
-import DoDisturbAltIcon from "@mui/icons-material/DoDisturbAlt";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
-import LoadingButton from "@mui/lab/LoadingButton";
-import {LABEL, LOADING_BUTTON_BORDER_RADIUS, SIZE_SMALL} from "../../../styles/const";
-import {CANCEL_TEXT, FILE_TYPE, UPLOAD_TEXT} from "../../../utils/const";
+import {fetchUploadPayment} from "../model/actions";
+import {Button} from "@mui/material";
+import CachedIcon from "@mui/icons-material/Cached";
+import FileUploadIcon from '@mui/icons-material/FileUpload';
+import ConfirmDeleteDialog from "../../../components/common/ConfirmDeleteDialog";
+import {selectInvoicesIsLoading} from "../model/selectors";
 
 interface IProps {
-    invoice: IInvoice;
+    invoice: IInvoice | null;
     forDetailsMode?: boolean;
 }
 
-const UploadPayment: FC<IProps> = ({ invoice, forDetailsMode = false }) => {
+const UploadPayment: FC<IProps> = ({invoice, forDetailsMode = false}) => {
     const dispatch = useAppDispatch();
     const user = useAppSelector(selectCurrentUser);
-    const { file, onFileChange, paymentErrorMessage, amount, isLoading, setIsLoading } = useUploadFile();
     const [openModal, setOpenModal] = useState(false);
     const [modalMessage, setModalMessage] = useState("");
-    const toggleOpen = () => {
-        setOpenModal((prev) => !prev);
-    };
-    const onLoadingPaymentOrderFile = (name: string, filePatch: string) => {
-        const newPaid = {
-            isPaid: true,
-            userId: user?.id || "",
-            date: getDateInMilliseconds(),
-            paymentOrderFileLink: filePatch,
-        };
-        /*dispatch(fetchUpdateInvoice({ invoiceId: invoice.id, newPaid: newPaid }));*/
-    };
-    const uploadFile = () => {
-        if (file) {
-           /* dispatch(
-                fetchUploadFile({
-                    file: file,
-                    updateFile: onLoadingPaymentOrderFile,
-                    setIsUpdateFileLoading: setIsLoading,
-                }),
-            );*/
+    const {
+        filesWithAmount,
+        onFileChange,
+        isLoading,
+        resetFiles
+    } = useUploadPaymentFile();
+    const closeModal = () => {
+        setModalMessage("")
+        setOpenModal(false)
+        resetFiles();
+    }
+    const invoiceLoading = useAppSelector(selectInvoicesIsLoading)
+    const uploadFile = useCallback((file: File) => {
+        if (file && invoice) {
+            const updatedInvoice = {
+                ...invoice,
+                paid_is_paid: true,
+                paid_date: getDateInMilliseconds(),
+                paid_user_id: user?.id
+            }
+            dispatch(fetchUploadPayment({invoice: updatedInvoice, file}));
         }
-    };
+        closeModal();
+    }, [dispatch, invoice, user?.id, closeModal]);
     useEffect(() => {
-        if (file && !paymentErrorMessage && !isLoading) {
-            if (amount === invoice.amount) {
-                uploadFile();
-            } else {
-                setModalMessage(`Обратите внимание, - сумма счёта: ${invoice.amount} руб. 
-                Сумма добавляемого платёжного поручения: ${amount} руб. Всё равно продолжить?`);
+        if (filesWithAmount) {
+            const {file, amount, error} = filesWithAmount[0];
+            if (amount) {
+                if (amount === invoice?.amount) {
+                    uploadFile(file);
+                    resetFiles();
+                } else {
+                    setModalMessage(`Обратите внимание, - сумма счёта: ${invoice?.amount} руб. 
+                    Сумма добавляемого платёжного поручения: ${amount} руб. Всё равно продолжить?`);
+                    setOpenModal(true);
+                }
+            }
+            if (!amount && error) {
+                setModalMessage(`Обратите внимание, - ${error}`);
                 setOpenModal(true);
             }
         }
-        if (file && paymentErrorMessage && !isLoading) {
-            setModalMessage(`${paymentErrorMessage} Всё равно продолжить?`);
-            setOpenModal(true);
-        }
-    }, [file, paymentErrorMessage, amount, isLoading]);
+    }, [filesWithAmount, invoice, uploadFile, resetFiles]);
     return (
         <>
-            <LoadingButton
-                sx={{ borderRadius: forDetailsMode ? 0 : LOADING_BUTTON_BORDER_RADIUS, maxWidth: "150px" }}
+            <Button
+                size={"small"}
+                sx={{textTransform: 'none', width: "150px"}}
                 component={LABEL}
-                loading={isLoading}
+                loading={isLoading || invoiceLoading}
                 variant={"contained"}
                 fullWidth
-                disabled={invoice.cancel_is_cancel}
-                size={forDetailsMode ? "medium" : SIZE_SMALL}
-                startIcon={invoice.cancel_is_cancel ? <DoDisturbAltIcon /> : <AttachFileIcon />}
+                disabled={invoice?.cancel_is_cancel}
+                color={invoice?.paid_payment_order_file_link ? "warning" : "primary"}
+                startIcon={invoice?.paid_payment_order_file_link
+                    ? <CachedIcon/>
+                    : <FileUploadIcon/>}
             >
-                {invoice.cancel_is_cancel ? CANCEL_TEXT : UPLOAD_TEXT}
-                <input type={FILE_TYPE}
-                       hidden accept="image/*,
-                       application/pdf"
-                       onChange={onFileChange} />
-            </LoadingButton>
-
+                {invoice?.paid_payment_order_file_link ? "Заменить ПП" : "Загрузить ПП"}
+                <input type={FILE_TYPE} hidden accept="image/*, application/pdf" onChange={onFileChange}/>
+            </Button>
+            {modalMessage && (
+                <ConfirmDeleteDialog
+                    open={openModal}
+                    onClose={closeModal}
+                    onConfirm={() => {
+                        if (filesWithAmount) {
+                            uploadFile(filesWithAmount[0].file);
+                            resetFiles();
+                        }
+                    }}
+                    title="Прикрепить файл?"
+                    confirmText="Прикрепить"
+                    description={modalMessage}
+                />
+            )}
         </>
     );
 };

@@ -8,9 +8,9 @@ import {routes} from "../../../utils/routes";
 import {useNavigate} from "react-router-dom";
 import {convertMillisecondsToDate, formatDateDDMMYYYY} from "../../../utils/services";
 import {COMPONENT_A, SUCCESS} from "../../../styles/const";
-import {Checkbox, Chip, Typography} from "@mui/material";
+import {Button, Checkbox, Chip, Typography} from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
-import {CANCEL_TEXT, DOWNLOAD_TEXT, NO_TEXT} from "../../../utils/const";
+import {CANCEL_TEXT, NO_TEXT} from "../../../utils/const";
 import UploadPayment from "./UploadPayment";
 import {IInvoice} from "../../../models/iInvoices";
 import {selectCurrentUserId} from "../../users/model/selectors";
@@ -125,48 +125,49 @@ const InvoicesTable = () => {
                 field: "invoice_file_link",
                 headerName: "Счёт",
                 disableColumnMenu: true,
-                renderCell: (params: any) => (
-                    <Chip
-                        label={"Счёт"}
-                        component={COMPONENT_A}
-                        href={params.row.invoice_file_link}
-                        icon={<DownloadIcon/>}
-                        color={SUCCESS}
-                        clickable
-                    />
-                ),
-                flex: 0.3,
+                renderCell: (params: any) => {
+                    const invoiceLink = params.row.invoice_file_link ?? "";
+                    const isInvoiceLinkPdf = /\.pdf(\?|#|$)/i.test(invoiceLink);
+                    return (
+                        <Button startIcon={<DownloadIcon/>}
+                                size={"small"}
+                                href={invoiceLink}
+                                target={isInvoiceLinkPdf ? "_blank" : undefined}
+                                rel={isInvoiceLinkPdf ? "noopener noreferrer" : undefined}
+                                variant={"contained"}
+                                color={"success"}
+                                sx={{textTransform: 'none'}}>
+                            Скачать счёт
+                        </Button>
+                    )
+                },
+                width: 170,
             },
             {
                 field: "payment_invoice_link",
                 headerName: "ПП",
                 disableColumnMenu: true,
-                renderCell: (params: any) => (
-                    <>
-                        {params.row.payment_invoice_link ? (
-                            <Chip
-                                sx={{width: '100%'}}
-                                label={DOWNLOAD_TEXT}
-                                component="a"
-                                href={params.row.payment_invoice_link}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                icon={<DownloadIcon/>}
-                                color={SUCCESS}
-                                clickable
-                                data-interactive="true"
-                                onPointerDown={(e) => e.stopPropagation()}
-                                onMouseDown={(e) => e.stopPropagation()}
-                                onTouchStart={(e) => e.stopPropagation()}
-                                onClick={(e) => e.stopPropagation()}
-                                onKeyDown={(e) => e.stopPropagation()}
-                            />
-                        ) : (
-                            <UploadPayment invoice={params.row}/>
-                        )}
-                    </>
-                ),
-                flex: 0.4,
+                renderCell: (params: any) => {
+                    const paymentLink = params.row.paid_payment_order_file_link;
+                    const isPaymentLinkPdf = /\.pdf(\?|#|$)/i.test(paymentLink);
+                    return (
+                        <>  {
+                            params.row.paid_payment_order_file_link
+                                ? (<Button startIcon={<DownloadIcon/>}
+                                           size={"small"}
+                                           href={paymentLink}
+                                           target={isPaymentLinkPdf ? "_blank" : undefined}
+                                           rel={isPaymentLinkPdf ? "noopener noreferrer" : undefined}
+                                           variant={"contained"}
+                                           color={"success"}
+                                           sx={{textTransform: 'none', width: "150px"}}>
+                                    Скачать ПП
+                                </Button>)
+                                : (<UploadPayment invoice={params.row}/>)
+                        }
+                        </>)
+                },
+                width: 170,
             },
         ],
         [onToggleApproved],

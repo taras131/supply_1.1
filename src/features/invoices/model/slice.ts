@@ -1,12 +1,28 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {createSlice, isFulfilled, isPending, isRejected, PayloadAction} from "@reduxjs/toolkit";
 import {IInvoice} from "../../../models/iInvoices";
 import {ISelectedOrderPosition} from "../../../models/IOrdersPositions";
-import {fetchAddInvoice, fetchGetAllInvoices, fetchGetInvoiceById, fetchUpdateInvoice} from "./actions";
+import {
+    fetchAddInvoice,
+    fetchGetAllInvoices,
+    fetchGetInvoiceById,
+    fetchUpdateInvoice,
+    fetchUploadInvoice,
+    fetchUploadPayment
+} from "./actions";
 
 interface ISelectedOrderPositionData {
     orderId: string;
     positionId: number;
 }
+
+const handledThunks = [
+    fetchAddInvoice,
+    fetchGetAllInvoices,
+    fetchUpdateInvoice,
+    fetchGetInvoiceById,
+    fetchUploadInvoice,
+    fetchUploadPayment,
+] as const;
 
 interface IInvoiceState {
     list: IInvoice[];
@@ -56,40 +72,28 @@ export const InvoicesSlice = createSlice({
         builder
             .addCase(fetchAddInvoice.fulfilled, (state, action: PayloadAction<IInvoice>) => {
                 state.list = [...state.list, action.payload];
-                state.isLoading = false;
             })
             .addCase(fetchGetAllInvoices.fulfilled, (state, action: PayloadAction<IInvoice []>) => {
                 state.list = action.payload.sort((a, b) => {
                     return a.author_date - b.author_date
                 });
-                state.isLoading = false;
             })
             .addCase(fetchUpdateInvoice.fulfilled, (state, action: PayloadAction<IInvoice>) => {
+                state.current = action.payload;
                 state.list = [...state.list.map(invoice => invoice.id === action.payload.id ? action.payload : invoice)];
-                state.isLoading = false;
             })
             .addCase(fetchGetInvoiceById.fulfilled, (state, action: PayloadAction<IInvoice>) => {
                 state.current = action.payload;
-                state.isLoading = false;
             })
-            .addCase(fetchAddInvoice.pending, (state) => {
+            .addMatcher(isPending(...handledThunks), (state) => {
                 state.isLoading = true;
             })
-            .addCase(fetchGetAllInvoices.pending, (state) => {
-                state.isLoading = true;
-            })
-            .addCase(fetchUpdateInvoice.pending, (state) => {
-                state.isLoading = true;
-            })
-            .addCase(fetchAddInvoice.rejected, (state) => {
+            .addMatcher(isRejected(...handledThunks), (state) => {
                 state.isLoading = false;
             })
-            .addCase(fetchGetAllInvoices.rejected, (state) => {
+            .addMatcher(isFulfilled(...handledThunks), (state) => {
                 state.isLoading = false;
-            })
-            .addCase(fetchUpdateInvoice.rejected, (state) => {
-                state.isLoading = false;
-            })
+            });
     },
 });
 

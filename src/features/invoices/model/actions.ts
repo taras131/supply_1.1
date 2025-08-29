@@ -66,8 +66,7 @@ export const fetchUpdateInvoice = createAsyncThunk(
     "invoices/update",
     async (invoice: IInvoice, {dispatch, rejectWithValue}) => {
         try {
-            const res = await invoicesAPI.update(invoice);
-            return res;
+            return  await invoicesAPI.update(invoice);
         } catch (e) {
             const msg = handlerError(e);
             dispatch(setModalMessage(msg));
@@ -76,7 +75,68 @@ export const fetchUpdateInvoice = createAsyncThunk(
     },
 );
 
+interface IUploadPaymentData {
+    invoice: IInvoice;
+    file: File;
+}
 
+export const fetchUploadPayment = createAsyncThunk(
+    "invoices/add",
+    async (uploadData: IUploadPaymentData, {dispatch, rejectWithValue}) => {
+        try {
+            const {invoice, file} = uploadData;
+            if(invoice.paid_payment_order_file_link){
+                try {
+                    const fileName = invoice.paid_payment_order_file_link.split("/").reverse()[0];
+                    await filesAPI.delete(fileName);
+                } catch {
+                    /*ignore*/
+                }
+            }
+            if (file) {
+                const uploadedFile = await filesAPI.upload(file);
+                invoice.paid_payment_order_file_link = `${nestServerPath}/static/${uploadedFile}`
+            }
+            return await dispatch(fetchUpdateInvoice(invoice)).unwrap();
+        } catch (e) {
+            const msg = handlerError(e);
+            dispatch(setModalMessage(msg));
+            return rejectWithValue(msg);
+        }
+    },
+);
+
+interface IUploadInvoiceData {
+    invoice: IInvoice;
+    file: File;
+}
+
+export const fetchUploadInvoice = createAsyncThunk(
+    "invoices/add",
+    async (uploadData: IUploadInvoiceData, {dispatch, rejectWithValue}) => {
+        try {
+            const {invoice, file} = uploadData;
+            if(invoice.invoice_file_link){
+                try {
+                    const fileName = invoice.invoice_file_link.split("/").reverse()[0];
+                    const res = await filesAPI.delete(fileName);
+                    console.log(res)
+                } catch {
+                    /*ignore*/
+                }
+            }
+            if (file) {
+                const uploadedFile = await filesAPI.upload(file);
+                invoice.invoice_file_link = `${nestServerPath}/static/${uploadedFile}`
+            }
+            return await dispatch(fetchUpdateInvoice(invoice)).unwrap();
+        } catch (e) {
+            const msg = handlerError(e);
+            dispatch(setModalMessage(msg));
+            return rejectWithValue(msg);
+        }
+    },
+);
 
 /*export const fetchLinkPositions = createAsyncThunk(
   "fetch_link_positions",

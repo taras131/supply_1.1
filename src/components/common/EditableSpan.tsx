@@ -23,7 +23,8 @@ interface IProps  {
     onChange: (newValue: number | string) => void;
     fieldName?: string;
     label?: string;
-};
+    maxWidth?: number;
+}
 
 export const EditableSpan: FC<IProps> = ({ value, onChange, fieldName, label ="Добавить комментарий" }) => {
     const [isEditing, setIsEditing] = useState(false);
@@ -69,6 +70,7 @@ export const EditableSpan: FC<IProps> = ({ value, onChange, fieldName, label ="�
                 ...baseStyle,
                 borderColor: "background.paper",
                 outline: "none",
+                maxWidth: ``
             }}
         />
     ) : (

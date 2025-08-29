@@ -14,7 +14,6 @@ const InvoiceDetailsPageHeader = () => {
                justifyContent="space-between"
                alignItems="center"
                sx={{mb: 2, mt: 2}}>
-
             <Typography component="h2" variant="h6">
                 Счёт
             </Typography>

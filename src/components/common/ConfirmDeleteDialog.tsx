@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import MyButton from "../../styles/theme/customizations/MyButton";
+import HelpCenterIcon from '@mui/icons-material/HelpCenter';
 
 type ConfirmDeleteDialogProps = {
     open: boolean;
@@ -63,7 +64,7 @@ const ConfirmDeleteDialog: React.FC<ConfirmDeleteDialogProps> = ({
         >
             <DialogTitle id="confirm-delete-title">
                 <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
-                    <DeleteOutlineIcon color="error"/>
+                    <HelpCenterIcon color="warning"/>
                     {title}
                 </Box>
             </DialogTitle>
@@ -74,7 +75,7 @@ const ConfirmDeleteDialog: React.FC<ConfirmDeleteDialogProps> = ({
                 </Typography>
             </DialogContent>
 
-            <DialogActions>
+            <DialogActions sx={{p: 2}}>
                 <MyButton onClick={onClose} disabled={loading} variant="outlined">
                     {cancelText}
                 </MyButton>
@@ -83,7 +84,6 @@ const ConfirmDeleteDialog: React.FC<ConfirmDeleteDialogProps> = ({
                     color="warning"
                     onClick={onConfirm}
                     disabled={loading}
-                    startIcon={<DeleteOutlineIcon/>}
                     autoFocus
                 >
                     {confirmText}
