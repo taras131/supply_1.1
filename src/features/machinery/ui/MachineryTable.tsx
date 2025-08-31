@@ -64,6 +64,8 @@ const MachineryTable: FC<IProps> = ({rows}) => {
         {
             field: "photos",
             headerName: "Фото",
+            disableColumnMenu: true,
+            sortable: false,
             renderCell: (params: any) => {
                 const photoPath = params.row.photos[0]
                     ? `${nestServerPath}/static/${params.row.photos[0]}`
@@ -75,6 +77,7 @@ const MachineryTable: FC<IProps> = ({rows}) => {
         {
             field: "type_id",
             headerName: "Категория",
+            disableColumnMenu: true,
             renderCell: (params: any) => {
                 const value = params.value ?? params.row.type_id;
                 return machineryTypes.find((t) => t.id === value)?.title || "";

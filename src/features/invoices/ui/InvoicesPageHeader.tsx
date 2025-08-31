@@ -5,6 +5,7 @@ import MyButton from "../../../styles/theme/customizations/MyButton";
 import AddIcon from "@mui/icons-material/Add";
 import {useNavigate} from "react-router-dom";
 import {routes} from "../../../utils/routes";
+import UploadPayments from "./UploadPayments";
 
 const InvoicesPageHeader = () => {
     const navigate = useNavigate();
@@ -20,7 +21,8 @@ const InvoicesPageHeader = () => {
             <Typography component="h2" variant="h6">
                 Счета
             </Typography>
-            <div>
+            <Stack direction="row" spacing={1}>
+                <UploadPayments/>
                 <MyButton
                     startIcon={<AddIcon sx={{fontSize: "var(--icon-fontSize-md)"}}/>}
                     variant="contained"
@@ -28,7 +30,7 @@ const InvoicesPageHeader = () => {
                 >
                     Добавить
                 </MyButton>
-            </div>
+            </Stack>
         </Stack>
     );
 };

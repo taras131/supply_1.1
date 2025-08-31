@@ -20,7 +20,6 @@ interface IProps {
 const InvoiceDetailsInfo: FC<IProps> = ({invoice}) => {
     const dispatch = useAppDispatch();
     const isLoading = useAppSelector(selectInvoicesIsLoading)
-    console.log(isLoading)
     const amountChangeHandler = (newValue: number | string) => {
         if (invoice) {
             if (+newValue > 0 && +newValue !== invoice.amount) {
@@ -49,26 +48,41 @@ const InvoiceDetailsInfo: FC<IProps> = ({invoice}) => {
             <Stack spacing={2}>
                 <TitleWithValue title={"Поставщик :"}
                                 value={invoice?.supplier?.name ?? "..."}
-                                isLoading={isLoading}/>
+                                isLoading={isLoading}
+                                copyable
+                                copyText={invoice?.supplier?.name}/>
                 <Divider/>
                 <TitleWithValue title={"ИНН :"}
                                 value={invoice?.supplier?.INN ?? "..."}
-                                isLoading={isLoading}/>
+                                isLoading={isLoading}
+                                copyable
+                                copyText={invoice?.supplier?.INN}/>
                 <Divider/>
-                <TitleWithValue title={"Счёт № :"} isLoading={isLoading}>
+                <TitleWithValue title={"Счёт № :"}
+                                isLoading={isLoading}
+                                copyable
+                                copyText={invoice?.number}>
                     <EditableInput value={invoice?.number ?? "..."}
                                    onChange={numberChangeHandler}
                                    type={"text"}/>
                 </TitleWithValue>
                 <Divider/>
-                <TitleWithValue title={"Сумма :"} isLoading={isLoading}>
+                <TitleWithValue title={"Сумма :"}
+                                isLoading={isLoading}
+                                copyable
+                                copyText={`${invoice?.amount}`}>
                     <EditableInput value={invoice?.amount ?? 0}
                                    onChange={amountChangeHandler}
                                    unit_measure={"руб."}
-                                   type={"number"}/>
+                                   type={"number"}
+                    />
                 </TitleWithValue>
                 <Divider/>
-                <TitleWithValue title={"НДС :"} isLoading={isLoading}>
+                <TitleWithValue title={"НДС :"}
+                                isLoading={isLoading}
+                                copyable
+                                copyText={`${invoice?.is_with_vat ? "Да" : "Нет"}`}
+                >
                     <EditableSelect
                         value={invoice?.is_with_vat ? "a" : "b"}
                         onChange={withVatChangeHandler}
@@ -79,14 +93,16 @@ const InvoiceDetailsInfo: FC<IProps> = ({invoice}) => {
                 </TitleWithValue>
                 <Stack direction={"row"} justifyContent={"space-between"} spacing={2} pt={4}>
                     <ButtonGroup>
-                        <Button startIcon={<DownloadIcon/>}
-                                href={invoiceLink}
-                                target={isInvoiceLinkPdf ? "_blank" : undefined}
-                                rel={isInvoiceLinkPdf ? "noopener noreferrer" : undefined}
-                                variant={"contained"}
-                                sx={{textTransform: 'none', width: "160px"}}>
-                            Скачать счёт
-                        </Button>
+                        {invoiceLink && (
+                            <Button startIcon={<DownloadIcon/>}
+                                    href={invoiceLink}
+                                    target={isInvoiceLinkPdf ? "_blank" : undefined}
+                                    rel={isInvoiceLinkPdf ? "noopener noreferrer" : undefined}
+                                    variant={"contained"}
+                                    sx={{textTransform: 'none', width: "160px"}}>
+                                Скачать счёт
+                            </Button>
+                        )}
                         <UploadInvoice invoice={invoice}/>
                     </ButtonGroup>
                     <ButtonGroup>
@@ -100,14 +116,6 @@ const InvoiceDetailsInfo: FC<IProps> = ({invoice}) => {
                                 Скачать ПП
                             </Button>)}
                         <UploadPayment invoice={invoice}/>
-                        {/*   {invoice.paid_payment_order_file_link && (
-                            <Button startIcon={<DeleteIcon/>}
-                                    color={"error"}
-                                    variant={"contained"}
-                                    sx={{textTransform: 'none', width: "160px"}}>
-                                Удалить ПП
-                            </Button>
-                        )}*/}
                     </ButtonGroup>
                 </Stack>
             </Stack>

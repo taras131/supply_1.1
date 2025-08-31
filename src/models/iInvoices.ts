@@ -27,7 +27,7 @@ export interface INewInvoice {
   paid_is_paid: boolean;
   paid_date?: number;
   paid_user_id?: string | null;
-  paid_user?: IUser;
+  paid_user?: IUser | null;
   paid_payment_order_file_link: string;
 
   positions_id?: string [];

@@ -1,5 +1,5 @@
 import React, {FC, useEffect, useState} from "react";
-import {Step, StepLabel, Stepper, Typography} from "@mui/material";
+import {Stack, Step, StepLabel, Stepper, Typography} from "@mui/material";
 import Box from "@mui/material/Box";
 import {defaultInvoice, IInvoice} from "../../../models/iInvoices";
 import {convertMillisecondsToDate} from "../../../utils/services";
@@ -7,6 +7,7 @@ import Card from "@mui/material/Card";
 import {useAppSelector} from "../../../hooks/redux";
 import {selectInvoicesIsLoading} from "../model/selectors";
 import CircularProgress from "@mui/material/CircularProgress";
+import CancelInvoiceButtons from "./CancelInvoiceButtons";
 
 interface IProps {
     invoice: IInvoice | null;
@@ -63,7 +64,7 @@ const InvoiceDetailsStepper: FC<IProps> = ({invoice}) => {
                 }}>
                     <CircularProgress/>
                 </Box>)
-                : (
+                : (<Stack direction="row" justifyContent={"space-between"}>
                     <Stepper activeStep={activeStep} orientation={"vertical"} sx={{height: "100%"}}>
                         <Step key={"Добавлен"}>
                             <StepLabel>
@@ -141,8 +142,10 @@ const InvoiceDetailsStepper: FC<IProps> = ({invoice}) => {
                             </StepLabel>
                         </Step>
                     </Stepper>
-                )}
-
+                    <Box>
+                        <CancelInvoiceButtons invoice={invoice}/>
+                    </Box>
+                </Stack>)}
         </Card>
     );
 };

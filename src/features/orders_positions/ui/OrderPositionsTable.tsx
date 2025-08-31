@@ -56,7 +56,6 @@ const OrderPositionsTable: FC<IProps> = ({
                                              selectedIds,
                                              onToggleChecked,
                                          }) => {
-    console.log("table render")
     const apiRef = useGridApiRef();
     const [cellModesModel, setCellModesModel] = useState<GridCellModesModel>({});
     const [photoDialogOpen, setPhotoDialogOpen] = useState(false);

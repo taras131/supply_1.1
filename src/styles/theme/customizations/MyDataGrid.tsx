@@ -1,5 +1,6 @@
 import {DataGrid, DataGridProps, gridClasses} from "@mui/x-data-grid";
 import React, {useEffect} from "react";
+import {GridToolbar} from "@mui/x-data-grid/internals";
 
 interface IProps extends DataGridProps {
     tableName: string;
@@ -54,6 +55,18 @@ export const MyDataGrid = ({
             onColumnVisibilityModelChange={handleVisibilityChange}
             pageSizeOptions={[25, 50, 100]}
             initialState={{pagination: {paginationModel: {pageSize: 50, page: 0}}}}
+            slots={{
+                toolbar: showToolbar ? GridToolbar : undefined,
+                ...slotsProp,
+            }}
+            // Для Pro: покажем «быстрый фильтр» (поиск)
+            slotProps={{
+                toolbar: {
+                    showQuickFilter: true,
+                    quickFilterProps: {debounceMs: 300},
+                },
+                ...slotPropsProp,
+            }}
             sx={(theme) => ({
                 [`& .${gridClasses.row}:hover > .${gridClasses.cell}`]: {
                     backgroundColor: 'background.paper',
@@ -75,31 +88,3 @@ export const MyDataGrid = ({
         />
     );
 }
-/*
-
-:root {
-    /!* База UI/редактора *!/
-    --ws-bg: #2B2B2B;              /!* фон редактора *!/
-    --ws-fg: #A9B7C6;              /!* основной текст *!/
-    --ws-gutter-bg: #313335;       /!* фон гаттера *!/
-    --ws-gutter-fg: #606366;       /!* номера строк *!/
-    --ws-caret-row-bg: #323232;    /!* строка каретки *!/
-    --ws-selection-bg: #214283;    /!* фон выделения *!/
-    --ws-selection-fg: #FFFFFF;    /!* текст при выделении *!/
-    /!* Токены синтаксиса *!/
-    --ws-comment: #808080;         /!* // комментарии *!/
-    --ws-doc-comment: #629755;     /!* /!** javadoc *!/
-    --ws-keyword: #CC7832;         /!* if, for, return *!/
-    --ws-string: #6A8759;          /!* "строки" *!/
-    --ws-number: #6897BB;          /!* 123, 0xFF *!/
-    --ws-constant: #9876AA;        /!* CONSTANT, enum, символы *!/
-    --ws-function: #FFC66D;        /!* имена функций/методов *!/
-    --ws-class: #A9B7C6;           /!* имена классов/типов *!/
-    --ws-interface: #A9B7C6;       /!* интерфейсы/типы *!/
-    --ws-annotation: #BBB529;      /!* @Annotation *!/
-    --ws-tag: #E8BF6A;             /!* HTML/XML теги *!/
-    --ws-attr-name: #BABABA;       /!* имя атрибута *!/
-    --ws-attr-value: #A5C261;      /!* значение атрибута *!/
-    --ws-operator: #A9B7C6;        /!* + - * / = *!/
-    --ws-punctuation: #A9B7C6;     /!* , ; . () {} [] *!/
-}*/

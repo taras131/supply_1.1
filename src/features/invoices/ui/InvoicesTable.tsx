@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo} from 'react';
+import React, {FC, useCallback, useMemo} from 'react';
 import Box from "@mui/material/Box";
 import {MyDataGrid} from "../../../styles/theme/customizations/MyDataGrid";
 import {useAppDispatch, useAppSelector} from "../../../hooks/redux";
@@ -6,22 +6,40 @@ import {selectInvoices, selectInvoicesIsLoading} from "../model/selectors";
 import {GridEventListener} from "@mui/x-data-grid";
 import {routes} from "../../../utils/routes";
 import {useNavigate} from "react-router-dom";
-import {convertMillisecondsToDate, formatDateDDMMYYYY} from "../../../utils/services";
-import {COMPONENT_A, SUCCESS} from "../../../styles/const";
-import {Button, Checkbox, Chip, Typography} from "@mui/material";
+import {
+    convertMillisecondsToDateWithTextMonths,
+} from "../../../utils/services";
+import {Button, Checkbox, Stack, Typography} from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 import {CANCEL_TEXT, NO_TEXT} from "../../../utils/const";
 import UploadPayment from "./UploadPayment";
 import {IInvoice} from "../../../models/iInvoices";
 import {selectCurrentUserId} from "../../users/model/selectors";
-import {fetchUpdateInvoice} from "../model/actions";
+import {fetchUpdateInvoice, TInvoiceFilter} from "../model/actions";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import FiberNewIcon from '@mui/icons-material/FiberNew';
+import CancelIcon from '@mui/icons-material/Cancel';
+import EditableSelect from "../../../components/common/EditableSelect";
 
-const InvoicesTable = () => {
+const filterOptions: TInvoiceFilter[] = ["all", "only_no_paid", "only_cancel"]
+const filterOptionLabels = {all: "Все", only_no_paid: "Не оплаченные", only_cancel: "Отменённые"}
+
+interface IProps {
+    filterValue?: TInvoiceFilter
+    filterChangeHandler?: (e: TInvoiceFilter) => void;
+}
+
+const InvoicesTable: FC<IProps> = ({filterValue, filterChangeHandler}) => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const rows = useAppSelector(selectInvoices)
     const isLoading = useAppSelector(selectInvoicesIsLoading)
     const currentUserId = useAppSelector(selectCurrentUserId)
+    const adaptiveRows = rows?.map(row => ({
+        ...row,
+        supplierName: row.supplier ? row.supplier.name : '',
+    }))
     const onToggleApproved = useCallback((invoice: IInvoice, checked: boolean) => {
         if (!currentUserId) return;
         dispatch(fetchUpdateInvoice({
@@ -55,7 +73,7 @@ const InvoicesTable = () => {
                 headerAlign: 'center',
                 renderCell: (params: any) => (
                     <Checkbox
-                        size="small"
+
                         checked={Boolean(params.row.approved_is_approved)}
                         onChange={(e, checked) => onToggleApproved(params.row, checked)}
                         onPointerDown={(e) => e.stopPropagation()}
@@ -65,20 +83,70 @@ const InvoicesTable = () => {
                         onKeyDown={(e) => e.stopPropagation()}
                     />
                 ),
-                flex: 0.25,
+                width: 80,
             },
             {
                 field: "created_at",
-                headerName: "Дата",
+                headerName: "Добавлен",
                 disableColumnMenu: true,
-                renderCell: (params: any) => (formatDateDDMMYYYY(params.row.created_at)),
-                flex: 0.3,
+                renderCell: (params: any) => (convertMillisecondsToDateWithTextMonths(
+                    new Date(params.row.created_at).getTime())),
+                width: 90,
             },
             {
-                field: "supplier",
+                field: "paid_is_paid",
+                headerName: "Оплачен",
+                disableColumnMenu: true,
+                renderCell: (params: any) => (<Box sx={{
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'start'
+                }}>
+                    {params.row.paid_is_paid ? (
+                        <Stack direction="row" alignItems="center" spacing={1}>
+                            <CheckCircleIcon color={"success"}/>
+                            <Typography fontWeight={600} fontSize="14px" color="success">
+                                {convertMillisecondsToDateWithTextMonths(+params.row.paid_date)}
+                            </Typography>
+                        </Stack>
+                    ) : (
+                        <Stack direction="row" alignItems="center" spacing={1}>
+                            {params.row.cancel_is_cancel
+                                ? (<>
+                                    <CancelIcon color={"error"}/>
+                                    <Typography color={"error"} fontWeight={600}>
+                                        {params.row.cancel_date
+                                            ? (convertMillisecondsToDateWithTextMonths(+params.row.cancel_date))
+                                            : CANCEL_TEXT}
+                                    </Typography>
+                                </>)
+                                : (<>
+                                    {
+                                        params.row.approved_is_approved
+                                            ? (<AccessTimeIcon color={"warning"}/>)
+                                            : (<FiberNewIcon color={"disabled"}/>)
+                                    }
+                                    <Typography color={params.row.approved_is_approved
+                                        ? "warning"
+                                        : "text.disabled"}
+                                                fontWeight={600}>
+                                        {NO_TEXT}
+                                    </Typography>
+                                </>)}
+                        </Stack>
+                    )}
+                </Box>),
+                width: 120,
+            },
+            {
+                field: "supplierName",
                 headerName: "Поставщик",
                 disableColumnMenu: true,
-                renderCell: (params: any) => (params.row.supplier.name),
+                renderCell: (params: any) => (params.row?.supplier?.name),
+                sortable: true,
+                filterable: true,
                 flex: 1,
             },
             {
@@ -91,40 +159,21 @@ const InvoicesTable = () => {
                 field: "amount",
                 headerName: "Сумма",
                 disableColumnMenu: true,
-                flex: 0.5,
+                width: 140,
             },
             {
                 field: "is_with_vat",
                 headerName: "НДС",
                 disableColumnMenu: true,
+                sortable: false,
                 renderCell: (params: any) => (params.row.is_with_vat ? "Да" : "Нет"),
-                flex: 0.2,
-            },
-            {
-                field: "paid_is_paid",
-                headerName: "Оплачен",
-                disableColumnMenu: true,
-                renderCell: (params: any) => (<Box sx={{
-                    width: '100%',
-                    height: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                }}>
-                    {params.row.paid_is_paid ? (
-                        convertMillisecondsToDate(+params.row.paid_date)
-                    ) : (
-                        <Typography color={"warning"}>
-                            {params.row.cancel_is_cancel ? CANCEL_TEXT : NO_TEXT}
-                        </Typography>
-                    )}
-                </Box>),
-                flex: 0.3,
+                width: 60,
             },
             {
                 field: "invoice_file_link",
                 headerName: "Счёт",
                 disableColumnMenu: true,
+                sortable: false,
                 renderCell: (params: any) => {
                     const invoiceLink = params.row.invoice_file_link ?? "";
                     const isInvoiceLinkPdf = /\.pdf(\?|#|$)/i.test(invoiceLink);
@@ -147,6 +196,7 @@ const InvoicesTable = () => {
                 field: "payment_invoice_link",
                 headerName: "ПП",
                 disableColumnMenu: true,
+                sortable: false,
                 renderCell: (params: any) => {
                     const paymentLink = params.row.paid_payment_order_file_link;
                     const isPaymentLinkPdf = /\.pdf(\?|#|$)/i.test(paymentLink);
@@ -172,8 +222,6 @@ const InvoicesTable = () => {
         ],
         [onToggleApproved],
     );
-
-
     return (
         <Box
             sx={{
@@ -183,12 +231,29 @@ const InvoicesTable = () => {
                 "& .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-columnHeader:focus-within": {
                     outline: "none",
                 },
-
+                position: "relative",
             }}
         >
+            {filterChangeHandler && filterValue && (
+                <Stack direction={"row"}
+                       alignItems={"center"}
+                       spacing={2}
+                       sx={{position: "absolute", left: 10, top: 10, zIndex: 3}}>
+                    <Typography>
+                        Показать:
+                    </Typography>
+                    <EditableSelect
+                        value={filterValue}
+                        onChange={filterChangeHandler}
+                        options={filterOptions}
+                        optionLabels={filterOptionLabels}
+                        placeholder="Выберите"
+                    />
+                </Stack>
+            )}
             <MyDataGrid
                 tableName={"invoices"}
-                rows={rows}
+                rows={adaptiveRows}
                 columns={columns}
                 loading={isLoading}
                 onRowClick={handleRowClick}

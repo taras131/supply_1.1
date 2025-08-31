@@ -1,10 +1,15 @@
 import {ChangeEvent, useState} from "react";
-import { pdfjs } from "react-pdf";
+import {pdfjs} from "react-pdf";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
     "pdfjs-dist/build/pdf.worker.min.mjs",
     import.meta.url
 ).toString();
+
+const extractInnsByOrder = (text: string): string[] => {
+    const inns = Array.from(text.matchAll(/ИНН\D{0,12}(\d{10,12})/giu)).map(m => m[1]);
+    return inns;
+};
 
 const isPdfFile = async (file: File): Promise<boolean> => {
     if (!file) return false;
@@ -15,7 +20,7 @@ const isPdfFile = async (file: File): Promise<boolean> => {
         const header = new Uint8Array(await file.slice(0, 5).arrayBuffer());
         const signature = new TextDecoder("ascii").decode(header);
         if (signature === "%PDF-") return true;
-    } catch(e) {
+    } catch (e) {
         console.log(e);
     }
     return false;
@@ -77,7 +82,7 @@ type Accounts = { payer: string | null; recipient: string | null; all: string[] 
 const extractAccounts = (text: string): Accounts => {
     const reAll = /Сч\.\s*№\s*(\d{20})/gu;
     const all: string[] = [];
-    for (let m: RegExpExecArray | null; (m = reAll.exec(text)) !== null; ) {
+    for (let m: RegExpExecArray | null; (m = reAll.exec(text)) !== null;) {
         all.push(m[1]);
     }
 
@@ -96,21 +101,16 @@ const extractAccounts = (text: string): Accounts => {
         }
     }
 
-    return { payer, recipient, all };
+    return {payer, recipient, all};
 };
 
-export interface IFileWithAmount {
-    file: File,
-    amount: number;
-    payer?: string
-    recipient?: string
-}
 
 export interface IFileWithAmount {
     file: File;
     amount: number;
     payer?: string;
     recipient?: string;
+    recipient_inn: string | null;
     error?: string;
 }
 
@@ -131,7 +131,7 @@ export const useUploadPaymentFile = () => {
             return;
         }
         for (const file of files) {
-            const entry: IFileWithAmount = { file, amount: 0 };
+            const entry: IFileWithAmount = {file, amount: 0, recipient_inn: null};
             const fileIsValid = await isPdfFile(file);
             if (!fileIsValid) {
                 entry.error = `Файл ${file.name} не является PDF.`;
@@ -164,6 +164,8 @@ export const useUploadPaymentFile = () => {
             entry.amount = amt;
             if (accs.payer) entry.payer = accs.payer;
             if (accs.recipient) entry.recipient = accs.recipient;
+            const inns = extractInnsByOrder(text);
+            (entry as any).recipient_inn = inns[1] ?? null;
             tempArr.push(entry);
         }
         setFilesWithAmount(tempArr);

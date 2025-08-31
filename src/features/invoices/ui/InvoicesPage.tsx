@@ -1,16 +1,20 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import InvoicesPageHeader from "./InvoicesPageHeader";
 import InvoicesTable from "./InvoicesTable";
 import {Stack} from "@mui/material";
 import AInvoicesMigration from "./AInvoicesMigration";
 import {useAppDispatch} from "../../../hooks/redux";
-import {fetchGetAllInvoices} from "../model/actions";
+import {fetchGetAllInvoices, TInvoiceFilter} from "../model/actions";
 
 const InvoicesPage = () => {
     const dispatch = useAppDispatch();
+    const [filterValue, setFilterValue] = useState<TInvoiceFilter>("all");
+    const filterChangeHandler = (e: TInvoiceFilter) => {
+        setFilterValue(e)
+    }
     useEffect(() => {
-        dispatch(fetchGetAllInvoices());
-    }, [dispatch]);
+        dispatch(fetchGetAllInvoices(filterValue));
+    }, [dispatch, filterValue]);
     return (
         <Stack sx={{
             width: '100%',
@@ -18,7 +22,9 @@ const InvoicesPage = () => {
             pt: 1.5,
         }}>
             <InvoicesPageHeader/>
-            <InvoicesTable/>
+            <InvoicesTable filterValue={filterValue}
+                           filterChangeHandler={filterChangeHandler}
+            />
             <AInvoicesMigration/>
         </Stack>
     );

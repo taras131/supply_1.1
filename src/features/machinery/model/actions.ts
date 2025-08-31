@@ -48,7 +48,7 @@ export const fetchAddMachinery = createAsyncThunk<IMachinery, IAddMachinery, Thu
     },
 );
 
-export const fetchGetAllMachinery = createAsyncThunk("fetch_get_all_machinery", async (_, {rejectWithValue}) => {
+export const fetchGetAllMachinery = createAsyncThunk("machinery/get_all", async (_, {rejectWithValue}) => {
     try {
         return await machineryAPI.getAll();
     } catch (e) {
@@ -57,10 +57,17 @@ export const fetchGetAllMachinery = createAsyncThunk("fetch_get_all_machinery", 
 });
 
 export const fetchGetMachineryById = createAsyncThunk(
-    "fetch_get_machinery_by_id",
+    "machinery/get_by_id",
     async (machinery_id: string, {rejectWithValue, dispatch}) => {
         try {
-            const {docs, problems, tasks, comments, orders, ...machinery} = await machineryAPI.getById(machinery_id);
+            const {
+                docs,
+                problems,
+                tasks,
+                comments,
+                orders,
+                ...machinery
+            } = await machineryAPI.getById(machinery_id);
             dispatch(setDocs(docs));
             dispatch(setProblems(problems));
             dispatch(setTasks(tasks));
@@ -75,7 +82,7 @@ export const fetchGetMachineryById = createAsyncThunk(
 );
 
 export const fetchUpdateMachinery = createAsyncThunk(
-    "fetch_update_machinery",
+    "machinery/update",
     async (machinery: ICurrentMachinery | IMachinery, {rejectWithValue, dispatch}) => {
         try {
             return await machineryAPI.update(machinery);

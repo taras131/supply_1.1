@@ -29,11 +29,11 @@ const UploadPayment: FC<IProps> = ({invoice, forDetailsMode = false}) => {
         isLoading,
         resetFiles
     } = useUploadPaymentFile();
-    const closeModal = () => {
+    const closeModal = useCallback(() => {
         setModalMessage("")
         setOpenModal(false)
         resetFiles();
-    }
+    }, [setModalMessage, setOpenModal, resetFiles]);
     const invoiceLoading = useAppSelector(selectInvoicesIsLoading)
     const uploadFile = useCallback((file: File) => {
         if (file && invoice) {
