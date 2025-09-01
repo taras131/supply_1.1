@@ -26,7 +26,7 @@ export interface IOrderPosition extends INewOrderPosition {
     order_id: string;
 }
 
-export const unitMeasures = ["шт", "комп", "метр", "кг"]
+export const unitMeasures = ["шт", "комп", "метр", "кг", "литр"]
 
 export const emptyOrderPosition: INewOrderPosition = {
     id: 0,

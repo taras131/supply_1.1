@@ -1,25 +1,8 @@
 import React from "react";
 import {routes} from "../utils/routes";
-/*import Invoices from "../features/invoices/ui/Invoices";*/
 import {Navigate} from "react-router-dom";
-/*import InvoiceDetails from "../features/invoices/ui/InvoiceDetails";
-import InvoicesAddNew from "../features/invoices/ui/InvoicesAddNew";
-import Shipments from "../features/shipments/ui/Shipments";
-import ShipmentsAddNew from "../features/shipments/ui/ShipmentsAddNew";*/
 import UsersPage from "../features/users/ui/UsersPage";
 import Profile from "../features/auth/ui/Profile";
-/*import MachineryPage from "../features/machinery/ui/MachineryPage";
-import MachineryDetailsPage from "../features/machinery/ui/MachineryDetailsPage";
-import MachineryAddNewPage from "../features/machinery/ui/MachineryAddNewPage";
-import TaskAddNewPage from "../features/machinery_tasks/ui/TaskAddNewPage";
-import TaskDetailsPage from "../features/machinery_tasks/ui/TaskDetailsPage";
-import SigInPage from "../features/auth/ui/SigInPage";
-import RegisterPage from "../features/auth/ui/RegisterPage";
-import ProblemsPage from "../features/machinery_problems/ui/ProblemsPage";
-import TasksPage from "../features/machinery_tasks/ui/TasksPage";
-import MachineryCommentsPage from "../features/machinery_comments/ui/MachineryCommentsPage";
-import MachineryMaintenancePage from "../features/machinery/ui/MachineryMaintenancePage";
-import SuppliersPage from "../features/suppliers/ui/SuppliersPage";*/
 import OrdersPage from "../features/orders/ui/OrdersPage";
 import OrderDetailsPage from "../features/orders/ui/OrderDetailsPage";
 import OrdersAddNewPage from "../features/orders/ui/OrdersAddNewPage";
@@ -39,6 +22,8 @@ import SuppliersPage from "../features/suppliers/ui/SuppliersPage";
 import InvoicesPage from "../features/invoices/ui/InvoicesPage";
 import InvoiceAddNewPage from "../features/invoices/ui/InvoiceAddNewPage";
 import InvoiceDetailsPage from "../features/invoices/ui/InvoiceDetailsPage";
+import ShipmentsPage from "../features/shipments/ui/ShipmentsPage";
+import ShipmentsAddNewPage from "../features/shipments/ui/ShipmentsAddNewPage";
 
 export interface IRouteConfig {
     icon: React.ReactNode;
@@ -73,8 +58,20 @@ export const routesConfig: IRouteConfig[] = [
         label: "Поставщики",
         showInMenu: true
     },
-    /*  {path: routes.shipments, element: <Shipments/>, label: "Отгрузки", showInMenu: true},*/
-    /*   {path: routes.addNewShipments, element: <ShipmentsAddNew/>, label: "Новая отгрузка", showInMenu: false},*/
+    {
+        icon: <HomeRoundedIcon/>,
+        path: routes.shipments,
+        element: <ShipmentsPage/>,
+        label: "Отгрузки",
+        showInMenu: true
+    },
+    {
+        icon: <HomeRoundedIcon/>,
+        path: routes.shipmentsAddNew,
+        element: <ShipmentsAddNewPage/>,
+        label: "Новая отгрузка",
+        showInMenu: false
+    },
     {icon: <HomeRoundedIcon/>, path: routes.orders, element: <OrdersPage/>, label: "Заявки", showInMenu: true},
     {
         icon: <HomeRoundedIcon/>,

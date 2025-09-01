@@ -9,6 +9,10 @@ import {machineryTypes} from "../utils/const";
 import {selectMachineryIsLoading} from "../model/selectors";
 import {MyDataGrid} from "../../../styles/theme/customizations/MyDataGrid";
 import MyButton from "../../../styles/theme/customizations/MyButton";
+import {Stack, Typography} from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import {convertMillisecondsToDateWithTextMonths} from "../../../utils/services";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 
 interface IProps {
     rows: IMachinery[];
@@ -67,7 +71,7 @@ const MachineryMaintenanceTable: FC<IProps> = ({rows}) => {
         },
         {
             field: "last_completed_service_task",
-            headerName: "Последнее завершённое ТО",
+            headerName: "Последнее ТО",
             disableColumnMenu: true,
             flex: 1,
             renderCell: (params: any) => {
@@ -77,11 +81,21 @@ const MachineryMaintenanceTable: FC<IProps> = ({rows}) => {
                 return (
                     <>
                         {params.row.last_completed_service_task ? (
-                            <RelatedTasksItem
-                                task={params.row.last_completed_service_task}
-                                taskClickHandler={taskClickHandler}
-                                isMaintenanceMode={true}
-                            />
+                            <Stack direction={"row"}
+                                   spacing={1}
+                                   alignItems={"center"}
+                                   sx={{height: "100%", cursor: "pointer"}}
+                                   onClick={taskClickHandler}>
+                                <CheckCircleIcon color="success"/>
+                                <Typography fontWeight={650} fontSize="14px">
+                                    {convertMillisecondsToDateWithTextMonths(+params.row.last_completed_service_task.result_date)}
+                                </Typography>
+                                <Typography fontWeight={650} fontSize="14px">
+                                    {params.row.last_completed_service_task.result_operating
+                                        ? `${params.row.last_completed_service_task.result_operating} ч`
+                                        : `${params.row.last_completed_service_task.result_operating} км`}
+                                </Typography>
+                            </Stack>
                         ) : (
                             "Нет завершённых ТО"
                         )}
@@ -108,11 +122,21 @@ const MachineryMaintenanceTable: FC<IProps> = ({rows}) => {
                 return (
                     <>
                         {params.row.next_service_task ? (
-                            <RelatedTasksItem
-                                task={params.row.next_service_task}
-                                taskClickHandler={taskClickHandler}
-                                isMaintenanceMode={true}
-                            />
+                            <Stack direction={"row"}
+                                   spacing={1}
+                                   alignItems={"center"}
+                                   sx={{height: "100%", cursor: "pointer"}}
+                                   onClick={taskClickHandler}>
+                                <AccessTimeIcon color="warning"/>
+                                <Typography fontWeight={650} fontSize="14px">
+                                    {convertMillisecondsToDateWithTextMonths(+params.row.next_service_task.due_date)}
+                                </Typography>
+                                <Typography fontWeight={650} fontSize="14px">
+                                    {params.row.next_service_task.issue_operating
+                                        ? `${params.row.next_service_task.issue_operating} ч`
+                                        : `${params.row.next_service_task.issue_odometer} км`}
+                                </Typography>
+                            </Stack>
                         ) : (
                             <MyButton onClick={plannedClickHandler}>Запланировать</MyButton>
                         )}

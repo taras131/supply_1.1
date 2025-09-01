@@ -17,9 +17,12 @@ import {fetchAddInvoice} from "../model/actions";
 import {fetchGetOrdersForNewInvoice} from "../../orders/model/actions";
 import {selectOrders} from "../../orders/model/selectors";
 import OrdersSection from "./OrdersSection";
+import {readText as readPdfText} from "../../../utils/readPdfText";
+import {ParsedInvoice} from "../utils/invoiceParsers";
+import {parseDocxInvoice, parsePdfInvoiceText} from "../utils/invoiceFileReaders";
+import {parseExcelInvoice} from "../utils/parseExcelInvoice";
 
 export type SelectedByOrder = Record<string, string[]>; // { [orderId]: [positionId, ...] }
-
 
 const InvoiceAddNewPage = () => {
     const dispatch = useAppDispatch();
@@ -43,10 +46,10 @@ const InvoiceAddNewPage = () => {
                 ? current.filter(id => id !== positionId)
                 : [...current, positionId];
             if (nextForOrder.length === 0) {
-                const { [orderId]: _removed, ...rest } = prev;
+                const {[orderId]: _removed, ...rest} = prev;
                 return rest; // без пустого массива
             }
-            return { ...prev, [orderId]: nextForOrder };
+            return {...prev, [orderId]: nextForOrder};
         });
     }, []);
     const selectedPositionIds = useMemo(() => {
@@ -55,12 +58,51 @@ const InvoiceAddNewPage = () => {
     const handleWithVatChange = () => {
         setEditedValue(prev => ({...prev, is_with_vat: !prev.is_with_vat}));
     }
-    const handleChangeInputFile = (e: ChangeEvent<HTMLInputElement>) => {
+    const handleChangeInputFile = async (e: ChangeEvent<HTMLInputElement>) => {
         const list = e.currentTarget.files;
-        if (list) {
-            setFile(list[0]);
+        if (!list || !list[0]) return;
+        const f = list[0];
+        setFile(f);
+        try {
+            const lower = (f.name || "").toLowerCase();
+            let parsed: ParsedInvoice | null = null;
+            const name = (f.name || "").toLowerCase();
+            const type = f.type;
+            if (type === "application/pdf" || name.endsWith(".pdf")) {
+                const text = await readPdfText(f, () => {
+                });
+                parsed = await parsePdfInvoiceText(text);
+            } else if (lower.endsWith(".xlsx") || lower.endsWith(".xls")) {
+                parsed = await parseExcelInvoice(f);
+
+            } else if (
+                type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+                name.endsWith(".docx")
+            ) {
+                parsed = await parseDocxInvoice(f);
+            }
+            console.log(parsed);
+            if (parsed) {
+                setEditedValue(prev => ({
+                    ...prev,
+                    amount: parsed?.amount ?? 0,
+                    number: parsed?.number?.split("от")[0] ?? "",
+                    is_with_vat: parsed?.isWithVat ?? true,
+                    supplier_id: (() => {
+                        const inn = parsed?.supplierInn?.trim();
+                        if (!inn) return "-1";
+                        const found = suppliers.find(s => {
+                            // предполагаем, что в suppliers есть поле inn / ИНН
+                            return (s.inn?.replace(/\s/g, "") ?? "") === inn;
+                        });
+                        return found?.id ?? "-1";
+                    })(),
+                }));
+            }
+        } catch (err: any) {
+            console.log(err);
         }
-    }
+    };
     const saveClickHandler = async () => {
         try {
             await dispatch(fetchAddInvoice({invoice: {...editedValue, positions_id: selectedPositionIds}, file: file}));
@@ -141,6 +183,7 @@ const InvoiceAddNewPage = () => {
                         <MyButton
                             variant="contained"
                             component="label"
+                            color={file && file.name ? "warning" : "primary"}
                             fullWidth
                             startIcon={file && file.name ? <AutorenewIcon/> : <AttachFileIcon/>}
                             sx={{height: "100%"}}
@@ -154,7 +197,7 @@ const InvoiceAddNewPage = () => {
                             bottom: "-25px"
                         }}>
                             {file && file.name && <Typography variant={"subtitle2"} textAlign={"end"}>
-                                Файл: {file.name}
+                                Файл: {file.name.length > 40 ? file.name.slice(0, 40 - 1) + "…" : file.name}
                             </Typography>}
                         </Box>
                     </Box>

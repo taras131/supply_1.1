@@ -38,6 +38,7 @@ interface IProps {
     selectable?: boolean;
     selectedIds?: string[];
     onToggleChecked?: (orderId: string, positionId: string) => void;
+    isNewOrder?: boolean;
 }
 
 const OrderPositionsTable: FC<IProps> = ({
@@ -55,6 +56,7 @@ const OrderPositionsTable: FC<IProps> = ({
                                              selectable = false,
                                              selectedIds,
                                              onToggleChecked,
+                                             isNewOrder = false
                                          }) => {
     const apiRef = useGridApiRef();
     const [cellModesModel, setCellModesModel] = useState<GridCellModesModel>({});
@@ -254,7 +256,7 @@ const OrderPositionsTable: FC<IProps> = ({
                 cellClassName: 'editable-cell',
             });
         }
-        if (!selectable) {
+        if (!selectable && !isNewOrder) {
             base.push({
                 field: 'invoice',
                 headerName: 'Поставщик',
@@ -283,7 +285,6 @@ const OrderPositionsTable: FC<IProps> = ({
                 },
             })
         }
-
         if (canDelete) {
             base.push({
                 field: 'delete',

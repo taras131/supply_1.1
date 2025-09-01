@@ -175,7 +175,9 @@ export const supplierValidate = (supplier: ISupplier | INewSupplier) => {
 
 export const orderValidate = (order: INewOrder | IOrder) => {
     const errors: ValidationErrors = {};
-    if (order.title.length === 0) errors.title = "Название заявки должно быть";
+    if (order.title.length === 0) errors.title = "Заголовок заявки должно быть";
+    if (order.positions?.filter(position => !!position.name
+        || !!position.catalog_number).length === 0) errors.title = "Должна быть хотя бы 1 позиция";
     return errors;
 }
 

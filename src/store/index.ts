@@ -7,7 +7,7 @@ import companiesReducer from "../features/companies/model/slice";
 import filesReducer from "../features/files/model/slice";
 import SuppliersReducer from "../features/suppliers/model/slice";
 import InvoicesReducer from "../features/invoices/model/slice";
-/*import shipmentsReducer from "../features/shipments/model/slice";*/
+import shipmentsReducer from "../features/shipments/model/slice";
 import ordersReducer from "../features/orders/model/slice";
 import ordersPositionsReducer from "../features/orders_positions/model/slice";
 import machineryReducer from "../features/machinery/model/slice";
@@ -21,7 +21,7 @@ const rootReducer = combineReducers({
     suppliers: SuppliersReducer,
     message: MessageReducer,
     auth: authReducer,
-    /*  shipments: shipmentsReducer,*/
+    shipments: shipmentsReducer,
     orders: ordersReducer,
     ordersPositions: ordersPositionsReducer,
     machinery: machineryReducer,

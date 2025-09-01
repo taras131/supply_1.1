@@ -96,7 +96,6 @@ const OrdersAddNewPage = () => {
                         : p
                 ),
             }));
-
         },
         [setEditedValue]
     );
@@ -162,7 +161,9 @@ const OrdersAddNewPage = () => {
                spacing={3}>
             <OrdersAddNewPageHeader saveClickHandler={saveClickHandler}
                                     resetOrder={resetOrder}
-                                    isLoading={isLoading}/>
+                                    isLoading={isLoading}
+                                    setEditedValue={setEditedValue}
+                                    errors={errors}/>
             <Card sx={{padding: "24px"}}>
                 <OrderDetailsForm editedValue={editedValue}
                                   handleFieldChange={handleFieldChange}/>
@@ -179,6 +180,7 @@ const OrdersAddNewPage = () => {
                 deletePositionHandler={deletePositionHandler}
                 titleChangeHandler={titleChangeHandler}
                 title={editedValue.title}
+                isNewOrder
             />
         </Stack>
     );

@@ -8,6 +8,7 @@ export const ordersAPI = {
         const payload = {
             ...order,
             positions: (order.positions ?? []).map(({id, ...pos}) => pos),
+            machinery_id: order.machinery_id === "-1" ? null : order.machinery_id,
         };
         const res = await appAPI.post(ordersPath, payload);
         return res.data;
@@ -30,28 +31,8 @@ export const ordersAPI = {
             ...order,
             approved_date: order.approved_date ? +order.approved_date : 0,
             cancel_date: order.cancel_date ? +order.cancel_date : 0,
+            machinery_id: order.machinery_id === "-1" ? null : order.machinery_id,
         });
         return res.data;
     }
-    /*  updateOrder: async (order: IOrder) => {
-        const res = await updateDoc(doc(db, "orders", order.id), {
-          title: order.title,
-          shipmentType: order.shipmentType,
-          orderType: order.orderType,
-          orderItems: order.orderItems,
-          comment: order.comment,
-          isCancelled: order.isCancelled ? order.isCancelled : false,
-        });
-        return res;
-      },*/
-    /*  updateOrderApproved: async (updateApprovedOrderData: IUpdateApprovedOrderData) => {
-        const res = await updateDoc(doc(db, "orders", updateApprovedOrderData.orderId), {
-          approved: {
-            isApproved: updateApprovedOrderData.newApproved.is_approved,
-            userId: updateApprovedOrderData.newApproved.userId,
-            date: updateApprovedOrderData.newApproved.date,
-          },
-        });
-        return res;
-      },*/
 };

@@ -8,7 +8,7 @@ export const selectSuppliers = createSelector([selectSuppliersState], (suppliers
 });
 
 export const selectSuppliersForOptions = createSelector([selectSuppliersState], (suppliersState) => {
-    return suppliersState.list.map(supplier => ({id: supplier.id, title: supplier.name}));
+    return suppliersState.list.map(supplier => ({id: supplier.id, title: supplier.name, inn: supplier.INN}));
 });
 
 export const selectSupplierById = createSelector(

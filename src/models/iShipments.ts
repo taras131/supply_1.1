@@ -27,6 +27,7 @@ export interface INewShipments {
     receiving_is_receiving?: boolean;
     receiving_date?: number;
     invoices_id: string [];
+    type: string
 }
 
 export interface IShipments extends INewShipments {
@@ -52,6 +53,7 @@ export const emptyShipment: INewShipments = {
     receiving_is_receiving: false,
     receiving_date: 0,
     invoices_id: [],
+    type: 'air',
 }
 
 export const defaultShipment: IShipments = {
