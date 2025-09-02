@@ -75,7 +75,7 @@ export const InvoicesSlice = createSlice({
             })
             .addCase(fetchGetAllInvoices.fulfilled, (state, action: PayloadAction<IInvoice []>) => {
                 state.list = action.payload.sort((a, b) => {
-                    return a.author_date - b.author_date
+                    return b.author_date - a.author_date
                 });
             })
             .addCase(fetchUpdateInvoice.fulfilled, (state, action: PayloadAction<IInvoice>) => {

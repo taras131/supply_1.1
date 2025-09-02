@@ -86,11 +86,10 @@ const InvoicesTable: FC<IProps> = ({filterValue, filterChangeHandler}) => {
                 width: 80,
             },
             {
-                field: "created_at",
+                field: "author_date",
                 headerName: "Добавлен",
                 disableColumnMenu: true,
-                renderCell: (params: any) => (convertMillisecondsToDateWithTextMonths(
-                    new Date(params.row.created_at).getTime())),
+                renderCell: (params: any) => (convertMillisecondsToDateWithTextMonths(+params.row.author_date)),
                 width: 90,
             },
             {

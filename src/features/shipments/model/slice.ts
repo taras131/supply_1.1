@@ -1,6 +1,7 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {IShipments, Transporter, TShipmentsType} from "../../../models/iShipments";
 import {ALL} from "../../../utils/const";
+import {fetchAddShipment, fetchGetAllShipment} from "./actions";
 
 
 interface IShipmentsState {
@@ -41,6 +42,31 @@ export const ShipmentSlice = createSlice({
             state.search = action.payload;
         },
     },
+    extraReducers: (builder) => {
+        builder
+            .addCase(fetchAddShipment.fulfilled, (state, action: PayloadAction<IShipments>) => {
+                state.list = [action.payload, ...state.list]
+            })
+            .addCase(fetchGetAllShipment.fulfilled, (state, action: PayloadAction<IShipments[]>) => {
+                state.list = action.payload.sort((a, b) => {
+                    return b.author_date - a.author_date
+                })
+            })
+
+            .addCase(fetchAddShipment.pending, (state) => {
+                state.isLoading = false
+            })
+            .addCase(fetchGetAllShipment.pending, (state) => {
+                state.isLoading = false
+            })
+
+            .addCase(fetchAddShipment.rejected, (state) => {
+                state.isLoading = false
+            })
+            .addCase(fetchGetAllShipment.rejected, (state) => {
+                state.isLoading = false
+            })
+    }
 
 });
 

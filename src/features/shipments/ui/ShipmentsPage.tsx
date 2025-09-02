@@ -1,14 +1,18 @@
-import React from "react";
-import {useAppSelector} from "../../../hooks/redux";
-import {selectShipments} from "../model/selectors";
+import React, {useEffect} from "react";
+import {useAppDispatch} from "../../../hooks/redux";
 import ShipmentsHelper from "./ShipmentsHelper";
-import {Stack, Typography} from "@mui/material";
+import {Stack} from "@mui/material";
 import ShipmentsPageHeader from "./ShipmentsPageHeader";
-import ShipmentsList from "./ShipmentsList";
+import {fetchGetAllShipment} from "../model/actions";
+import AShipmentsMigration from "./AShipmentsMigration";
+import ShipmentsSection from "./ShipmentsSection";
 
 
 const ShipmentsPage = () => {
-    const shipments = useAppSelector(selectShipments);
+    const dispatch = useAppDispatch();
+    useEffect(() => {
+        dispatch(fetchGetAllShipment());
+    }, [dispatch]);
     return (
         <Stack sx={{
             width: '100%',
@@ -16,12 +20,9 @@ const ShipmentsPage = () => {
             pt: 1.5,
         }}>
             <ShipmentsPageHeader/>
-            {shipments.length
-                ? (<ShipmentsList shipments={shipments}/>)
-                : (<Typography pb={4} pt={4} fontSize={28}>
-                    ничего не найдено, измените условия поиска
-                </Typography>)}
+            <ShipmentsSection/>
             <ShipmentsHelper/>
+            <AShipmentsMigration/>
         </Stack>
     );
 };

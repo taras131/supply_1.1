@@ -54,25 +54,7 @@ const ShipmentsAddNewPage: FC = () => {
       setIsValidate(false);
     }
   }, [transporter, type, filePatch, isUploadFileLoading, selectedInvoices, ladingNumber]);
-  const handleChangeSelectedInvoices = (invoiceId: string) => {
-    const isContains = selectedInvoices.find((invoice) => invoice.invoiceId === invoiceId) !== undefined;
-    if (isContains) {
-      setSelectedInvoices((prev) => [...prev.filter((shipment) => shipment.invoiceId !== invoiceId)]);
-    } else {
-      setSelectedInvoices((prev) => [...prev, { invoiceId: invoiceId, volume: "completely" }]);
-    }
-  };
-  const handleValueChange = (invoiceId: string, newValue: TShipmentInvoiceValue) => {
-    setSelectedInvoices((prev) => [
-      ...prev.map((selectedInvoice) => {
-        if (selectedInvoice.invoiceId === invoiceId) {
-          return { ...selectedInvoice, volume: newValue };
-        } else {
-          return selectedInvoice;
-        }
-      }),
-    ]);
-  };
+
   const transporterList = transporters.map((transporter) => (
     <MenuItem key={transporter} value={transporter}>
       {transporter}

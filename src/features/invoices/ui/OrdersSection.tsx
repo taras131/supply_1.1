@@ -91,7 +91,6 @@ const OrdersSection: FC<IProps> = ({
                         {ordersWithPositions.map((order, idx) => {
                             const total = order.positions?.length ?? 0;
                             const selectedCount = (selectedByOrder[order.id] ?? []).length;
-
                             return (
                                 <ListItemButton
                                     key={order.id}

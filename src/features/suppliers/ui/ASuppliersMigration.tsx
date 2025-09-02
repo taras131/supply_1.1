@@ -48,9 +48,9 @@ function ASuppliersMigration() {
                 }, 1000);
             };
             await dispatchWithDelay(suppliers);
-            console.log('Invoices migration complete. Count:', suppliers.length);
+            console.log('Suppliers migration complete. Count:', suppliers.length);
         } catch (e) {
-            console.error('Invoices migration failed:', e);
+            console.error('Suppliers migration failed:', e);
         }
     };
     return <Button onClick={clickHandler}>Стащить</Button>;

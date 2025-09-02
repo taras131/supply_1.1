@@ -43,6 +43,7 @@ export const orderCategories = [
 ];
 
 export interface INewOrder {
+    author_id?: string;
     firebase_id?: string;
     title: string;
     category?: string;
@@ -56,7 +57,7 @@ export interface INewOrder {
     cancel_author_id?: string | null;
     machinery_id?: string | null;
     positions: INewOrderPosition[];
-    created_at?: Date | string;
+    author_date: number;
 }
 
 export interface IOrder extends Omit<INewOrder, 'positions'> {
@@ -91,6 +92,7 @@ export const emptyOrder: INewOrder = {
     cancel_author_id: null,
     machinery_id: "-1",
     positions: [emptyOrderPosition],
+    author_date: 0,
 };
 
 export const defaultOrder: IOrder = {
@@ -113,4 +115,5 @@ export const defaultOrder: IOrder = {
     cancel_author: null,
     created_at: new Date(),
     updated_at: new Date(),
+    author_date: 0,
 };

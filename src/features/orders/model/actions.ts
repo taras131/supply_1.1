@@ -13,7 +13,9 @@ export const fetchAddOrder = createAsyncThunk<
     "orders/add_new",
     async (order, {rejectWithValue, dispatch}) => {
         try {
-            return await ordersAPI.add(order);
+            const actualData = new Date().getTime()
+            const order_in = {...order, author_date: order.author_date === 0 ? actualData : order.author_date}
+            return await ordersAPI.add(order_in);
         } catch (e) {
             const msg = handlerError(e);
             dispatch(setModalMessage(msg));
@@ -66,16 +68,17 @@ export interface IUpdateApprovedOrderData {
 }
 
 export const fetchUpdateOrder = createAsyncThunk("orders/update",
-    async (order: IOrder, {rejectWithValue, dispatch
-}) => {
-    try {
-        return await ordersAPI.update(order);
-    } catch (e) {
-        const msg = handlerError(e);
-        dispatch(setModalMessage(msg));
-        return rejectWithValue(msg);
-    }
-});
+    async (order: IOrder, {
+        rejectWithValue, dispatch
+    }) => {
+        try {
+            return await ordersAPI.update(order);
+        } catch (e) {
+            const msg = handlerError(e);
+            dispatch(setModalMessage(msg));
+            return rejectWithValue(msg);
+        }
+    });
 
 /*export const fetchUpdateOrderApproved = createAsyncThunk(
   "update_order_approved",

@@ -1,10 +1,16 @@
-import {addDoc, collection, doc, updateDoc} from "firebase/firestore";
-import {db} from "../../../firebase";
 import {INewShipments} from "../../../models/iShipments";
+import {appAPI, nestServerPath} from "../../../api";
+
+const shipmentsPath = `${nestServerPath}/shipment`
 
 export const shipmentsAPI = {
-    addShipment: async (shipment: INewShipments) => {
-        return await addDoc(collection(db, "shipments"), shipment);
+    add: async (shipment: INewShipments) => {
+        const res = await appAPI.post(shipmentsPath, shipment)
+        return await res.data;
+    },
+    getAll: async () => {
+        const res = await appAPI.get(shipmentsPath)
+        return await res.data;
     },
 
 };

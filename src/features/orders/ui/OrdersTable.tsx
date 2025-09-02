@@ -4,7 +4,11 @@ import {GridEventListener} from "@mui/x-data-grid";
 import {routes} from "../../../utils/routes";
 import {useAppSelector} from "../../../hooks/redux";
 import {selectOrders, selectOrdersIsLoading} from "../model/selectors";
-import {formatDateDDMMYYYY} from "../../../utils/services";
+import {
+    convertMillisecondsToDate,
+    convertMillisecondsToDateWithTextMonths,
+    formatDateDDMMYYYY
+} from "../../../utils/services";
 import AirplanemodeActiveIcon from "@mui/icons-material/AirplanemodeActive";
 import DirectionsSubwayIcon from "@mui/icons-material/DirectionsSubway";
 import CompletionBar from "./CompletionBar";
@@ -29,11 +33,11 @@ const OrdersTable: FC = () => {
     const columns = useMemo<any>(
         () => [
             {
-                field: "created_at",
+                field: "author_date",
                 headerName: "Дата",
                 disableColumnMenu: true,
-                renderCell: (params: any) => (formatDateDDMMYYYY(params.row.created_at)),
-                flex: 0.1,
+                renderCell: (params: any) => (convertMillisecondsToDate(+params.row.author_date)),
+                width: 100,
             },
             {
                 field: "type",

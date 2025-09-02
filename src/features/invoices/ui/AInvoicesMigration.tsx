@@ -11,7 +11,7 @@ import {userAPI} from "../../users/api";
 async function mapDocToNewInvoiceAsync(doc: any): Promise<INewInvoice> {
     const data = doc.data() ?? {};
     return {
-        firebase_id: data.id,
+        firebase_id: String(doc.id),
         amount: data.amount || 0,
 
         approved_date: data.approved?.date,
@@ -49,42 +49,54 @@ const AInvoicesMigration: React.FC = () => {
             );
             const dispatchWithDelay = async (items: INewInvoice[], index = 0) => {
                 console.log(items[index]);
-                const supplier = await suppliersAPI.getByFirebaseId(items[index].supplier_id);
-                let author = null
+                const supplierId = items[index].supplier_id
+                if (supplierId) {
+                    try {
+                        items[index].supplier_id = await suppliersAPI.getByFirebaseId(items[index].supplier_id)
+                    } catch (e) {
+                        console.log(e)
+                    }
+                }
                 const authorId = items[index].author_id
                 if (authorId) {
-                    author = await userAPI.getByFirebaseId(authorId);
+                    try {
+                        items[index].author_id = await userAPI.getByFirebaseId(authorId);
+                    } catch (e) {
+                        console.log(e)
+                    }
                 }
-                let paid_user = null
                 const paidUserId = items[index].paid_user_id
                 if (paidUserId) {
-                    paid_user = await userAPI.getByFirebaseId(paidUserId);
+                    try {
+                        items[index].paid_user_id = await userAPI.getByFirebaseId(paidUserId);
+                    } catch (e) {
+                        console.log(e)
+                    }
                 }
-
-                let cancel_user = null
                 const cancelUserId = items[index].cancel_user_id
                 if (cancelUserId) {
-                    cancel_user = await userAPI.getByFirebaseId(cancelUserId);
+                    try {
+                        items[index].cancel_user_id = await userAPI.getByFirebaseId(cancelUserId);
+                    } catch (e) {
+                        console.log(e)
+                    }
                 }
-
-                let approved_user = null
                 const approvedUserId = items[index].approved_user_id
                 if (approvedUserId) {
-                    approved_user = await userAPI.getByFirebaseId(approvedUserId);
+                    try {
+                        items[index].approved_user_id = await userAPI.getByFirebaseId(approvedUserId);
+                    } catch (e) {
+                        console.log(e)
+                    }
                 }
                 if (index >= items.length) return;
                 const invoice_in = {
                     ...items[index],
-                    supplier_id: supplier.id,
-                    author_id: author?.id,
-                    paid_user_id: paid_user?.id,
-                    cancel_user_id: cancel_user?.id,
-                    approved_user_id: approved_user?.id
                 }
                 await dispatch(fetchAddInvoice({invoice: invoice_in}));
                 setTimeout(() => {
                     dispatchWithDelay(items, index + 1);
-                }, 1000);
+                }, 500);
             };
             await dispatchWithDelay(invoices);
             console.log('Invoices migration complete. Count:', invoices.length);

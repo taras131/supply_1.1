@@ -19,7 +19,7 @@ export const suppliersAPI = {
     getByFirebaseId: async (firebase_id: string) => {
         console.log(firebase_id);
         const res = await appAPI.get(`${suppliersPath}/firebase/${firebase_id}`)
-        return await res.data;
+        return await res.data.id;
     },
     update: async (supplier: ISupplier) => {
         const res = await appAPI.put(suppliersPath, supplier);

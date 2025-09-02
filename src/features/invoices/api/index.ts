@@ -23,4 +23,8 @@ export const invoicesAPI = {
     const res = await appAPI.put(invoicePath, invoice);
     return res.data;
   },
+  getByFirebaseId: async (firebase_id: string) => {
+    const res = await appAPI.get(`${invoicePath}/firebase/${firebase_id}`);
+    return res.data.id;
+  },
 }
