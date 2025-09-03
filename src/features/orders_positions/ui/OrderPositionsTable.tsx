@@ -56,7 +56,7 @@ const OrderPositionsTable: FC<IProps> = ({
                                              selectable = false,
                                              selectedIds,
                                              onToggleChecked,
-                                             isNewOrder = false
+                                             isNewOrder = false,
                                          }) => {
     const apiRef = useGridApiRef();
     const [cellModesModel, setCellModesModel] = useState<GridCellModesModel>({});
@@ -67,290 +67,295 @@ const OrderPositionsTable: FC<IProps> = ({
     const canManageComments = !!commentChangeHandler;
     const canManagePhotos = !!addPhotoHandler || !!deletePhotoHandler;
     const canDelete = !!deletePositionHandler;
-    const [activeRow, setActiveRow] = useState<INewOrderPosition | IOrderPosition | null>(null);
+    // Вместо хранения целого объекта строки — храним только id
+    const [activeRowId, setActiveRowId] = useState<string | null>(null);
+    // Находим актуальную строку по id только при необходимости
+    const currentRow = useMemo(
+        () => (activeRowId ? rows.find((r: any) => r.id === activeRowId) ?? null : null),
+        [rows, activeRowId]
+    );
+    const photos = (Array.isArray((currentRow as any)?.photos) ? (currentRow as any).photos : []) as string[];
+    const comment = ((currentRow as any)?.comment ?? "") as string;
     const getRowId = useCallback((row: any) => row.id, []);
-    const activeRowFromRows = useMemo(() => {
-        if (!activeRow) return null;
-        return rows.find(r => r.id === activeRow.id) ?? activeRow;
-    }, [rows, activeRow]);
     const openPhotosDialog = useCallback((row: any) => {
-        setActiveRow(row);
+        setActiveRowId(row.id);
         setPhotoDialogOpen(true);
     }, []);
     const closePhotoDialog = useCallback(() => {
         setPhotoDialogOpen(false);
-        setActiveRow(null);
+        setActiveRowId(null);
     }, []);
     const openCommentDialog = useCallback((row: any) => {
-        setActiveRow(row);
+        setActiveRowId(row.id);
         setCommentDialogOpen(true);
     }, []);
     const closeCommentDialog = useCallback(() => {
         setCommentDialogOpen(false);
-        setActiveRow(null);
+        setActiveRowId(null);
     }, []);
     const openDeletePositionDialog = useCallback((row: any) => {
-        setActiveRow(row);
+        setActiveRowId(row.id);
         setDeletePositionDialogOpen(true);
     }, []);
     const closeDeletePositionDialog = useCallback(() => {
         setDeletePositionDialogOpen(false);
-        setActiveRow(null);
+        setActiveRowId(null);
     }, []);
-    const handleAddFiles = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.currentTarget.files?.[0];
-        if (!file || !addPhotoHandler || !activeRow) return;
-        addPhotoHandler(file, `${activeRow.id}`);
-    }, [addPhotoHandler, activeRow]);
-    const handleDeletePhoto = useCallback((src: string) => {
-        if (!deletePhotoHandler || !activeRow) return;
-        deletePhotoHandler(src, `${activeRow.id}`);
-    }, [deletePhotoHandler, activeRow]);
-    const handleCommentChange = useCallback((newValue: string | number) => {
-        if (!commentChangeHandler || !activeRow) return;
-        commentChangeHandler(newValue, `${activeRow.id}`);
-    }, [commentChangeHandler, activeRow]);
+    const handleAddFiles = useCallback(
+        (e: React.ChangeEvent<HTMLInputElement>) => {
+            const file = e.currentTarget.files?.[0];
+            if (!file || !addPhotoHandler || !activeRowId) return;
+            addPhotoHandler(file, activeRowId);
+        },
+        [addPhotoHandler, activeRowId]
+    );
+    const handleDeletePhoto = useCallback(
+        (src: string) => {
+            if (!deletePhotoHandler || !activeRowId) return;
+            deletePhotoHandler(src, activeRowId);
+        },
+        [deletePhotoHandler, activeRowId]
+    );
+    const handleCommentChange = useCallback(
+        (newValue: string | number) => {
+            if (!commentChangeHandler || !activeRowId) return;
+            commentChangeHandler(newValue, activeRowId);
+        },
+        [commentChangeHandler, activeRowId]
+    );
     const handleConfirmDeletePosition = useCallback(() => {
-        if (!activeRow || !deletePositionHandler) return;
-        deletePositionHandler(`${activeRow.id}`);
+        if (!activeRowId || !deletePositionHandler) return;
+        const id = activeRowId;
+        setActiveRowId(null); // сначала сбросить
+        deletePositionHandler(id); // затем удалять
         closeDeletePositionDialog();
-    }, [activeRow, deletePositionHandler, closeDeletePositionDialog]);
+    }, [activeRowId, deletePositionHandler, closeDeletePositionDialog]);
+    // Быстрый доступ к выбранным id — O(1) в ячейке, без includes
+    const selectedIdsSet = useMemo(() => new Set(selectedIds ?? []), [selectedIds]);
+    // Вынесите в мемо, если getNumberColumn дорого
+    const numberCol = useMemo(() => getNumberColumn(apiRef), [apiRef]);
     const columns = useMemo<GridColDef[]>(() => {
         const base: GridColDef[] = [];
         if (selectable && onToggleChecked) {
-            base.push(
-                {
-                    field: 'id',
-                    headerName: 'Выбран',
-                    type: 'boolean',
-                    disableColumnMenu: true,
-                    sortable: false,
-                    align: 'center',
-                    headerAlign: 'center',
-                    renderCell: (params: any) => (
+            base.push({
+                field: "selected",
+                headerName: "Выбран",
+                type: "boolean",
+                disableColumnMenu: true,
+                sortable: false,
+                align: "center",
+                headerAlign: "center",
+                renderCell: (params: any) => {
+                    const isChecked = selectedIdsSet.has(params.row.id);
+                    const handleChange = () => onToggleChecked(orderId, params.row.id);
+                    return (
                         <Checkbox
                             size="small"
-                            checked={Boolean(selectedIds?.includes(params.row.id))} // всегда boolean
-                            onChange={() => onToggleChecked(orderId, params.row.id)}
-                            onPointerDown={(e) => e.stopPropagation()}
-                            onMouseDown={(e) => e.stopPropagation()}
-                            onTouchStart={(e) => e.stopPropagation()}
+                            checked={isChecked}
+                            onChange={handleChange}
                             onClick={(e) => e.stopPropagation()}
-                            onKeyDown={(e) => e.stopPropagation()}
                         />
-                    ),
-                    flex: 0.25,
+                    );
                 },
-            )
+                flex: 0.25,
+            });
         }
         if (!selectable && orderId !== "-1") {
             base.push({
-                field: 'invoice_id',
-                headerName: '',
-                width: 40,
+                field: "invoice_id",
+                headerName: "",
+                width: 35,
                 disableColumnMenu: true,
                 editable: false,
                 renderCell: (params: any) => (
                     <Tooltip title={params.row.invoice_id ? "Заказано" : "ещё не заказано"}>
-                        <Box sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            height: "100%"
-                        }}>
-                            {params.row.invoice_id
-                                ? (<CheckCircleIcon color={"success"}/>)
-                                : (<AccessTimeIcon color={"warning"}/>)}
+                        <Box
+                            sx={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%" }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            {params.row.invoice_id ? <CheckCircleIcon color="success" /> : <AccessTimeIcon color="warning" />}
                         </Box>
                     </Tooltip>
-                )
-            })
+                ),
+            });
         }
         base.push(
-            getNumberColumn(apiRef),
+            numberCol,
             {
-                field: 'name',
-                headerName: 'Наименование',
+                field: "name",
+                headerName: "Наименование",
                 flex: 1,
                 editable: canEditInline,
                 disableColumnMenu: true,
-                cellClassName: 'editable-cell',
+                cellClassName: "editable-cell",
             },
             {
-                field: 'catalog_number',
-                headerName: 'Каталожный номер',
-                flex: 1,
+                field: "catalog_number",
+                headerName: "Каталожный номер",
+                flex: 0.75,
                 editable: canEditInline,
                 disableColumnMenu: true,
-                cellClassName: 'editable-cell',
+                cellClassName: "editable-cell",
             },
             {
-                field: 'count',
-                headerName: 'Количество',
-                width: 140,
-                type: 'number',
+                field: "count",
+                headerName: "Количество",
+                width: 100,
+                type: "number",
                 editable: canEditInline,
                 disableColumnMenu: true,
-                cellClassName: 'editable-cell',
+                cellClassName: "editable-cell",
             },
             {
-                field: 'unit_measure',
-                headerName: 'Ед. изм.',
+                field: "unit_measure",
+                headerName: "Ед. изм.",
                 width: 80,
                 editable: canEditInline,
-                type: 'singleSelect',
+                type: "singleSelect",
                 valueOptions: unitMeasures,
                 disableColumnMenu: true,
-                cellClassName: 'editable-cell',
+                cellClassName: "editable-cell",
             }
         );
         if (canManageComments) {
             base.push({
-                field: 'comment',
-                headerName: 'Прим.',
+                field: "comment",
+                headerName: "Прим.",
                 width: 60,
                 sortable: false,
                 filterable: false,
-                align: 'center',
-                headerAlign: 'center',
+                align: "center",
+                headerAlign: "center",
                 disableColumnMenu: true,
                 editable: false,
                 renderCell: (params: any) => {
-                    const isComment = (params.row.comment?.length ?? 0) > 0;
+                    const isComment = ((params.row.comment ?? "") as string).length > 0;
                     return (
-                        <Tooltip title={isComment ? 'Посмотреть примечание' : 'Добавить примечание'}>
+                        <Tooltip title={isComment ? "Посмотреть примечание" : "Добавить примечание"}>
               <span onClick={(e) => e.stopPropagation()}>
                 <IconButton size="small" aria-label="Примечание" onClick={() => openCommentDialog(params.row)}>
-                  <ModeCommentIcon color={isComment ? 'primary' : 'secondary'} fontSize="small"/>
+                  <ModeCommentIcon color={isComment ? "primary" : "secondary"} fontSize="small" />
                 </IconButton>
               </span>
                         </Tooltip>
                     );
                 },
-                cellClassName: 'editable-cell',
+                cellClassName: "editable-cell",
             });
         }
         if (canManagePhotos) {
             base.push({
-                field: 'photos',
-                headerName: 'Фото',
+                field: "photos",
+                headerName: "Фото",
                 width: 60,
                 sortable: false,
                 filterable: false,
-                align: 'center',
-                headerAlign: 'center',
+                align: "center",
+                headerAlign: "center",
                 disableColumnMenu: true,
                 editable: false,
                 renderCell: (params: any) => {
-                    const count = params.row.photos?.length ?? 0;
+                    const count = Array.isArray(params.row.photos) ? params.row.photos.length : 0;
                     return (
                         <Tooltip title="Открыть фото">
               <span onClick={(e) => e.stopPropagation()}>
                 <IconButton size="small" aria-label="Фото" onClick={() => openPhotosDialog(params.row)}>
-                  <PhotoCameraIcon color={count ? 'primary' : 'secondary'} fontSize="small"/>
+                  <PhotoCameraIcon color={count ? "primary" : "secondary"} fontSize="small" />
                 </IconButton>
               </span>
                         </Tooltip>
                     );
                 },
-                cellClassName: 'editable-cell',
+                cellClassName: "editable-cell",
             });
         }
         if (!selectable && !isNewOrder) {
             base.push({
-                field: 'invoice',
-                headerName: 'Поставщик',
+                field: "invoice",
+                headerName: "Поставщик",
                 width: 160,
                 disableColumnMenu: true,
                 editable: false,
                 renderCell: (params: any) => {
+                    const inv = params.row.invoice;
                     return (
-                        <Box sx={{display: "flex", height: "100%", alignItems: "center"}}>
-                            {params.row.invoice
-                                ? (
-                                    <Tooltip
-                                        title={`${params.row.invoice.supplier.name} Счёт № ${params.row.invoice.number}`}>
-                                        <span onClick={(e) => e.stopPropagation()}>
-                                            <Typography color={"primary"} variant={"subtitle2"}>
-                                                {params.row.invoice.supplier.name}
-                                            </Typography>
-                                        </span>
-                                    </Tooltip>
-                                )
-                                : (<Typography color={"warning"} variant={"subtitle2"}>
+                        <Box sx={{ display: "flex", height: "100%", alignItems: "center" }} onClick={(e) => e.stopPropagation()}>
+                            {inv ? (
+                                <Tooltip title={`${inv.supplier.name} Счёт № ${inv.number}`}>
+                  <span>
+                    <Typography color="primary" variant="subtitle2">
+                      {inv.supplier.name}
+                    </Typography>
+                  </span>
+                                </Tooltip>
+                            ) : (
+                                <Typography color="warning" variant="subtitle2">
                                     Не заказано
-                                </Typography>)}
+                                </Typography>
+                            )}
                         </Box>
                     );
                 },
-            })
+            });
         }
         if (canDelete) {
             base.push({
-                field: 'delete',
-                headerName: '',
+                field: "delete",
+                headerName: "",
                 width: 60,
                 sortable: false,
                 filterable: false,
-                align: 'center',
+                align: "center",
                 disableColumnMenu: true,
                 editable: false,
                 renderCell: (params: any) => (
-                    <Tooltip title={!!params.row.invoice_id ? "уже заказано" : "удалить"}>
-                         <span onClick={(e) => e.stopPropagation()}>
-                        <IconButton
-                            size="small"
-                            aria-label="Удалить"
-                            disabled={!!params.row.invoice_id}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                openDeletePositionDialog(params.row);
-                            }}
-                        >
-                            <DeleteOutlineIcon color={!!params.row.invoice_id ? undefined : "warning"}
-                                               fontSize="small"/>
-                        </IconButton>
-                             </span>
+                    <Tooltip title={params.row.invoice_id ? "уже заказано" : "удалить"}>
+            <span onClick={(e) => e.stopPropagation()}>
+              <IconButton
+                  size="small"
+                  aria-label="Удалить"
+                  disabled={!!params.row.invoice_id}
+                  onClick={() => openDeletePositionDialog(params.row)}
+              >
+                <DeleteOutlineIcon color={params.row.invoice_id ? undefined : "warning"} fontSize="small" />
+              </IconButton>
+            </span>
                     </Tooltip>
                 ),
-                cellClassName: 'editable-cell',
+                cellClassName: "editable-cell",
             });
         }
         return base;
-    }, [apiRef,
+    }, [
+        numberCol,
+        selectable,
+        onToggleChecked,
+        selectedIdsSet,
+        orderId,
         canEditInline,
         canManageComments,
         canManagePhotos,
         canDelete,
+        isNewOrder,
         openCommentDialog,
         openPhotosDialog,
         openDeletePositionDialog,
-        onToggleChecked,
-        selectable,
-        selectedIds,
-        orderId
     ]);
-    const processRowUpdate = useCallback((newRow: INewOrderPosition, oldRow: INewOrderPosition) => {
-        const normalized: INewOrderPosition = {...oldRow, ...newRow, count: Number(newRow.count) || 0};
-        onRowsChange?.(normalized);
-        return normalized;
-    }, [onRowsChange]);
-    const photos = rows.filter(row => row.id === activeRow?.id)[0]
-        ? rows.filter(row => row.id === activeRow?.id)[0].photos
-        : []
-    const comment = rows.filter(row => row.id === activeRow?.id)[0]
-        ? rows.filter(row => row.id === activeRow?.id)[0].comment
-        : ""
+    const processRowUpdate = useCallback(
+        (newRow: INewOrderPosition, oldRow: INewOrderPosition) => {
+            const normalized: INewOrderPosition = { ...oldRow, ...newRow, count: Number(newRow.count) || 0 };
+            onRowsChange?.(normalized);
+            return normalized;
+        },
+        [onRowsChange]
+    );
     return (
-        <div style={{position: "relative"}}>
-            {titleChangeHandler
-                && (<Box sx={{position: "absolute", left: "10px", top: "10px", zIndex: 3}}>
-                    <EditableSpan
-                        onChange={titleChangeHandler}
-                        value={title}
-                        label={"Добавить заголовок"}
-                    />
-                </Box>)}
+        <div style={{ position: "relative" }}>
+            {titleChangeHandler && (
+                <Box sx={{ position: "absolute", left: "10px", top: "10px", zIndex: 3 }}>
+                    <EditableSpan onChange={titleChangeHandler} value={title} label={"Добавить заголовок"} />
+                </Box>
+            )}
             <MyDataGrid
                 tableName={selectable ? "order_section" : "order_positions"}
                 apiRef={apiRef}
@@ -366,12 +371,15 @@ const OrderPositionsTable: FC<IProps> = ({
                 showToolbar={!!onRowsChange}
             />
             {handleAddRow && (
-                <MyButton onClick={handleAddRow} startIcon={<AddIcon sx={{fontSize: 'var(--icon-fontSize-md)'}}/>}
-                          sx={{position: 'absolute', left: 10, bottom: 10}}>
+                <MyButton
+                    onClick={handleAddRow}
+                    startIcon={<AddIcon sx={{ fontSize: "var(--icon-fontSize-md)" }} />}
+                    sx={{ position: "absolute", left: 10, bottom: 10 }}
+                >
                     Строка
                 </MyButton>
             )}
-            {canManagePhotos && (
+            {canManagePhotos && photoDialogOpen && (
                 <PhotoDialog
                     dialogOpen={photoDialogOpen}
                     closeDialog={closePhotoDialog}
@@ -380,7 +388,7 @@ const OrderPositionsTable: FC<IProps> = ({
                     photos={photos}
                 />
             )}
-            {canManageComments && (
+            {canManageComments && commentDialogOpen && (
                 <CommentDialog
                     dialogOpen={commentDialogOpen}
                     closeDialog={closeCommentDialog}
@@ -388,20 +396,24 @@ const OrderPositionsTable: FC<IProps> = ({
                     comment={comment}
                 />
             )}
-            {canDelete && (
+            {canDelete && deletePositionDialogOpen && (
                 <ConfirmDeleteDialog
                     open={deletePositionDialogOpen}
                     onClose={closeDeletePositionDialog}
                     onConfirm={handleConfirmDeletePosition}
                     title="Удалить позицию?"
                     description={
-                        activeRowFromRows ? (
+                        currentRow ? (
                             <>
-                                Вы уверены, что хотите удалить
-                                позицию <b>{activeRowFromRows.name || 'без наименования'}</b>
-                                {activeRowFromRows.catalog_number ? <> (кат.
-                                    № {activeRowFromRows.catalog_number})</> : null}?
-                                <br/>
+                                Вы уверены, что хотите удалить позицию <b>{(currentRow as any).name || "без наименования"}</b>
+                                {(currentRow as any).catalog_number ? (
+                                    <>
+                                        {" "}
+                                        (кат. № {(currentRow as any).catalog_number})
+                                    </>
+                                ) : null}
+                                ?
+                                <br />
                                 Это действие нельзя отменить.
                             </>
                         ) : (
@@ -413,5 +425,4 @@ const OrderPositionsTable: FC<IProps> = ({
         </div>
     );
 };
-
 export default React.memo(OrderPositionsTable);

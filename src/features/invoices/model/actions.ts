@@ -6,6 +6,7 @@ import {IInvoice, INewInvoice} from "../../../models/iInvoices";
 import {filesAPI} from "../../files/api";
 import {nestServerPath} from "../../../api";
 import {setOrdersPositions} from "../../orders_positions/model/slice";
+import {log} from "node:util";
 
 /*export interface ILinkPositions {
   selectedPosition: ISelectedOrderPosition;
@@ -45,6 +46,20 @@ export const fetchGetAllInvoices = createAsyncThunk(
         try {
             return await invoicesAPI.getAll(filter);
         } catch (e) {
+            const msg = handlerError(e);
+            dispatch(setModalMessage(msg));
+            return rejectWithValue(msg);
+        }
+    },
+);
+
+export const fetchGetInvoicesForNewShipment = createAsyncThunk(
+    "invoices/get_for_new_shipment",
+    async (_, {dispatch, rejectWithValue}) => {
+        try {
+            return await invoicesAPI.getForNewShipment();
+        } catch (e) {
+            console.log(e)
             const msg = handlerError(e);
             dispatch(setModalMessage(msg));
             return rejectWithValue(msg);

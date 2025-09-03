@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FC } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 
 interface IEditableSelectProps<T extends string | number> {

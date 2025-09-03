@@ -4,7 +4,7 @@ import {ISelectedOrderPosition} from "../../../models/IOrdersPositions";
 import {
     fetchAddInvoice,
     fetchGetAllInvoices,
-    fetchGetInvoiceById,
+    fetchGetInvoiceById, fetchGetInvoicesForNewShipment,
     fetchUpdateInvoice,
     fetchUploadInvoice,
     fetchUploadPayment
@@ -22,6 +22,7 @@ const handledThunks = [
     fetchGetInvoiceById,
     fetchUploadInvoice,
     fetchUploadPayment,
+    fetchGetInvoicesForNewShipment,
 ] as const;
 
 interface IInvoiceState {
@@ -74,6 +75,11 @@ export const InvoicesSlice = createSlice({
                 state.list = [...state.list, action.payload];
             })
             .addCase(fetchGetAllInvoices.fulfilled, (state, action: PayloadAction<IInvoice []>) => {
+                state.list = action.payload.sort((a, b) => {
+                    return b.author_date - a.author_date
+                });
+            })
+            .addCase(fetchGetInvoicesForNewShipment.fulfilled, (state, action: PayloadAction<IInvoice []>) => {
                 state.list = action.payload.sort((a, b) => {
                     return b.author_date - a.author_date
                 });

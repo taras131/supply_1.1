@@ -1,6 +1,6 @@
 import {IUser} from "./IUser";
 import {ISupplier} from "./iSuppliers";
-import {IShipments} from "./iShipments";
+import {IShipments, IShipmentsInvoice, TShipmentInvoiceValue} from "./iShipments";
 
 export interface INewInvoice {
   firebase_id?: string;
@@ -40,6 +40,7 @@ export interface IInvoice extends INewInvoice {
   updated_author?: IUser | null;
   shipments?: IShipments[];
   approved_user?: IUser | null,
+  volume?: TShipmentInvoiceValue;
 }
 
 export const emptyInvoice: INewInvoice = {

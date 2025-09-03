@@ -2,7 +2,7 @@ import {transporters} from "../utils/const";
 import {IUser} from "./IUser";
 import {IInvoice} from "./iInvoices";
 
-export type TShipmentInvoiceValue =  "completely" | "partly";
+export type TShipmentInvoiceValue = "completely" | "partly";
 
 export interface IShipmentsInvoice {
     invoice_id: string;
@@ -10,7 +10,7 @@ export interface IShipmentsInvoice {
     invoice?: IInvoice;
 }
 
-export type TShipmentsType = "railway" | "air";
+export type TShipmentsType = "railway" | "air" | "-1";
 
 export interface IReceiving {
     userId: string;
@@ -26,11 +26,12 @@ export interface INewShipments {
     transporter: string;
     lading_number: string;
     lading_file_path?: string | null;
+    photo_file_path?: string | null;
     receiving_is_receiving?: boolean;
     receiving_date?: number;
     receiving_author_id?: string | null;
     shipment_invoices: IShipmentsInvoice [];
-    type: string
+    type: TShipmentsType;
     author_date: number;
 }
 
@@ -53,6 +54,7 @@ export const emptyShipment: INewShipments = {
     transporter: "-1",
     lading_number: "",
     lading_file_path: "",
+    photo_file_path: null,
     receiving_is_receiving: false,
     receiving_date: 0,
     shipment_invoices: [],

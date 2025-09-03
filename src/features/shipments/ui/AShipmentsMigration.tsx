@@ -71,7 +71,7 @@ const AShipmentsMigration = () => {
                 const shipment_in = {
                     ...shipments[index],
                 }
-                await dispatch(fetchAddShipment(shipment_in));
+                await dispatch(fetchAddShipment({shipment: shipment_in}));
                 setTimeout(() => {
                     dispatchWithDelay(shipments, index + 1);
                 }, 500);

@@ -1,169 +1,250 @@
 import {useAppDispatch, useAppSelector} from "../../../hooks/redux";
 import {selectShipments} from "../model/selectors";
 import InvoicesTable from "../../invoices/ui/InvoicesTable";
-import React, {FC, useState, useEffect, memo, useMemo, useCallback, useRef} from "react";
-import {Stack, Card, Typography, Box, List, ListItemButton, ListItemText, Chip, Tooltip} from "@mui/material";
+import React, {FC, useState, useEffect, memo, useMemo, useCallback, useRef, ChangeEvent} from "react";
+import {
+    Card,
+    Box,
+    List,
+    alpha,
+    SelectChangeEvent, Typography
+} from "@mui/material";
 import {setInvoices} from "../../invoices/model/slice";
-import {IInvoice} from "../../../models/iInvoices";
+import {defaultInvoice, IInvoice} from "../../../models/iInvoices";
 import {IShipments} from "../../../models/iShipments";
-import {convertMillisecondsToDate} from "../../../utils/services";
-import AirplanemodeActiveIcon from "@mui/icons-material/AirplanemodeActive";
-import DirectionsSubwayIcon from "@mui/icons-material/DirectionsSubway";
+import SearchTextField from "../../../components/common/SearchTextField";
+import ShipmentsSectionItem from "./ShipmentsSectionItem";
+
+// Дебаунс значения (чтобы фильтрация срабатывала не на каждый символ)
+function useDebouncedValue<T>(value: T, delay = 300) {
+    const [debounced, setDebounced] = useState(value);
+    useEffect(() => {
+        const id = setTimeout(() => setDebounced(value), delay);
+        return () => clearTimeout(id);
+    }, [value, delay]);
+    return debounced;
+}
+
+const DEBOUNCE_MS = 300;
+
+// Нормализация в нижний регистр (быстрее и короче, чем везде писать .toLowerCase())
+const toLower = (v: unknown) => String(v ?? '').toLowerCase();
 
 const ShipmentsSection: FC = () => {
     const dispatch = useAppDispatch();
-    const shipments = useAppSelector(selectShipments);
+
+    // Исходный список
+    const allShipments = useAppSelector(selectShipments);
+    // Управление состоянием
     const [activeShipmentId, setActiveShipmentId] = useState<string | null>(null);
-    // ref на контейнер списка (для фокуса)
+    const [shipmentsFilter, setShipmentsFilter] = useState<string>('');
+
+    // Для клавиатурной навигации по списку
     const listboxRef = useRef<HTMLDivElement | null>(null);
-    // Фокусируем список на старте/при появлении данных
-    useEffect(() => {
-        if (shipments.length) {
-            // сперва обеспечим активный элемент
-            setActiveShipmentId((prev) => {
-                if (!prev || !shipments.some(s => s.id === prev)) return shipments[0].id;
-                return prev;
-            });
-            // затем сфокусируем список
-            // небольшой setTimeout помогает, если список ещё не отрендерился
-            setTimeout(() => listboxRef.current?.focus({preventScroll: true}), 0);
+
+    // 1) Прединдексация текста поиска (ускоряет фильтрацию на больших списках)
+    const searchIndex = useMemo(() => {
+        const map = new Map<string, string>();
+        for (const s of allShipments) {
+            map.set(s.id, toLower(`${s.transporter ?? ''} ${s.lading_number ?? ''}`));
         }
-    }, [shipments.length]);
+        return map;
+    }, [allShipments]);
+
+    // 2) Дебаунс строки поиска (исключает дергание рендера при паузах/наборе)
+    const debouncedFilter = useDebouncedValue(shipmentsFilter, DEBOUNCE_MS);
+
+    // 3) Фильтрация по двум полям, поддержка нескольких слов
+    const displayedShipments = useMemo<IShipments[]>(() => {
+        const q = toLower(debouncedFilter).trim();
+        if (!q) return allShipments;
+
+        const tokens = q.split(/\s+/).filter(Boolean);
+        if (!tokens.length) return allShipments;
+
+        return allShipments.filter((s) => {
+            const text = searchIndex.get(s.id) || '';
+            // все токены должны встречаться
+            for (const t of tokens) if (!text.includes(t)) return false;
+            return true;
+        });
+    }, [allShipments, debouncedFilter, searchIndex]);
+
+    // 4) Управление активным элементом (без перехвата фокуса у инпута)
+    useEffect(() => {
+        if (!displayedShipments.length) {
+            setActiveShipmentId(null);
+            return;
+        }
+        setActiveShipmentId((prev) => {
+            if (prev && displayedShipments.some((s) => s.id === prev)) return prev;
+            return displayedShipments[0].id;
+        });
+        // ВАЖНО: НИЧЕГО НЕ ФОКУСИРУЕМ здесь, чтобы не красть фокус у строки поиска
+    }, [displayedShipments]);
+
+    // 5) Индекс и объект активной отгрузки — по отображаемому списку
     const activeIndex = useMemo(() => {
         if (!activeShipmentId) return -1;
-        return shipments.findIndex(s => s.id === activeShipmentId);
-    }, [shipments, activeShipmentId]);
+        return displayedShipments.findIndex((s) => s.id === activeShipmentId);
+    }, [displayedShipments, activeShipmentId]);
+
     const activeShipment = useMemo<IShipments | null>(() => {
         if (activeIndex < 0) return null;
-        return shipments[activeIndex] ?? null;
-    }, [shipments, activeIndex]);
-    // Прокрутка к активному элементу при изменении
+        return displayedShipments[activeIndex] ?? null;
+    }, [displayedShipments, activeIndex]);
+
+    // 6) Прокрутка к активному элементу
     useEffect(() => {
         if (!activeShipmentId) return;
         const el = document.getElementById(`shipment-item-${activeShipmentId}`);
-        // block: 'nearest' — чтобы прокрутка была минимальной и внутри ближайшего скролл-контейнера
         el?.scrollIntoView({block: 'nearest', behavior: 'smooth'});
     }, [activeShipmentId]);
-    // Подгружаем счета активной отгрузки в стор
+
+    // 7) Подгружаем счета активной отгрузки
     useEffect(() => {
         const invoices: IInvoice[] = (activeShipment?.shipment_invoices ?? [])
-            .map(si => si.invoice)
-            .filter((inv): inv is IInvoice => inv != null);
+            .map((si) => {
+                const invoice: IInvoice = si.invoice ?? defaultInvoice
+                return {...invoice, volume: si.volume};
+            })
+
         dispatch(setInvoices(invoices));
     }, [activeShipment, dispatch]);
-    // Навигация по списку
-    const moveSelection = useCallback((delta: number) => {
-        if (!shipments.length) return;
-        const from = Math.max(0, Math.min(activeIndex >= 0 ? activeIndex : 0, shipments.length - 1));
-        const next = Math.max(0, Math.min(from + delta, shipments.length - 1));
-        setActiveShipmentId(shipments[next].id);
-    }, [shipments, activeIndex]);
-    const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
-        if (!shipments.length) return;
-        if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            moveSelection(-1);
-        } else if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            moveSelection(1);
-        } else if (e.key === 'Home') {
-            e.preventDefault();
-            setActiveShipmentId(shipments[0].id);
-        } else if (e.key === 'End') {
-            e.preventDefault();
-            setActiveShipmentId(shipments[shipments.length - 1].id);
-        }
-    }, [shipments, moveSelection]);
+
+    // 8) Навигация по списку (влево/вправо не используем, только вертикально)
+    const moveSelection = useCallback(
+        (delta: number) => {
+            if (!displayedShipments.length) return;
+            const from = Math.max(
+                0,
+                Math.min(activeIndex >= 0 ? activeIndex : 0, displayedShipments.length - 1),
+            );
+            const next = Math.max(0, Math.min(from + delta, displayedShipments.length - 1));
+            setActiveShipmentId(displayedShipments[next].id);
+        },
+        [displayedShipments, activeIndex],
+    );
+
+    const handleKeyDown = useCallback(
+        (e: React.KeyboardEvent<HTMLDivElement>) => {
+            if (!displayedShipments.length) return;
+
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                moveSelection(-1);
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                moveSelection(1);
+            } else if (e.key === 'Home') {
+                e.preventDefault();
+                setActiveShipmentId(displayedShipments[0].id);
+            } else if (e.key === 'End') {
+                e.preventDefault();
+                setActiveShipmentId(displayedShipments[displayedShipments.length - 1].id);
+            }
+        },
+        [displayedShipments, moveSelection],
+    );
+
+    // 9) Обработчик ввода — мемоизирован
+    const shipmentsFilterChangeHandler = useCallback(
+        (
+            e:
+                | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+                | SelectChangeEvent<string | number>,
+        ) => {
+            setShipmentsFilter(`${e.target.value}`);
+        },
+        [],
+    );
+
     return (
         <Box sx={{display: 'flex', gap: 2, mt: 2, width: '100%'}}>
             {/* Левая колонка: список отгрузок */}
-            <Card sx={{width: 360, flexShrink: 0, p: 1, maxHeight: '70vh', overflow: 'auto'}}>
+            <Card
+                sx={(theme) => ({
+                    width: 360,
+                    flexShrink: 0,
+                    border: 1,
+                    borderColor: alpha(theme.palette.divider, 0.04),
+                })}
+            >
                 <Box
+                    sx={{
+                        height: 55,
+                        backgroundColor: 'background.default',
+                        display: 'flex',
+                        alignItems: 'center',
+                        px: 1,
+                    }}
+                >
+                    <SearchTextField
+                        placeholder="Поиск..."
+                        name="shipments_filter"
+                        value={shipmentsFilter}
+                        onChange={shipmentsFilterChangeHandler}
+                        onClear={() => {
+                            setShipmentsFilter('');
+                        }}
+                        sx={{width: '100%'}}
+                    />
+                </Box>
+
+                {/* Список */}
+                <Box
+                    sx={{height: '70vh', overflow: 'auto', p: 1}}
                     ref={listboxRef}
                     tabIndex={0}
                     onKeyDown={handleKeyDown}
                     aria-label="Список отгрузок"
                     role="listbox"
-                    aria-activedescendant={activeShipmentId ? `shipment-item-${activeShipmentId}` : undefined}
+                    aria-activedescendant={
+                        activeShipmentId && displayedShipments.some((s) => s.id === activeShipmentId)
+                            ? `shipment-item-${activeShipmentId}`
+                            : undefined
+                    }
                 >
-                    <List dense disablePadding>
-                        {shipments.map((s) => {
-                            const total = s.shipment_invoices?.length ?? 0;
-                            const selected = s.id === activeShipmentId;
-                            return (
-                                <ListItemButton
-                                    // id нужен для scrollIntoView и aria-activedescendant
-                                    id={`shipment-item-${s.id}`}
+                    {displayedShipments.length > 0
+                        ? (<List dense disablePadding>
+                            {displayedShipments.map((s) => (
+                                <ShipmentsSectionItem
                                     key={s.id}
-                                    role="option"
-                                    selected={selected}
-                                    aria-selected={selected}
-                                    onClick={() => setActiveShipmentId(s.id)}
-                                    sx={{borderRadius: 1, mb: 0.5, alignItems: 'flex-start'}}
-                                >
-                                    <ListItemText
-                                        slotProps={{
-                                            primary: {component: 'div'},
-                                            secondary: {component: 'div'},
-                                        }}
-                                        primary={
-                                            <Stack direction="row" justifyContent="space-between" alignItems="center"
-                                                   spacing={1}>
-                                                <Stack direction={"row"} spacing={1} sx={{minWidth: 0}}
-                                                       alignItems={"center"}>
-                                                    <Typography variant="body2" fontWeight={600} noWrap>
-                                                        {s.transporter}
-                                                    </Typography>
-                                                    <Typography variant="subtitle2" color="text.secondary">
-                                                        {s.lading_number}
-                                                    </Typography>
-                                                </Stack>
-                                                <Stack direction="row" spacing={1} sx={{flexShrink: 0}}>
-                                                    {s.type === "air"
-                                                        ? (<Tooltip title={"Авиа отправка"}>
-                                                            <AirplanemodeActiveIcon
-                                                                color={s.receiving_date && s.receiving_date > 0
-                                                                    ? 'success'
-                                                                    : 'secondary'}/>
-                                                        </Tooltip>)
-                                                        : (
-                                                            <Tooltip title={"ЖД отправка"}>
-                                                                <DirectionsSubwayIcon
-                                                                    color={s.receiving_date && s.receiving_date > 0
-                                                                        ? 'success'
-                                                                        : 'secondary'}/>
-                                                            </Tooltip>)}
-                                                </Stack>
-                                            </Stack>
-                                        }
-                                        secondary={
-                                            <Stack direction="row"
-                                                   spacing={1}
-                                                   alignItems="center"
-                                                   justifyContent={"space-between"}
-                                                   mt={1}>
-                                                <Typography variant="caption" color="text.secondary" noWrap>
-                                                    Отгружено: {convertMillisecondsToDate(s.author_date)}
-                                                </Typography>
-                                                <Typography variant="caption" color="text.secondary" noWrap>
-                                                    {s.receiving_date && s.receiving_date > 0
-                                                        ? `Получено: ${convertMillisecondsToDate(s.receiving_date)}`
-                                                        : "в пути"}
-                                                </Typography>
-                                            </Stack>
-                                        }
-                                    />
-                                </ListItemButton>
-                            );
-                        })}
-                    </List>
+                                    id={s.id}
+                                    selected={s.id === activeShipmentId}
+                                    transporter={s.transporter}
+                                    lading_number={s.lading_number}
+                                    receiving_date={s.receiving_date}
+                                    author_date={s.author_date}
+                                    type={s.type}
+                                    setActiveShipmentId={setActiveShipmentId}
+                                />
+                            ))}
+                        </List>)
+                        : (<Box sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            height: '100%',
+                            width: '100%'
+                        }}>
+                            <Typography>
+                                Ничего не найдено
+                            </Typography>
+                        </Box>)}
+
                 </Box>
             </Card>
+
             {/* Правая колонка */}
-            <Box sx={{flex: 1, minWidth: 0}}>
-                <InvoicesTable/>
+            <Box sx={{flex: 1, minWidth: 0, position: 'relative'}}>
+                <Typography variant={"h6"} sx={{position: "absolute", top: 12, left: 12, zIndex: 3}}>
+                    Связанные счета
+                </Typography>
+                <InvoicesTable shipmentMode/>
             </Box>
         </Box>
     );
 };
+
 export default memo(ShipmentsSection);

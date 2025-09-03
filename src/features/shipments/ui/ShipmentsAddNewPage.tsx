@@ -1,222 +1,176 @@
-import React, { FC, useEffect, useId, useState } from "react";
+import React, {ChangeEvent, FC, useCallback, useEffect, useId, useState} from "react";
 import {
-  FormControl,
-  MenuItem,
-  Paper,
-  Select,
-  SelectChangeEvent,
-  Stack,
-  TextField,
-  Typography,
-  useMediaQuery,
+    Stack,
+    Typography,
 } from "@mui/material";
 
-import LoadingButton from "@mui/lab/LoadingButton";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
-import { useNavigate } from "react-router-dom";
 import {shipmentTypes, transporters} from "../../../utils/const";
-import {routes} from "../../../utils/routes";
-import {IShipmentsInvoice, Transporter, TShipmentInvoiceValue, TShipmentsType} from "../../../models/iShipments";
-import {useAppDispatch, useAppSelector} from "../../../hooks/redux";
-import {selectCurrentUser} from "../../users/model/selectors";
+import {
+    emptyShipment,
+    INewShipments, IShipmentsInvoice,
+    TShipmentInvoiceValue,
+} from "../../../models/iShipments";
+import FileUploadIcon from '@mui/icons-material/FileUpload';
+import {useAppDispatch} from "../../../hooks/redux";
+import ShipmentsAddNewPageHeader from "./ShipmentsAddNewPageHeader";
+import {useEditor} from "../../../hooks/useEditor";
+import {shipmentValidate} from "../../../utils/validators";
+import Card from "@mui/material/Card";
+import MyFormControl from "../../../styles/theme/customizations/MyFormControl";
+import MySelectControl from "../../../styles/theme/customizations/MySelectControl";
+import MyButton from "../../../styles/theme/customizations/MyButton";
+import Box from "@mui/material/Box";
+import InvoicesTable from "../../invoices/ui/InvoicesTable";
+import {fetchGetInvoicesForNewShipment} from "../../invoices/model/actions";
+import {fetchAddShipment} from "../model/actions";
+import {useNavigate} from "react-router-dom";
 
 export interface IInvoiceValue {
-  value: TShipmentInvoiceValue;
-  title: string;
+    value: TShipmentInvoiceValue;
+    title: string;
 }
 
 export const invoiceValues: IInvoiceValue[] = [
-  { value: "partly", title: "Часть" },
-  { value: "completely", title: "Весь" },
+    {value: "partly", title: "Часть"},
+    {value: "completely", title: "Весь"},
 ];
 
 const ShipmentsAddNewPage: FC = () => {
-  const dispatch = useAppDispatch();
-  const matches_870 = useMediaQuery("(min-width:870px)");
-  const matches_700 = useMediaQuery("(min-width:700px)");
-  const navigate = useNavigate();
-  const user = useAppSelector(selectCurrentUser);
-  const [transporter, setTransporter] = useState<Transporter>(transporters[0]);
-  const [type, setType] = useState<TShipmentsType>(shipmentTypes[0].name);
-  const [filePatch, setFilePatch] = useState("");
-  const [isUploadFileLoading, setIsUploadFileLoading] = useState(false);
-  const [fileName, setFileName] = useState("");
-  const [isValidate, setIsValidate] = useState(false);
-  const [selectedInvoices, setSelectedInvoices] = useState<IShipmentsInvoice[]>([]);
-  const [ladingNumber, setLadingNumber] = useState("");
-  const selectTransporterId = useId();
-  const selectTypeId = useId();
-  useEffect(() => {
-    if (transporter && type && !isUploadFileLoading && selectedInvoices.length > 0 && ladingNumber) {
-      setIsValidate(true);
-    } else {
-      setIsValidate(false);
-    }
-  }, [transporter, type, filePatch, isUploadFileLoading, selectedInvoices, ladingNumber]);
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+    const [ladingFile, setLadingFile] = useState<File | null>(null);
+    const [photoFile, setPhotoFile] = useState<File | null>(null);
+    const [selectedInvoicesWithVolume, setSelectedInvoicesWithVolume] = useState<IShipmentsInvoice[]>([]);
+    const {
+        editedValue,
+        errors,
+        handleFieldChange,
+        resetValue,
+    } = useEditor<INewShipments>({
+        initialValue: JSON.parse(JSON.stringify(emptyShipment)),
+        validate: shipmentValidate,
+    });
 
-  const transporterList = transporters.map((transporter) => (
-    <MenuItem key={transporter} value={transporter}>
-      {transporter}
-    </MenuItem>
-  ));
-  const typeList = shipmentTypes.map((type) => (
-    <MenuItem key={type.name} value={type.name}>
-      {type.value}
-    </MenuItem>
-  ));
-  const handleAddClick = () => {
-/*    dispatch(
-      fetchAddShipment({
-        author: {
-          userId: user.id,
-          dateCreating: getDateInMilliseconds(),
-        },
-        receiving: {
-          userId: "",
-          dateCreating: 0,
-          isReceived: false,
-        },
-        ladingNumber: ladingNumber,
-        ladingNumberFilePath: filePatch,
-        transporter: transporter,
-        type: type,
-        invoicesList: selectedInvoices,
-      }),
-    );
-    setFilePatch("");
-    setFileName("");
-    setTransporter(transporters[0]);
-    setType(shipmentTypes[0].name);
-    setIsValidate(false);
-    setSelectedInvoices([]);
-    setLadingNumber("");
-    navigate(routes.shipments);*/
-  };
-  const handleTransporterChange = (e: SelectChangeEvent) => {
-    setTransporter(e.target.value as Transporter);
-  };
-  const handleTypeChange = (e: SelectChangeEvent) => {
-    setType(e.target.value as TShipmentsType);
-  };
-  const updateFile = (name: string, filePatch: string) => {
-    setFileName(name);
-    setFilePatch(filePatch);
-  };
-  const handleChangeInputFile = (e: any) => {
-    setIsUploadFileLoading(true);
-   /* if (filePatch) {
-      dispatch(fetchRemoveFile(fileName));
-    }*/
-/*    dispatch(
-      fetchUploadFile({
-        file: e.target.files[0],
-        updateFile: updateFile,
-        setIsUpdateFileLoading: setIsUploadFileLoading,
-      }),
-    );*/
-    setFileName(e.target.files[0].name);
-  };
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLadingNumber(e.target.value);
-  };
-  const handleBackClick = () => {
-    navigate(routes.shipments);
-  };
-  return (
-    <Stack maxWidth={1000}>
-    {/*  <PageHeaderWithTitleAndTwoButtons
-        leftButtonText={"Назад"}
-        rightButtonText={"Сохранить"}
-        title={"Новая отгрузка"}
-        handleLeftButtonClick={handleBackClick}
-        handleRightButtonClick={handleAddClick}
-        isRightButtonDisabled={!isValidate}
-      />*/}
-      <Paper sx={{ maxWidth: "1000px", width: "100%", padding: matches_700 ? "20px" : "4px" }}>
-        <Stack spacing={2} sx={{ width: "100%" }} pt={2}>
-          <Stack >
-            <Stack spacing={1}>
-              <Typography color="gray" fontWeight={600}>
-                Перевозчик:
-              </Typography>
-            </Stack>
-            <Stack >
-              <FormControl fullWidth sx={{ width: "100%" }}>
-                <Select
-                  id={selectTransporterId}
-                  defaultValue={""}
-                  value={transporter}
-                  onChange={handleTransporterChange}
-                  sx={{ overflow: "hidden" }}
-                  variant={"standard"}
-                >
-                  {transporterList}
-                </Select>
-              </FormControl>
-            </Stack>
-          </Stack>
-          <Stack  sx={{ width: "100%" }} alignItems="center">
-            <Stack spacing={1}>
-              <Typography color="gray" fontWeight={600}>
-                Транспортная накладная №
-              </Typography>
-            </Stack>
-            <Stack >
-              <TextField value={ladingNumber} fullWidth onChange={handleInputChange} name="ladingNumber" />
-            </Stack>
-          </Stack>
-          <Stack  sx={{ width: "100%" }} alignItems="center">
-            <Stack  spacing={1}>
-              <Typography color="gray" fontWeight={600}>
-                Тип перевозки:
-              </Typography>
-            </Stack>
-            <Stack >
-              <FormControl fullWidth sx={{ width: "100%" }}>
-                <Select
-                  id={selectTypeId}
-                  defaultValue={""}
-                  value={type}
-                  onChange={handleTypeChange}
-                  sx={{ overflow: "hidden" }}
-                  variant={"standard"}
-                >
-                  {typeList}
-                </Select>
-              </FormControl>
-            </Stack>
-          </Stack>
-          <Stack  sx={{ width: "100%" }} alignItems="center">
-            <Stack spacing={1}>
-              <Typography color="gray" fontWeight={600}>
-                Транспортная накладная:
-              </Typography>
-            </Stack>
-            <Stack >
-              <LoadingButton
-                sx={{ height: "56px" }}
-                variant="outlined"
-                component="label"
-                loading={isUploadFileLoading}
-                fullWidth
-                startIcon={fileName ? <AutorenewIcon /> : <AttachFileIcon />}
-              >
-                {fileName ? "Заменить накладную" : "Прикрепить накладную"}
-                <input type="file" hidden onChange={handleChangeInputFile} />
-              </LoadingButton>
-              <Typography mt={1}>{fileName ? fileName : ""}</Typography>
-            </Stack>
-          </Stack>
-{/*          <ShipmentsAddNewInvoiceList
-            selectedInvoices={selectedInvoices}
-            handleChangeSelectedInvoices={handleChangeSelectedInvoices}
-            handleValueChange={handleValueChange}
-          />*/}
-        </Stack>
-      </Paper>
-    </Stack>
-  );
+    useEffect(() => {
+        dispatch(fetchGetInvoicesForNewShipment())
+    }, [dispatch]);
+    const saveClickHandler = async () => {
+        try {
+            await dispatch(fetchAddShipment({
+                shipment: {...editedValue, shipment_invoices: selectedInvoicesWithVolume},
+                photoFile: photoFile,
+                ladingFile: ladingFile,
+            }))
+            resetValue()
+            setLadingFile(null)
+            setPhotoFile(null)
+            navigate(-1)
+        } catch (e) {
+
+        }
+    };
+
+    const handleChangePhotoFile = (e: ChangeEvent<HTMLInputElement>) => {
+        const list = e.currentTarget.files;
+        if (!list || !list[0]) return;
+        setPhotoFile(list[0]);
+    }
+    const handleChangeLandingFile = (e: ChangeEvent<HTMLInputElement>) => {
+        const list = e.currentTarget.files;
+        if (!list || !list[0]) return;
+        setLadingFile(list[0]);
+    }
+    const onToggleChecked = useCallback((invoiceId: string) => {
+        setSelectedInvoicesWithVolume(prev => {
+            const exists = prev.some(i => i.invoice_id === invoiceId);
+            return exists
+                ? prev.filter(i => i.invoice_id !== invoiceId)
+                : [...prev, {invoice_id: invoiceId, volume: "completely"}];
+        });
+    }, []);
+    const onChangeInvoiceVolume = useCallback((invoiceId: string, volume: TShipmentInvoiceValue) => {
+        setSelectedInvoicesWithVolume(prev =>
+            prev.map(i => i.invoice_id === invoiceId ? {...i, volume} : i)
+        );
+    }, []);
+    return (
+        <Stack sx={{
+            width: '100%',
+            maxWidth: {sm: '100%', md: '1700px'},
+            pt: 1.5,
+        }}>
+            <ShipmentsAddNewPageHeader isValid={!Object.keys(errors).length}
+                                       saveClickHandler={saveClickHandler}/>
+            <Card sx={{padding: "36px 28px"}}>
+                <Box sx={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr', gap: 3}}>
+                    <MySelectControl value={editedValue.transporter}
+                                     changeHandler={handleFieldChange}
+                                     errorText={errors.transporter}
+                                     label={"перевозчик"}
+                                     name={"transporter"}
+                                     options={transporters.map(transporter => (
+                                         {id: transporter, title: transporter})
+                                     )}
+                                     sx={{gridColumn: '1 / 5'}}
+                    />
+                    <MySelectControl value={editedValue.type}
+                                     changeHandler={handleFieldChange}
+                                     errorText={errors.type}
+                                     label={"тип перевозки"}
+                                     name={"type"}
+                                     options={shipmentTypes.map(type => (
+                                         {id: type.name, title: type.value})
+                                     )}
+                                     sx={{gridColumn: '5 / 9'}}
+                    />
+                    <MyFormControl
+                        value={editedValue.lading_number}
+                        changeHandler={handleFieldChange}
+                        errorText={errors.lading_number}
+                        label={"номер накладной"}
+                        name={"lading_number"}
+                        sx={{gridColumn: '1 / 5'}}
+                    />
+                    <Box sx={{position: "relative", width: "100%", alignSelf: "stretch", gridColumn: '5 / 7'}}>
+                        <MyButton
+                            variant="contained"
+                            component="label"
+                            color={photoFile && photoFile.name ? "warning" : "primary"}
+                            fullWidth
+                            startIcon={photoFile && photoFile.name ? <AutorenewIcon/> : <FileUploadIcon/>}
+                            sx={{height: "100%"}}
+                        >
+                            {photoFile && photoFile.name ? "Заменить фото" : "Загрузить фото"}
+                            <input type="file" hidden onChange={handleChangePhotoFile}/>
+                        </MyButton>
+                        <Typography variant="caption" sx={{position: "absolute", right: 0, bottom: -23}}>
+                            {photoFile && photoFile.name ? photoFile.name : ""}
+                        </Typography>
+                    </Box>
+                    <Box sx={{position: "relative", width: "100%", alignSelf: "stretch", gridColumn: '7 / 9'}}>
+                        <MyButton
+                            variant="contained"
+                            component="label"
+                            color={ladingFile && ladingFile.name ? "warning" : "primary"}
+                            fullWidth
+                            startIcon={ladingFile && ladingFile.name ? <AutorenewIcon/> : <FileUploadIcon/>}
+                            sx={{height: "100%"}}
+                        >
+                            {ladingFile && ladingFile.name ? "Заменить накладную" : "Загрузить накладную"}
+                            <input type="file" hidden onChange={handleChangeLandingFile}/>
+                        </MyButton>
+                        <Typography variant="caption" sx={{position: "absolute", right: 0, bottom: -23}}>
+                            {ladingFile && ladingFile.name ? ladingFile.name : ""}
+                        </Typography>
+                    </Box>
+                </Box>
+            </Card>
+            <InvoicesTable newShipmentMode
+                           selectedInvoicesWithVolume={selectedInvoicesWithVolume}
+                           onToggleChecked={onToggleChecked}
+                           onChangeVolume={onChangeInvoiceVolume}/>
+        </Stack>);
 };
 
 export default ShipmentsAddNewPage;

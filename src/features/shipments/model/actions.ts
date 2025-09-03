@@ -3,22 +3,37 @@ import {INewShipments} from "../../../models/iShipments";
 import {shipmentsAPI} from "../api";
 import {handlerError} from "../../../store/handleError";
 import {setModalMessage} from "../../messages/model/slice";
+import {filesAPI} from "../../files/api";
+import {nestServerPath} from "../../../api";
+
+interface CreateShipmentDto {
+    shipment: INewShipments,
+    photoFile?: File | null,
+    ladingFile?: File | null,
+}
 
 export const fetchAddShipment = createAsyncThunk("shipments/add",
-    async (shipment: INewShipments, {dispatch, rejectWithValue}) => {
+    async (dto: CreateShipmentDto, {dispatch, rejectWithValue}) => {
         try {
-            console.log(shipment.author_date)
+            const {shipment, photoFile, ladingFile} = dto;
             const safeAuthorDate =
-                typeof shipment.author_date === 'number'
-                && Number.isFinite(shipment.author_date) && shipment.author_date > 0
+               Number.isFinite(shipment.author_date) && shipment.author_date > 0
                     ? shipment.author_date
-                    : Date.now(); // дефолт, если не пришло валидное значение
+                    : Date.now();
             const shipment_in = {
                 ...shipment,
                 lading_file_path: shipment.lading_file_path ?? null,
                 author_date: safeAuthorDate,
                 receiving_author_id: shipment.receiving_author_id ? shipment.receiving_author_id : null,
                 author_id: shipment.author_id ? shipment.author_id : null,
+            }
+            if(photoFile){
+                const res = await filesAPI.upload(photoFile);
+                shipment_in.photo_file_path = `${nestServerPath}/static/${res}`;
+            }
+            if(ladingFile){
+                const res = await filesAPI.upload(ladingFile);
+                shipment_in.lading_file_path = `${nestServerPath}/static/${res}`;
             }
             return await shipmentsAPI.add(shipment_in);
         } catch (e) {

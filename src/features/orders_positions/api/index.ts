@@ -14,7 +14,9 @@ export const ordersPositionsAPI = {
         return await res.data;
     },
     update: async (ordersPosition: INewOrderPosition | IOrderPosition) => {
+        console.log(ordersPosition)
         const res = await appAPI.put(ordersPositionsPath, ordersPosition);
+        console.log(res.data)
         return await res.data;
     },
     delete: async (positionId: string) => {

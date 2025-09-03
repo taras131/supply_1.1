@@ -196,9 +196,9 @@ const InvoiceAddNewPage = () => {
                             left: "5px",
                             bottom: "-25px"
                         }}>
-                            {file && file.name && <Typography variant={"subtitle2"} textAlign={"end"}>
+                            {file && file.name && (<Typography variant={"subtitle2"} textAlign={"end"}>
                                 Файл: {file.name.length > 40 ? file.name.slice(0, 40 - 1) + "…" : file.name}
-                            </Typography>}
+                            </Typography>)}
                         </Box>
                     </Box>
                 </Box>

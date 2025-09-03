@@ -35,6 +35,7 @@ export const fetchUpdateOrdersPositions = createAsyncThunk(
     "orders_positions/update",
     async (ordersPosition: INewOrderPosition | IOrderPosition, {rejectWithValue}) => {
         try {
+            console.log(ordersPosition);
             return await ordersPositionsAPI.update(ordersPosition);
         } catch (e) {
             return rejectWithValue(handlerError(e));
@@ -54,7 +55,6 @@ export const fetchUploadOrdersPositionsPhoto = createAsyncThunk<
 >(
     "orders_positions/upload_photo",
     async (data_in: IPositionUploadPhotoData, {dispatch, getState, rejectWithValue}) => {
-
         try {
             const {file, orderPositionId} = data_in;
             const res = await filesAPI.upload(file);
@@ -62,7 +62,7 @@ export const fetchUploadOrdersPositionsPhoto = createAsyncThunk<
             if (!ordersPosition) return;
             const updatedOrdersPosition = {
                 ...ordersPosition,
-                photos: [...ordersPosition.photos, res],
+                photos: ordersPosition.photos ? [...ordersPosition.photos, res] : [res],
             };
             return dispatch(fetchUpdateOrdersPositions(updatedOrdersPosition)).unwrap();
         } catch (e) {

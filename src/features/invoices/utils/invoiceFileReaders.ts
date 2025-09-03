@@ -1,4 +1,3 @@
-import * as XLSX from "xlsx";
 import mammoth from "mammoth";
 import { parseCommonFieldsFromText, ParsedInvoice } from "./invoiceParsers";
 // PDF — используй твой readText(file, ...) и передавай текст сюда

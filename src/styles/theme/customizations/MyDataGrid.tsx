@@ -23,7 +23,7 @@ export const MyDataGrid = ({
             localStorage.setItem(STORAGE_KEY, JSON.stringify(newModel));
         } catch { /* ignore */
         }
-    }, []);
+    }, [STORAGE_KEY]);
     useEffect(() => {
         try {
             const saved = localStorage.getItem(STORAGE_KEY);

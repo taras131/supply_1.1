@@ -9,6 +9,7 @@ import {INewSupplier, ISupplier} from "../models/iSuppliers";
 import {IMachineryProblem, INewMachineryProblem} from "../models/IMachineryProblems";
 import {INewOrder, IOrder} from "../models/iOrders";
 import {IInvoice, INewInvoice} from "../models/iInvoices";
+import {INewShipments, IShipments} from "../models/iShipments";
 
 export type ValidationErrors = { [key: string]: string | null };
 
@@ -186,5 +187,13 @@ export const invoiceValidate = (invoice: INewInvoice | IInvoice) => {
     if(invoice.supplier_id === "-1") errors.supplier_id = "выберите поставщика";
     if(invoice.number.length < 1) errors.number = "введите номер счёта";
     if(+invoice.amount < 1) errors.amount = "введите сумму";
+    return errors;
+}
+
+export const shipmentValidate = (shipment: INewShipments | IShipments) => {
+    const errors: ValidationErrors = {};
+    if(shipment.lading_number.length < 2) errors.lading_number = "введите номер накладной";
+    if(shipment.transporter === "-1") errors.transporter = "выбирите перевозчика";
+    if(shipment.type === "-1") errors.type = "выбирите тип отгрузки";
     return errors;
 }

@@ -6,10 +6,6 @@ import {setupStore} from "./store";
 import {Provider} from "react-redux";
 import {BrowserRouter} from "react-router-dom";
 import './index.css';
-import "filepond/dist/filepond.min.css";
-import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
-import "yet-another-react-lightbox/styles.css";
-import "yet-another-react-lightbox/plugins/thumbnails.css"
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement

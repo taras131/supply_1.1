@@ -1,7 +1,7 @@
 export const getNumberColumn = (apiRef: any) => ({
     field: '__rowNumber__',
     headerName: '№',
-    width: 64,
+    width: 50,
     sortable: false,
     filterable: false,
     disableColumnMenu: true,
@@ -21,7 +21,7 @@ export const getNumberColumn = (apiRef: any) => ({
         const pageSize = api?.state?.pagination?.paginationModel?.pageSize ?? 0;
         if (pageSize > 0) {
             const start = page * pageSize;
-            return idx - start + 1;
+            return idx + start + 1;
         }
         return idx + 1;
     },
