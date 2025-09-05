@@ -28,7 +28,7 @@ export interface INewShipments {
     lading_file_path?: string | null;
     photo_file_path?: string | null;
     receiving_is_receiving?: boolean;
-    receiving_date?: number;
+    receiving_date?: number | null;
     receiving_author_id?: string | null;
     shipment_invoices: IShipmentsInvoice [];
     type: TShipmentsType;

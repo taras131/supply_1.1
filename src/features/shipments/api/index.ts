@@ -1,4 +1,4 @@
-import {INewShipments} from "../../../models/iShipments";
+import {INewShipments, IShipments} from "../../../models/iShipments";
 import {appAPI, nestServerPath} from "../../../api";
 
 const shipmentsPath = `${nestServerPath}/shipment`
@@ -12,5 +12,11 @@ export const shipmentsAPI = {
         const res = await appAPI.get(shipmentsPath)
         return await res.data;
     },
-
+    update: async (shipment: IShipments) => {
+        const res = await appAPI.put(shipmentsPath, {
+            ...shipment,
+            author_date: +shipment.author_date,
+        })
+        return await res.data;
+    }
 };

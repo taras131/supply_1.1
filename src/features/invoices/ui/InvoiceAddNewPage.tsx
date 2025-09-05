@@ -21,11 +21,13 @@ import {readText as readPdfText} from "../../../utils/readPdfText";
 import {ParsedInvoice} from "../utils/invoiceParsers";
 import {parseDocxInvoice, parsePdfInvoiceText} from "../utils/invoiceFileReaders";
 import {parseExcelInvoice} from "../utils/parseExcelInvoice";
+import {useNavigate} from "react-router-dom";
 
 export type SelectedByOrder = Record<string, string[]>; // { [orderId]: [positionId, ...] }
 
 const InvoiceAddNewPage = () => {
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
     const suppliers = useAppSelector(selectSuppliersForOptions);
     const orders = useAppSelector(selectOrders);
     const [file, setFile] = useState<File | null>(null);
@@ -55,9 +57,9 @@ const InvoiceAddNewPage = () => {
     const selectedPositionIds = useMemo(() => {
         return Object.values(selectedByOrder).flatMap(ids => ids.map(String));
     }, [selectedByOrder]);
-    const handleWithVatChange = () => {
+    const handleWithVatChange = useCallback(() => {
         setEditedValue(prev => ({...prev, is_with_vat: !prev.is_with_vat}));
-    }
+    },[setEditedValue]);
     const handleChangeInputFile = async (e: ChangeEvent<HTMLInputElement>) => {
         const list = e.currentTarget.files;
         if (!list || !list[0]) return;
@@ -108,6 +110,8 @@ const InvoiceAddNewPage = () => {
             await dispatch(fetchAddInvoice({invoice: {...editedValue, positions_id: selectedPositionIds}, file: file}));
             resetValue();
             setFile(null)
+            setSelectedByOrder({})
+            navigate(-1)
         } catch (e) {
         }
     }

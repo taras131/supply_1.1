@@ -1,5 +1,5 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
-import {INewShipments} from "../../../models/iShipments";
+import {INewShipments, IShipments} from "../../../models/iShipments";
 import {shipmentsAPI} from "../api";
 import {handlerError} from "../../../store/handleError";
 import {setModalMessage} from "../../messages/model/slice";
@@ -49,6 +49,18 @@ export const fetchGetAllShipment = createAsyncThunk("shipments/get_all",
         try {
             return await shipmentsAPI.getAll();
         } catch (e) {
+            const msg = handlerError(e);
+            dispatch(setModalMessage(msg));
+            return rejectWithValue(msg);
+        }
+    });
+
+export const fetchUpdateShipment = createAsyncThunk("shipments/update",
+    async (shipment: IShipments, {dispatch, rejectWithValue}) => {
+        try {
+            return await shipmentsAPI.update(shipment);
+        } catch (e) {
+            console.log(e)
             const msg = handlerError(e);
             dispatch(setModalMessage(msg));
             return rejectWithValue(msg);

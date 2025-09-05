@@ -16,7 +16,7 @@ async function mapDocToNewShipmentAsync(doc: any): Promise<INewShipments> {
         transporter: data.transporter,
         lading_number: data.ladingNumber,
         lading_file_path: data.ladingNumberFilePath ?? null,
-        receiving_is_receiving: data.receiving?.isReceiving ?? false,
+        receiving_is_receiving: data.receiving?.dateCreating ?? false,
         receiving_date: data.receiving?.dateCreating ?? 0,
         type: data.type,
         shipment_invoices: [...data.invoicesList.map((invoice: any) => (

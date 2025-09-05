@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import InvoicesPageHeader from "./InvoicesPageHeader";
 import InvoicesTable from "./InvoicesTable";
 import {Stack} from "@mui/material";
@@ -9,9 +9,9 @@ import {fetchGetAllInvoices, TInvoiceFilter} from "../model/actions";
 const InvoicesPage = () => {
     const dispatch = useAppDispatch();
     const [filterValue, setFilterValue] = useState<TInvoiceFilter>("all");
-    const filterChangeHandler = (e: TInvoiceFilter) => {
+    const filterChangeHandler = useCallback((e: TInvoiceFilter) => {
         setFilterValue(e)
-    }
+    }, [])
     useEffect(() => {
         dispatch(fetchGetAllInvoices(filterValue));
     }, [dispatch, filterValue]);

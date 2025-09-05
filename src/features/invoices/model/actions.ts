@@ -28,6 +28,9 @@ export const fetchAddInvoice = createAsyncThunk(
                 const uploadedFile = await filesAPI.upload(file);
                 invoice.invoice_file_link = `${nestServerPath}/static/${uploadedFile}`
             }
+            if(invoice.author_date === 0) {
+                invoice.author_date = new Date().getTime()
+            }
             return await invoicesAPI.add(invoice);
         } catch (e) {
             console.log(e)

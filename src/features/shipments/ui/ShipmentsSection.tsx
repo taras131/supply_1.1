@@ -1,19 +1,21 @@
 import {useAppDispatch, useAppSelector} from "../../../hooks/redux";
 import {selectShipments} from "../model/selectors";
-import InvoicesTable from "../../invoices/ui/InvoicesTable";
 import React, {FC, useState, useEffect, memo, useMemo, useCallback, useRef, ChangeEvent} from "react";
 import {
     Card,
     Box,
     List,
     alpha,
-    SelectChangeEvent, Typography
+    SelectChangeEvent,
+    Typography, Stack,
 } from "@mui/material";
 import {setInvoices} from "../../invoices/model/slice";
 import {defaultInvoice, IInvoice} from "../../../models/iInvoices";
 import {IShipments} from "../../../models/iShipments";
 import SearchTextField from "../../../components/common/SearchTextField";
 import ShipmentsSectionItem from "./ShipmentsSectionItem";
+import InvoicesTableForShipment from "../../invoices/ui/InvoicesTableForShipment";
+import ShipmentShow from "./ShipmentShow";
 
 // Дебаунс значения (чтобы фильтрация срабатывала не на каждый символ)
 function useDebouncedValue<T>(value: T, delay = 300) {
@@ -214,7 +216,7 @@ const ShipmentsSection: FC = () => {
                                     selected={s.id === activeShipmentId}
                                     transporter={s.transporter}
                                     lading_number={s.lading_number}
-                                    receiving_date={s.receiving_date}
+                                    receiving_date={s.receiving_date || 0}
                                     author_date={s.author_date}
                                     type={s.type}
                                     setActiveShipmentId={setActiveShipmentId}
@@ -237,12 +239,15 @@ const ShipmentsSection: FC = () => {
             </Card>
 
             {/* Правая колонка */}
+            <Stack spacing={3} sx={{width: '100%'}}>
+                <ShipmentShow shipment={activeShipment}/>
             <Box sx={{flex: 1, minWidth: 0, position: 'relative'}}>
                 <Typography variant={"h6"} sx={{position: "absolute", top: 12, left: 12, zIndex: 3}}>
                     Связанные счета
                 </Typography>
-                <InvoicesTable shipmentMode/>
+                <InvoicesTableForShipment/>
             </Box>
+            </Stack>
         </Box>
     );
 };

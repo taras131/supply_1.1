@@ -21,10 +21,10 @@ import MyFormControl from "../../../styles/theme/customizations/MyFormControl";
 import MySelectControl from "../../../styles/theme/customizations/MySelectControl";
 import MyButton from "../../../styles/theme/customizations/MyButton";
 import Box from "@mui/material/Box";
-import InvoicesTable from "../../invoices/ui/InvoicesTable";
 import {fetchGetInvoicesForNewShipment} from "../../invoices/model/actions";
 import {fetchAddShipment} from "../model/actions";
 import {useNavigate} from "react-router-dom";
+import InvoicesTableForNewShipment from "../../invoices/ui/InvoicesTableForNewShipment";
 
 export interface IInvoiceValue {
     value: TShipmentInvoiceValue;
@@ -166,10 +166,10 @@ const ShipmentsAddNewPage: FC = () => {
                     </Box>
                 </Box>
             </Card>
-            <InvoicesTable newShipmentMode
-                           selectedInvoicesWithVolume={selectedInvoicesWithVolume}
-                           onToggleChecked={onToggleChecked}
-                           onChangeVolume={onChangeInvoiceVolume}/>
+            <InvoicesTableForNewShipment
+                selectedInvoicesWithVolume={selectedInvoicesWithVolume}
+                onToggleChecked={onToggleChecked}
+                onChangeVolume={onChangeInvoiceVolume}/>
         </Stack>);
 };
 
