@@ -7,9 +7,9 @@ export const MyTabs = (props: TabsProps) => {
             sx={[
                 {
                     minHeight: 'fit-content',
-                    '& .MuiTabs-indicator': (theme) => ({
+                 /*   '& .MuiTabs-indicator': (theme) => ({
                         backgroundColor: theme.palette.mode === 'dark' ? theme.palette.grey[200] : theme.palette.grey[800],
-                    }),
+                    }),*/
                 },
             ]}
         />
@@ -35,7 +35,9 @@ export const MyTab = (props: TabProps) => {
                         bgcolor: theme.palette.mode === 'dark' ? theme.palette.grey[800] : theme.palette.grey[100],
                     },
                     '&.Mui-selected': {
+/*
                         color: theme.palette.mode === 'dark' ? theme.palette.common.white : theme.palette.grey[900],
+*/
                     },
                 }),
             ]}

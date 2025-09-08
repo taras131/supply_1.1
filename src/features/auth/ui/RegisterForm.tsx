@@ -37,7 +37,10 @@ const RegisterForm = () => {
   }, [editedValue.company_id]);
   return (
     <AuthLayout title="Регистрация" handleSubmit={handleSubmit}>
-      <UserView userFieldChangeHandler={handleFieldChange} editedUser={editedValue} errors={errors} isEditMode={true} />
+      <UserView userFieldChangeHandler={handleFieldChange}
+                editedUser={editedValue}
+                errors={errors}
+                isEditMode={true} />
       <FieldControl
         label="Пароль"
         name="password"

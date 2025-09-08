@@ -38,7 +38,7 @@ const TaskCard: FC<IProps> = ({task, isShowMachineryInformation = false}) => {
             ref={containerRef}
             style={{
                 borderRadius: "4px",
-                backgroundColor: isDragging ? "#d3d3d3" : "white",
+                backgroundColor:  "background.paper",
                 height: isDragging ? 0 : "auto",
                 cursor: "pointer",
                 boxShadow: "0 1px 3px rgba(0,0,0,0.12)",

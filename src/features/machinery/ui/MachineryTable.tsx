@@ -32,7 +32,7 @@ function renderStatus(status: MachineryStatus) {
         [MachineryStatus.repair]: 'warning',
         [MachineryStatus.disActive]: 'error',
     };
-    return (<Chip sx={{width: "80px"}}
+    return (<Chip sx={{width: "120px"}}
                   label={status}
                   color={colors[status]}
                   size="small"/>);
@@ -111,8 +111,8 @@ const MachineryTable: FC<IProps> = ({rows}) => {
             field: 'status',
             headerName: 'Статус',
             type: 'singleSelect',
-            flex: 0.6,
-            minWidth: 120,
+
+            width: 200,
             valueOptions: [MachineryStatus.active, MachineryStatus.repair, MachineryStatus.disActive],
             renderCell: (params: any) => renderStatus(params.value),
             sortComparator: (a: any, b: any) => {
@@ -125,7 +125,7 @@ const MachineryTable: FC<IProps> = ({rows}) => {
             },
             disableColumnMenu: true,
         },
-        {
+     /*   {
             field: "actions",
             type: "actions",
             headerName: '',
@@ -143,7 +143,7 @@ const MachineryTable: FC<IProps> = ({rows}) => {
                 />
             ],
             disableColumnMenu: true,
-        },
+        },*/
     ], [handleRowEdit]);
 
     return (

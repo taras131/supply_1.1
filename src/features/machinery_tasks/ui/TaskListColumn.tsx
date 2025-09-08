@@ -30,7 +30,7 @@ const TasksColumn: React.FC<TasksColumnProps> = ({status, tasks, moveTask, isSho
             ref={containerRef}
             spacing={1}
             style={{
-                backgroundColor: "#f0f0f0",
+                backgroundColor: "background.default",
                 padding: "16px",
                 borderRadius: "8px",
                 flex: "1",

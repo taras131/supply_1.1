@@ -4,6 +4,7 @@ import AirplanemodeActiveIcon from "@mui/icons-material/AirplanemodeActive";
 import DirectionsSubwayIcon from "@mui/icons-material/DirectionsSubway";
 import {convertMillisecondsToDate} from "../../../utils/services";
 import {TShipmentsType} from "../../../models/iShipments";
+import ShipmentTypeIcon from "./ShipmentTypeIcon";
 
 interface IProps {
     selected: boolean
@@ -27,10 +28,10 @@ const ShipmentsSectionItem: FC<IProps> = memo(({
                                                    setActiveShipmentId
                                                }) => {
     const handleClick = useCallback(() => setActiveShipmentId(id), [id, setActiveShipmentId]);
-    const received = receiving_date && receiving_date > 0;
+    const received = Boolean(receiving_date && receiving_date > 0);
     const authorDateStr = useMemo(() => convertMillisecondsToDate(author_date), [author_date]);
     const receivingDateStr = useMemo(
-        () => (received ? convertMillisecondsToDate(receiving_date!) : 'в пути'),
+        () => (received ? 'получено' : 'в пути'),
         [received, receiving_date]
     );
     return (
@@ -54,17 +55,7 @@ const ShipmentsSectionItem: FC<IProps> = memo(({
                                 {lading_number}
                             </Typography>
                         </Stack>
-                        <Stack direction="row" spacing={1} sx={{flexShrink: 0}}>
-                            {type === 'air' ? (
-                                <Tooltip title="Авиа отправка">
-                                    <AirplanemodeActiveIcon color={received ? 'success' : 'warning'}/>
-                                </Tooltip>
-                            ) : (
-                                <Tooltip title="ЖД отправка">
-                                    <DirectionsSubwayIcon color={received ? 'success' : 'warning'}/>
-                                </Tooltip>
-                            )}
-                        </Stack>
+                        <ShipmentTypeIcon type={type} received={received}/>
                     </Stack>
                 }
                 secondary={
@@ -77,9 +68,10 @@ const ShipmentsSectionItem: FC<IProps> = memo(({
                             Отгружено: {authorDateStr}
                         </Typography>
                         <Typography variant="caption"
+                                    fontWeight={600}
                                     color={received ? "success" : "text.warning"}
                                     noWrap>
-                            {received ? `Получено: ${receivingDateStr}` : receivingDateStr}
+                            {receivingDateStr}
                         </Typography>
                     </Stack>
                 }

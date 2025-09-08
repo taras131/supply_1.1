@@ -18,7 +18,7 @@ const baseStyle: React.CSSProperties = {
     textOverflow: "ellipsis",
 };
 
-interface IProps  {
+interface IProps {
     value: number | string;
     onChange: (newValue: number | string) => void;
     fieldName?: string;
@@ -26,7 +26,13 @@ interface IProps  {
     maxWidth?: number;
 }
 
-export const EditableSpan: FC<IProps> = ({ value, onChange, fieldName, label ="Добавить комментарий" }) => {
+export const EditableSpan: FC<IProps> = ({
+                                             value,
+                                             onChange,
+                                             fieldName,
+                                             maxWidth,
+                                             label = "Добавить комментарий"
+                                         }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [inputValue, setInputValue] = useState(String(value ?? ""));
 
@@ -70,7 +76,7 @@ export const EditableSpan: FC<IProps> = ({ value, onChange, fieldName, label ="�
                 ...baseStyle,
                 borderColor: "background.paper",
                 outline: "none",
-                maxWidth: ``
+                maxWidth: `${maxWidth}px`
             }}
         />
     ) : (

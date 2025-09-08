@@ -1,6 +1,6 @@
 import React, {FC, memo} from 'react';
 import Card from "@mui/material/Card";
-import {IShipments} from "../../../models/iShipments";
+import {defaultShipment, emptyShipment, INewShipments, IShipments} from "../../../models/iShipments";
 import TitleWithValue from "../../../components/TitleWithValue";
 import {convertMillisecondsToDate} from "../../../utils/services";
 import {Button, CardHeader, Checkbox, Chip, FormControlLabel, Stack, Typography} from "@mui/material";
@@ -12,8 +12,12 @@ import DownloadIcon from "@mui/icons-material/Download";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import CardContent from "@mui/material/CardContent";
+import {EditableSpan} from "../../../components/common/EditableSpan";
+import {useEditor} from "../../../hooks/useEditor";
+import {shipmentValidate} from "../../../utils/validators";
+import ShipmentTypeIcon from "./ShipmentTypeIcon";
 
-const InfoGrid: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+const InfoGrid: React.FC<{ children: React.ReactNode }> = ({children}) => (
     <Box
         sx={{
             display: "grid",
@@ -22,7 +26,7 @@ const InfoGrid: React.FC<{ children: React.ReactNode }> = ({ children }) => (
                 sm: "repeat(1, 1fr)",    // планшеты — 2
                 md: "repeat(2, 1fr)",    // десктоп — 3
             },
-            gap: 2, // одинаковые отступы между ячейками
+            gap: 4, // одинаковые отступы между ячейками
         }}
     >
         {children}
@@ -58,42 +62,54 @@ const ShipmentShow: FC<IProps> = ({shipment}) => {
     };
 
     if (!shipment) return null;
-    const transportLabel = shipment.type === "air" ? "Авиа" : "ЖД";
+    const ladingNumberChangeHandler = (newValue: number | string) => {
+        dispatch(fetchUpdateShipment({
+            ...shipment,
+            lading_number: `${newValue}`,
+        }))
+    }
     const received = shipment.receiving_is_receiving;
     return (
-        <Card sx={{ p: { xs: 2, sm: 3 }, minHeight: 200 }}>
+        <Card sx={{p: {xs: 1, sm: 2}, minHeight: 200}}>
             <CardHeader
-                title={shipment.transporter || "Перевозчик не указан"}
-                subheader={`Тип перевозки: ${transportLabel}`}
+                title={<Stack direction={"row"} spacing={2} alignItems={"center"}>
+                    <Typography component="h2" variant="h5">
+                        {shipment.transporter || "Перевозчик не указан"}
+                    </Typography>
+                    <ShipmentTypeIcon type={shipment.type}
+                                      received={shipment.receiving_is_receiving}/>
+                </Stack>}
+                subheader={
+                    <Stack direction="row" spacing={1} alignItems={"center"}>
+                        <Typography variant={"subtitle1"}>№</Typography>
+                        <EditableSpan value={shipment.lading_number}
+                                      onChange={ladingNumberChangeHandler}
+                                      maxWidth={250}/>
+
+                    </Stack>}
                 action={
                     <Chip
                         size="small"
-                        label={received ? "Получено" : "Не получено"}
-                        color={received ? "success" : "default"}
+                        label={received ? "получено" : "в пути"}
+                        color={received ? "success" : "warning"}
                     />
                 }
                 sx={{
                     pb: 1,
-                    "& .MuiCardHeader-title": { fontWeight: 600 },
-                    "& .MuiCardHeader-subheader": { color: "text.secondary" },
+                    "& .MuiCardHeader-title": {fontWeight: 600},
+                    "& .MuiCardHeader-subheader": {color: "text.secondary"},
                 }}
             />
-            <Divider sx={{ mb: 2 }} />
-            <CardContent sx={{ pt: 0 }}>
+            <Divider sx={{mb: 2}}/>
+            <CardContent sx={{pt: 0}}>
                 <InfoGrid>
                     <TitleWithValue
-                        title="Номер накладной"
-                        value={shipment.lading_number}
-                        isLoading={isLoading}
-                        copyable
-                    />
-                    <TitleWithValue
-                        title="Отгружено"
+                        title="Отгружено:"
                         value={convertMillisecondsToDate(shipment.author_date)}
                         isLoading={isLoading}
                     />
                     <TitleWithValue
-                        title="Отгрузил"
+                        title="Отгрузил:"
                         value={
                             shipment.author
                                 ? `${shipment.author.first_name} ${shipment.author.middle_name}`
@@ -101,19 +117,15 @@ const ShipmentShow: FC<IProps> = ({shipment}) => {
                         }
                         isLoading={isLoading}
                     />
-                    <TitleWithValue title="Получено" isLoading={isLoading}>
+                    <TitleWithValue title="Получено:" isLoading={isLoading}>
                         <Stack
                             direction="row"
                             spacing={1}
                             alignItems="center"
                             flexWrap="wrap"
                         >
-                            {shipment.receiving_date && +shipment.receiving_date > 1 && (
-                                <Typography variant="subtitle2">
-                                    {convertMillisecondsToDate(shipment.receiving_date)}
-                                </Typography>
-                            )}
                             <FormControlLabel
+                                labelPlacement="start"
                                 control={
                                     <Checkbox
                                         checked={received}
@@ -121,31 +133,36 @@ const ShipmentShow: FC<IProps> = ({shipment}) => {
                                         disabled={isLoading}
                                     />
                                 }
-                                label="Отметить как получено"
+                                label={received ? "" : "Отметить как полученое"}
                             />
+                            {shipment.receiving_date && +shipment.receiving_date > 1 && (
+                                <Typography variant="subtitle1" fontWeight={600}>
+                                    {convertMillisecondsToDate(shipment.receiving_date)}
+                                </Typography>
+                            )}
                         </Stack>
                     </TitleWithValue>
                     {shipment.receiving_author && (
                         <TitleWithValue
-                            title="Получил"
+                            title="Получил:"
                             value={`${shipment.receiving_author.first_name} ${shipment.receiving_author.middle_name}`}
                             isLoading={isLoading}
                         />
                     )}
                     {shipment.lading_file_path && (
-                        <Box sx={{ gridColumn: { xs: "1 / -1", sm: "auto" } }}>
+                        <Box sx={{gridColumn: {xs: "1 / -1", sm: "auto"}}}>
                             <TitleWithValue title="Накладная">
                                 <Button
-                                    startIcon={<DownloadIcon />}
+                                    startIcon={<DownloadIcon/>}
                                     size="small"
                                     href={shipment.lading_file_path}
                                     target="_blank"
                                     variant="contained"
                                     color="success"
                                     fullWidth
-                                    sx={{ textTransform: "none" }}
+                                    sx={{textTransform: "none"}}
                                 >
-                                    Скачать ПП
+                                    Скачать накладную
                                 </Button>
                             </TitleWithValue>
                         </Box>
