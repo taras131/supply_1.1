@@ -46,26 +46,8 @@ export const InvoicesSlice = createSlice({
         setInvoices: (state, action: PayloadAction<IInvoice[]>) => {
             state.list = action.payload;
         },
-        setSelectedOrderPosition: (state, action: PayloadAction<ISelectedOrderPositionData>) => {
-            const {orderId, positionId} = action.payload;
-            if (state.selectedPosition[orderId]) {
-                if (state.selectedPosition[orderId].find((item) => item === positionId)) {
-                    state.selectedPosition = {
-                        ...state.selectedPosition,
-                        [orderId]: [...state.selectedPosition[orderId].filter((item) => item !== positionId)],
-                    };
-                } else {
-                    state.selectedPosition = {
-                        ...state.selectedPosition,
-                        [orderId]: [...state.selectedPosition[orderId], positionId],
-                    };
-                }
-            } else {
-                state.selectedPosition = {...state.selectedPosition, [orderId]: [positionId]};
-            }
-        },
-        resetSelectedOrderPosition: (state) => {
-            state.selectedPosition = {};
+        addInvoices: (state, action: PayloadAction<IInvoice[]>) => {
+            state.list = [...action.payload, ...state.list];
         },
     },
 
@@ -103,6 +85,6 @@ export const InvoicesSlice = createSlice({
     },
 });
 
-export const {setInvoices, setSelectedOrderPosition, resetSelectedOrderPosition} = InvoicesSlice.actions;
+export const {setInvoices, addInvoices} = InvoicesSlice.actions;
 
 export default InvoicesSlice.reducer;

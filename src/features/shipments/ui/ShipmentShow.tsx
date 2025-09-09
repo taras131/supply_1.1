@@ -1,6 +1,6 @@
 import React, {FC, memo} from 'react';
 import Card from "@mui/material/Card";
-import {defaultShipment, emptyShipment, INewShipments, IShipments} from "../../../models/iShipments";
+import {IShipments} from "../../../models/iShipments";
 import TitleWithValue from "../../../components/TitleWithValue";
 import {convertMillisecondsToDate} from "../../../utils/services";
 import {Button, CardHeader, Checkbox, Chip, FormControlLabel, Stack, Typography} from "@mui/material";
@@ -13,8 +13,6 @@ import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import CardContent from "@mui/material/CardContent";
 import {EditableSpan} from "../../../components/common/EditableSpan";
-import {useEditor} from "../../../hooks/useEditor";
-import {shipmentValidate} from "../../../utils/validators";
 import ShipmentTypeIcon from "./ShipmentTypeIcon";
 
 const InfoGrid: React.FC<{ children: React.ReactNode }> = ({children}) => (
@@ -38,7 +36,6 @@ interface IProps {
 }
 
 const ShipmentShow: FC<IProps> = ({shipment}) => {
-    console.log(shipment)
     const dispatch = useAppDispatch();
     const currentUserId = useAppSelector(selectCurrentUserId);
     const isLoading = useAppSelector(selectShipmentsIsLoading)
@@ -89,7 +86,6 @@ const ShipmentShow: FC<IProps> = ({shipment}) => {
                     </Stack>}
                 action={
                     <Chip
-                        size="small"
                         label={received ? "получено" : "в пути"}
                         color={received ? "success" : "warning"}
                     />
@@ -135,7 +131,7 @@ const ShipmentShow: FC<IProps> = ({shipment}) => {
                                 }
                                 label={received ? "" : "Отметить как полученое"}
                             />
-                            {shipment.receiving_date && +shipment.receiving_date > 1 && (
+                            {received && !!shipment.receiving_date && (
                                 <Typography variant="subtitle1" fontWeight={600}>
                                     {convertMillisecondsToDate(shipment.receiving_date)}
                                 </Typography>

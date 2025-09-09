@@ -53,7 +53,7 @@ const ShipmentsAddNewPage: FC = () => {
     });
 
     useEffect(() => {
-        dispatch(fetchGetInvoicesForNewShipment())
+        dispatch(fetchGetInvoicesForNewShipment([]))
     }, [dispatch]);
     const saveClickHandler = async () => {
         try {

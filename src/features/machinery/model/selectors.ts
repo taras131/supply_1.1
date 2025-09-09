@@ -60,31 +60,3 @@ export const getCurrentMachineryOperatingTypeId = (state: RootState): number | n
 export const getTaskById = (state: RootState, taskId: string): ITask | null => {
   return state.machinery.current?.tasks.find((task) => task.id === taskId) || null;
 };
-
-/*
-export const getRelatedMachineryByInvoiceId = (state: RootState, invoiceId: string): IMachinery[] => {
-  const relatedMachinery: IMachinery[] = [];
-  const relatedOrders: IOrder[] = [];
-  state.orders.list.forEach((order) => {
-    const include = order.orderItems.some((orderItems) => orderItems.invoiceId && orderItems.invoiceId === invoiceId);
-    if (include) {
-      relatedOrders.push(order);
-    }
-  });
-  if (relatedOrders.length > 0) {
-    const relatedMachineryIds: string[] = [];
-    relatedOrders.forEach((relatedOrder) => {
-      if (relatedOrder.machineryId && relatedOrder.machineryId.length > 0) {
-        relatedMachineryIds.push(relatedOrder.machineryId);
-      }
-    });
-    if (relatedMachineryIds.length > 0) {
-      relatedMachineryIds.forEach((relatedMachineryId) => {
-        const machinery = useAppSelector((state) => getMachineryById(state, +relatedMachineryId));
-        relatedMachinery.push(machinery[0]);
-      });
-    }
-  }
-  return relatedMachinery;
-};
-*/

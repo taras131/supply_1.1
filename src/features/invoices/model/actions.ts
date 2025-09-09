@@ -6,14 +6,33 @@ import {IInvoice, INewInvoice} from "../../../models/iInvoices";
 import {filesAPI} from "../../files/api";
 import {nestServerPath} from "../../../api";
 import {setOrdersPositions} from "../../orders_positions/model/slice";
-import {log} from "node:util";
 
-/*export interface ILinkPositions {
-  selectedPosition: ISelectedOrderPosition;
-  orders: IOrder[];
-  invoiceId: string;
+function mergeInvoicesPreserveLocal(
+    oldArr: IInvoice[],
+    newArr: IInvoice[],
+): IInvoice[] {
+    const byId = new Map<string, IInvoice>();
+    // Сначала кладём новые (серверные) — это база истины
+    for (const n of newArr) byId.set(n.id, n);
+    // Затем дополняем локальными полями из старых
+    for (const o of oldArr) {
+        const cur = byId.get(o.id);
+        if (cur) {
+            byId.set(o.id, {
+                ...cur,
+                // Сохраняем локальные поля (добавьте сюда всё нужное)
+                volume: o.volume ?? cur.volume,
+                // checked: o.checked ?? cur.checked,
+                // ...
+            });
+        } else {
+            // Если в новых нет — оставим старый как есть
+            byId.set(o.id, o);
+        }
+    }
+    return Array.from(byId.values());
 }
-*/
+
 export interface IAddInvoiceData {
     invoice: INewInvoice;
     file?: File | null;
@@ -28,7 +47,7 @@ export const fetchAddInvoice = createAsyncThunk(
                 const uploadedFile = await filesAPI.upload(file);
                 invoice.invoice_file_link = `${nestServerPath}/static/${uploadedFile}`
             }
-            if(invoice.author_date === 0) {
+            if (invoice.author_date === 0) {
                 invoice.author_date = new Date().getTime()
             }
             return await invoicesAPI.add(invoice);
@@ -58,11 +77,11 @@ export const fetchGetAllInvoices = createAsyncThunk(
 
 export const fetchGetInvoicesForNewShipment = createAsyncThunk(
     "invoices/get_for_new_shipment",
-    async (_, {dispatch, rejectWithValue}) => {
+    async (old_invoices: IInvoice [] = [], {dispatch, rejectWithValue}) => {
         try {
-            return await invoicesAPI.getForNewShipment();
+            const res = await invoicesAPI.getForNewShipment();
+            return mergeInvoicesPreserveLocal(old_invoices, res);
         } catch (e) {
-            console.log(e)
             const msg = handlerError(e);
             dispatch(setModalMessage(msg));
             return rejectWithValue(msg);

@@ -1,7 +1,7 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {IShipments, Transporter, TShipmentsType} from "../../../models/iShipments";
 import {ALL} from "../../../utils/const";
-import {fetchAddShipment, fetchGetAllShipment, fetchUpdateShipment} from "./actions";
+import {fetchAddShipment, fetchGetAllShipment, fetchUpdateShipment, fetchUpdateShipmentInvoices} from "./actions";
 
 
 interface IShipmentsState {
@@ -53,6 +53,12 @@ export const ShipmentSlice = createSlice({
                 })
             })
             .addCase(fetchUpdateShipment.fulfilled, (state, action: PayloadAction<IShipments>) => {
+                state.list = state.list.map(shipment => shipment.id === action.payload.id
+                    ? action.payload
+                    : shipment
+                )
+            })
+            .addCase(fetchUpdateShipmentInvoices.fulfilled, (state, action: PayloadAction<IShipments>) => {
                 state.list = [...state.list.map(shipment => shipment.id === action.payload.id
                     ? action.payload
                     : shipment

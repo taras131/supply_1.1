@@ -66,3 +66,15 @@ export const fetchUpdateShipment = createAsyncThunk("shipments/update",
             return rejectWithValue(msg);
         }
     });
+
+export const fetchUpdateShipmentInvoices = createAsyncThunk("shipments/update_shipment_invoices",
+    async (shipment: IShipments, {dispatch, rejectWithValue}) => {
+        try {
+            return await shipmentsAPI.updateShipmentInvoices(shipment);
+        } catch (e) {
+            console.log(e)
+            const msg = handlerError(e);
+            dispatch(setModalMessage(msg));
+            return rejectWithValue(msg);
+        }
+    });
