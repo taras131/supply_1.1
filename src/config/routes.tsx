@@ -24,6 +24,7 @@ import InvoiceAddNewPage from "../features/invoices/ui/InvoiceAddNewPage";
 import InvoiceDetailsPage from "../features/invoices/ui/InvoiceDetailsPage";
 import ShipmentsPage from "../features/shipments/ui/ShipmentsPage";
 import ShipmentsAddNewPage from "../features/shipments/ui/ShipmentsAddNewPage";
+import ProblemDetailsPage from "../features/machinery_problems/ui/ProblemDetailsPage";
 
 export interface IRouteConfig {
     icon: React.ReactNode;
@@ -123,6 +124,13 @@ export const routesConfig: IRouteConfig[] = [
         element: <ProblemsPage/>,
         label: "Проблемы",
         showInMenu: true
+    },
+    {
+        icon: <HomeRoundedIcon/>,
+        path: routes.machineryProblemDetails,
+        element: <ProblemDetailsPage/>,
+        label: "Проблемы",
+        showInMenu: false
     },
     {
         icon: <HomeRoundedIcon/>,

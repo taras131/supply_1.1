@@ -75,7 +75,7 @@ const ShipmentsSectionInvoices: FC<IProps> = ({activeShipment}) => {
     return (
         <Box sx={{flex: 1, minWidth: 0, position: 'relative'}}>
             <Stack direction={"row"}
-                   spacing={3}
+                   spacing={7}
                    alignItems={"center"}
                    sx={{position: "absolute", top: 10, left: 12, zIndex: 3}}>
                 <Typography variant={"h6"}>
@@ -86,7 +86,7 @@ const ShipmentsSectionInvoices: FC<IProps> = ({activeShipment}) => {
                         <Button
                             onClick={toggleInvoiceEditing}
                             color={"warning"}
-                            variant="contained"
+                            variant="text"
                             size={"small"}
                             loading={isLoading}
                             sx={{
@@ -97,7 +97,7 @@ const ShipmentsSectionInvoices: FC<IProps> = ({activeShipment}) => {
                         <Button
                             onClick={updateShipmenInvoiceClickHandler}
                             color={"success"}
-                            variant="contained"
+                            variant="text"
                             size={"small"}
                             loading={isLoading}
                             sx={{
@@ -109,7 +109,7 @@ const ShipmentsSectionInvoices: FC<IProps> = ({activeShipment}) => {
                     : (<Button
                         onClick={toggleInvoiceEditing}
                         size={"small"}
-                        variant="contained"
+                        variant="text"
                         loading={isLoading}
                         sx={{
                             textTransform: 'none'

@@ -1,50 +1,38 @@
-import React, {FC, useCallback, useEffect, useMemo, useState} from "react";
+import React, {FC, useCallback, useMemo} from "react";
 import {formatDateDDMMYYYY} from "../../../utils/services";
 import {getCategoryTitleById} from "../../machinery/utils/services";
 import Box from "@mui/material/Box";
 import {IMachineryProblem} from "../../../models/IMachineryProblems";
 import StatusIcon from "../../machinery_tasks/ui/StatusIcon";
 import PriorityChip from "../../machinery_tasks/ui/PriorityChip";
-import {DataGrid, gridClasses, GridEventListener} from "@mui/x-data-grid";
-import {GridToolbar} from "@mui/x-data-grid/internals";
+import {GridEventListener} from "@mui/x-data-grid";
 import {useAppSelector} from "../../../hooks/redux";
 import {selectMachineryProblemsIsLoading} from "../model/selectors";
-import {Link, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {routes} from "../../../utils/routes";
 import {Typography} from "@mui/material";
-
-const STORAGE_KEY = 'my-grid:problemColumnVisibility';
+import {MyDataGrid} from "../../../styles/theme/customizations/MyDataGrid";
 
 interface IProps {
     rows: IMachineryProblem[] | null;
-    onProblemClick: (problem: IMachineryProblem) => void;
     isShowMachineryInfo: boolean;
     activeRowId?: number | null;
 }
 
-const ProblemsTable: FC<IProps> = ({rows, onProblemClick, isShowMachineryInfo, activeRowId = null}) => {
+const ProblemsTable: FC<IProps> = ({rows, isShowMachineryInfo, }) => {
         const navigate = useNavigate();
         const isLoading = useAppSelector(selectMachineryProblemsIsLoading)
-        const [sortModel, setSortModel] = React.useState<any>([]);
-        const [columnVisibilityModel, setColumnVisibilityModel] = useState<Record<string, boolean>>({});
         const adaptiveRows = rows?.map(row => ({
             ...row,
             machineryTitle: row.machinery ? `${row.machinery?.brand} ${row.machinery?.model}` : 'Текущая',
             machineryId: row.machinery?.id,
             category: getCategoryTitleById(row.category_id)
         }))
-        const handleVisibilityChange = useCallback((newModel: Record<string, boolean>) => {
-            setColumnVisibilityModel(newModel);
-            try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(newModel));
-            } catch { /* ignore */
-            }
-        }, []);
         const handleRowClick = useCallback<GridEventListener<"rowClick">>(
             ({row}) => {
-                onProblemClick(row);
+                navigate(routes.machineryProblemDetails.replace(":problemId", row.id));
             },
-            [onProblemClick],
+            [navigate],
         );
         let columns = useMemo<any>(() => [
                 {
@@ -152,51 +140,15 @@ const ProblemsTable: FC<IProps> = ({rows, onProblemClick, isShowMachineryInfo, a
                 },
             ],
             [navigate]);
-        useEffect(() => {
-            try {
-                const saved = localStorage.getItem(STORAGE_KEY);
-                if (saved) {
-                    setColumnVisibilityModel(JSON.parse(saved));
-                }
-            } catch { /* ignore */
-            }
-        }, []);
-        useEffect(() => {
-            setColumnVisibilityModel(prev => {
-                const next = {...prev};
-                for (const col of columns) {
-                    if (next[col.field] === undefined) next[col.field] = true;
-                }
-                return next;
-            });
-        }, [columns]);
-        if (!rows) return null;
+
         return (
-            <DataGrid
+            <MyDataGrid
                 rows={adaptiveRows}
                 columns={columns}
-                columnVisibilityModel={columnVisibilityModel}
-                onColumnVisibilityModelChange={handleVisibilityChange}
-                sortModel={sortModel}
-                onSortModelChange={setSortModel}
-                pagination
-                pageSizeOptions={[10, 20, 50]}
-                slots={{toolbar: GridToolbar}}
-                slotProps={{
-                    toolbar: {showQuickFilter: true, quickFilterProps: {debounceMs: 500}},
-                    baseIconButton: {size: 'small'},
-                }}
-                density="compact"
-                rowHeight={90}
-                columnHeaderHeight={70}
                 loading={isLoading}
-                sx={{
-                    [`& .${gridClasses.columnHeader}, & .${gridClasses.cell}`]: {outline: 'transparent'},
-                    [`& .${gridClasses.columnHeader}:focus-within, & .${gridClasses.cell}:focus-within`]: {outline: 'none'},
-                    [`& .${gridClasses.row}:hover`]: {cursor: 'pointer'},
-                }}
                 onRowClick={handleRowClick}
                 showToolbar
+                tableName={"problems"}
             />
         );
     }

@@ -1,12 +1,17 @@
-import React, {FC, memo} from 'react';
+import React, {ChangeEvent, FC, memo} from 'react';
 import Card from "@mui/material/Card";
 import {IShipments} from "../../../models/iShipments";
 import TitleWithValue from "../../../components/TitleWithValue";
 import {convertMillisecondsToDate} from "../../../utils/services";
-import {Button, CardHeader, Checkbox, Chip, FormControlLabel, Stack, Typography} from "@mui/material";
+import {Button, ButtonGroup, CardHeader, Checkbox, Chip, FormControlLabel, Stack, Typography} from "@mui/material";
 import {useAppDispatch, useAppSelector} from "../../../hooks/redux";
 import {selectCurrentUserId} from "../../users/model/selectors";
-import {fetchUpdateShipment} from "../model/actions";
+import {
+    fetchAddShipmentPhotos,
+    fetchChangeShipmentLadingFile,
+    fetchDeleteShipmentPhoto,
+    fetchUpdateShipment
+} from "../model/actions";
 import {selectShipmentsIsLoading} from "../model/selectors";
 import DownloadIcon from "@mui/icons-material/Download";
 import Box from "@mui/material/Box";
@@ -14,22 +19,11 @@ import Divider from "@mui/material/Divider";
 import CardContent from "@mui/material/CardContent";
 import {EditableSpan} from "../../../components/common/EditableSpan";
 import ShipmentTypeIcon from "./ShipmentTypeIcon";
-
-const InfoGrid: React.FC<{ children: React.ReactNode }> = ({children}) => (
-    <Box
-        sx={{
-            display: "grid",
-            gridTemplateColumns: {
-                xs: "1fr",               // мобильные — 1 колонка
-                sm: "repeat(1, 1fr)",    // планшеты — 2
-                md: "repeat(2, 1fr)",    // десктоп — 3
-            },
-            gap: 4, // одинаковые отступы между ячейками
-        }}
-    >
-        {children}
-    </Box>
-);
+import MyButton from "../../../styles/theme/customizations/MyButton";
+import AutorenewIcon from "@mui/icons-material/Autorenew";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
+import ShipmentPhotos from "./ShipmentPhotos";
+import {nestServerPath} from "../../../api";
 
 interface IProps {
     shipment: IShipments | null;
@@ -57,7 +51,6 @@ const ShipmentShow: FC<IProps> = ({shipment}) => {
             };
         dispatch(fetchUpdateShipment(updated_shipment));
     };
-
     if (!shipment) return null;
     const ladingNumberChangeHandler = (newValue: number | string) => {
         dispatch(fetchUpdateShipment({
@@ -65,9 +58,23 @@ const ShipmentShow: FC<IProps> = ({shipment}) => {
             lading_number: `${newValue}`,
         }))
     }
+    const handleChangeLandingFile = (e: ChangeEvent<HTMLInputElement>) => {
+        const list = e.currentTarget.files;
+        if (!list || !list[0]) return;
+        dispatch(fetchChangeShipmentLadingFile({shipment, file: list[0]}));
+    }
+    const photosUploadHandler = (files: FileList) => {
+        dispatch(fetchAddShipmentPhotos({shipment, files}));
+    }
+    const photoDeleteHandler = (index: number) => {
+        dispatch(fetchDeleteShipmentPhoto({shipment, index}));
+    }
+    const photoFilePaths = shipment.photo_file_paths
+        ? shipment.photo_file_paths.map(fileName => (`${nestServerPath}/static/${fileName}`))
+        : []
     const received = shipment.receiving_is_receiving;
     return (
-        <Card sx={{p: {xs: 1, sm: 2}, minHeight: 200}}>
+        <Card sx={{p: {xs: 1, sm: 2}, minHeight: 100}}>
             <CardHeader
                 title={<Stack direction={"row"} spacing={2} alignItems={"center"}>
                     <Typography component="h2" variant="h5">
@@ -98,72 +105,111 @@ const ShipmentShow: FC<IProps> = ({shipment}) => {
             />
             <Divider sx={{mb: 2}}/>
             <CardContent sx={{pt: 0}}>
-                <InfoGrid>
-                    <TitleWithValue
-                        title="Отгружено:"
-                        value={convertMillisecondsToDate(shipment.author_date)}
-                        isLoading={isLoading}
-                    />
-                    <TitleWithValue
-                        title="Отгрузил:"
-                        value={
-                            shipment.author
-                                ? `${shipment.author.first_name} ${shipment.author.middle_name}`
-                                : ""
-                        }
-                        isLoading={isLoading}
-                    />
-                    <TitleWithValue title="Получено:" isLoading={isLoading}>
-                        <Stack
-                            direction="row"
-                            spacing={1}
-                            alignItems="center"
-                            flexWrap="wrap"
-                        >
-                            <FormControlLabel
-                                labelPlacement="start"
-                                control={
-                                    <Checkbox
-                                        checked={received}
-                                        onChange={(_, checked) => receivingChangeHandler(checked)}
-                                        disabled={isLoading}
-                                    />
-                                }
-                                label={received ? "" : "Отметить как полученое"}
-                            />
-                            {received && !!shipment.receiving_date && (
-                                <Typography variant="subtitle1" fontWeight={600}>
-                                    {convertMillisecondsToDate(shipment.receiving_date)}
-                                </Typography>
-                            )}
-                        </Stack>
-                    </TitleWithValue>
-                    {shipment.receiving_author && (
+                <Box sx={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    columnGap: 3,
+                    rowGap: 3,
+                    alignItems: "start",
+                }}>
+                    <Stack spacing={2} sx={{height: "100%"}}>
                         <TitleWithValue
-                            title="Получил:"
-                            value={`${shipment.receiving_author.first_name} ${shipment.receiving_author.middle_name}`}
+                            title="Отгружено:"
+                            value={convertMillisecondsToDate(shipment.author_date)}
                             isLoading={isLoading}
                         />
-                    )}
-                    {shipment.lading_file_path && (
-                        <Box sx={{gridColumn: {xs: "1 / -1", sm: "auto"}}}>
-                            <TitleWithValue title="Накладная">
-                                <Button
-                                    startIcon={<DownloadIcon/>}
-                                    size="small"
-                                    href={shipment.lading_file_path}
-                                    target="_blank"
+                        <TitleWithValue
+                            title="Отгрузил:"
+                            value={
+                                shipment.author
+                                    ? `${shipment.author.first_name} ${shipment.author.middle_name}`
+                                    : ""
+                            }
+                            isLoading={isLoading}
+                        />
+                        <TitleWithValue title="Получено:" isLoading={isLoading}>
+                            <Stack
+                                direction="row"
+                                spacing={1}
+                                alignItems="center"
+                                flexWrap="wrap"
+                            >
+                                <FormControlLabel
+                                    labelPlacement="start"
+                                    control={
+                                        <Checkbox
+                                            checked={received}
+                                            onChange={(_, checked) => receivingChangeHandler(checked)}
+                                            disabled={isLoading}
+                                        />
+                                    }
+                                    label={received ? "" : "Отметить как полученое"}
+                                />
+                                {received && !!shipment.receiving_date && (
+                                    <Typography variant="subtitle1" fontWeight={600}>
+                                        {convertMillisecondsToDate(shipment.receiving_date)}
+                                    </Typography>
+                                )}
+                            </Stack>
+                        </TitleWithValue>
+                        {shipment.receiving_author && (
+                            <TitleWithValue
+                                title="Получил:"
+                                value={`${shipment.receiving_author.first_name} ${shipment.receiving_author.middle_name}`}
+                                isLoading={isLoading}
+                            />
+                        )}
+                        <Box
+                            sx={{
+                                position: "relative",
+                                display: "flex",
+                                alignItems: "end",
+                                justifyContent: "end",
+                                flexGrow: 1,
+                            }}
+                        >
+                            <ButtonGroup fullWidth={false}>
+                                <MyButton
                                     variant="contained"
-                                    color="success"
+                                    component="label"
+                                    color={shipment.lading_file_path ? "warning" : "primary"}
                                     fullWidth
-                                    sx={{textTransform: "none"}}
+                                    startIcon={shipment.lading_file_path ? <AutorenewIcon/> : <FileUploadIcon/>}
+                                    sx={{width: 220}}
                                 >
-                                    Скачать накладную
-                                </Button>
-                            </TitleWithValue>
+                                    {shipment.lading_file_path ? "Заменить накладную" : "Загрузить накладную"}
+                                    <input type="file" hidden onChange={handleChangeLandingFile}/>
+                                </MyButton>
+                                {shipment.lading_file_path && (
+                                    <Button
+                                        startIcon={<DownloadIcon/>}
+                                        size="small"
+                                        href={shipment.lading_file_path}
+                                        target="_blank"
+                                        variant="contained"
+                                        color="success"
+                                        fullWidth
+                                        sx={{textTransform: "none", width: 220}}
+                                    >
+                                        Скачать накладную
+                                    </Button>)}
+                            </ButtonGroup>
+                            <Typography variant="subtitle2" sx={{
+                                position: "absolute",
+                                right: 0,
+                                bottom: -25,
+                                color: "text.secondary"
+                            }}>
+                                {shipment.lading_file_path
+                                    ? shipment.lading_file_path.split("/").reverse()[0].split("?")[0]
+                                    : ""}
+                            </Typography>
                         </Box>
-                    )}
-                </InfoGrid>
+                    </Stack>
+                    <ShipmentPhotos srcArr={photoFilePaths}
+                                    onUpload={photosUploadHandler}
+                                    onDelete={photoDeleteHandler}/>
+                </Box>
             </CardContent>
         </Card>
     );

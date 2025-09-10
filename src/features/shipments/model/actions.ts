@@ -17,7 +17,7 @@ export const fetchAddShipment = createAsyncThunk("shipments/add",
         try {
             const {shipment, photoFile, ladingFile} = dto;
             const safeAuthorDate =
-               Number.isFinite(shipment.author_date) && shipment.author_date > 0
+                Number.isFinite(shipment.author_date) && shipment.author_date > 0
                     ? shipment.author_date
                     : Date.now();
             const shipment_in = {
@@ -27,11 +27,11 @@ export const fetchAddShipment = createAsyncThunk("shipments/add",
                 receiving_author_id: shipment.receiving_author_id ? shipment.receiving_author_id : null,
                 author_id: shipment.author_id ? shipment.author_id : null,
             }
-            if(photoFile){
+            if (photoFile) {
                 const res = await filesAPI.upload(photoFile);
                 shipment_in.photo_file_path = `${nestServerPath}/static/${res}`;
             }
-            if(ladingFile){
+            if (ladingFile) {
                 const res = await filesAPI.upload(ladingFile);
                 shipment_in.lading_file_path = `${nestServerPath}/static/${res}`;
             }
@@ -73,6 +73,85 @@ export const fetchUpdateShipmentInvoices = createAsyncThunk("shipments/update_sh
             return await shipmentsAPI.updateShipmentInvoices(shipment);
         } catch (e) {
             console.log(e)
+            const msg = handlerError(e);
+            dispatch(setModalMessage(msg));
+            return rejectWithValue(msg);
+        }
+    });
+
+interface IChangeLadingFile {
+    shipment: IShipments;
+    file: File;
+}
+
+export const fetchChangeShipmentLadingFile = createAsyncThunk("shipments/change_lading_file",
+    async (changeData: IChangeLadingFile, {dispatch, rejectWithValue}) => {
+        const {shipment, file} = changeData
+        try {
+            if (shipment.lading_file_path) {
+                try {
+                    await filesAPI.delete(shipment.lading_file_path);
+                } catch (e) {
+
+                }
+            }
+            const res = await filesAPI.upload(file);
+            return await dispatch(fetchUpdateShipment({
+                ...shipment,
+                lading_file_path: `${nestServerPath}/static/${res}`
+            })).unwrap();
+        } catch (e) {
+            console.log(e)
+            const msg = handlerError(e);
+            dispatch(setModalMessage(msg));
+            return rejectWithValue(msg);
+        }
+    });
+
+interface IAddPhotos {
+    shipment: IShipments;
+    files: FileList
+}
+
+export const fetchAddShipmentPhotos = createAsyncThunk("shipments/add_photos",
+    async (addPhotosData: IAddPhotos, {dispatch, rejectWithValue}) => {
+        try {
+            const {shipment, files} = addPhotosData
+            const fileArr = Array.from(files);             // FileList -> File[]
+            const uploads = fileArr.map(async (file, i) => {
+                const fileName = await filesAPI.upload(file);
+                return fileName as string;
+            });
+            const file_names = await Promise.all(uploads);
+            return await dispatch(fetchUpdateShipment({
+                ...shipment,
+                photo_file_paths: file_names
+            })).unwrap();
+        } catch (e) {
+            const msg = handlerError(e);
+            dispatch(setModalMessage(msg));
+            return rejectWithValue(msg);
+        }
+    });
+
+interface IDeletePhoto {
+    shipment: IShipments;
+    index: number
+}
+
+export const fetchDeleteShipmentPhoto = createAsyncThunk("shipments/delete_photo",
+    async (deletePhotoData: IDeletePhoto, {dispatch, rejectWithValue}) => {
+        try {
+            const {shipment, index} = deletePhotoData
+            if (shipment.photo_file_paths && shipment.photo_file_paths[index]) {
+                const deleteFileName = shipment.photo_file_paths[index]
+                await filesAPI.delete(deleteFileName);
+                return await dispatch(fetchUpdateShipment({
+                    ...shipment,
+                    photo_file_paths: shipment.photo_file_paths.filter(photo => photo !== deleteFileName)
+                })).unwrap();
+            }
+        } catch (e) {
             const msg = handlerError(e);
             dispatch(setModalMessage(msg));
             return rejectWithValue(msg);

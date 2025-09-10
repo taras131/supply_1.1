@@ -1,6 +1,7 @@
 import { defaultUser, IUser } from "./IUser";
 import { IMachinery } from "./iMachinery";
 import { ITask } from "./IMachineryTasks";
+import {AiSolution} from "../utils/aiSolution";
 
 export interface ISubCategory {
   id: number;
@@ -38,6 +39,8 @@ export interface IMachineryProblem extends INewMachineryProblem {
   company_id: string;
   tasks?: ITask[];
   tasks_id?: string[];
+  solution_summary?: string | null;
+  solution?: AiSolution | null;
 }
 
 export const emptyProblem: INewMachineryProblem = {

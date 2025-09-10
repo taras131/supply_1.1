@@ -21,9 +21,7 @@ const ShipmentsSection: FC = () => {
             <Stack spacing={3} sx={{width: '100%'}}>
                 <ShipmentShow shipment={activeShipment}/>
                 {activeShipment && (
-                    <>
-                        <ShipmentsSectionInvoices activeShipment={activeShipment}/>
-                    </>
+                    <ShipmentsSectionInvoices activeShipment={activeShipment}/>
                 )}
             </Stack>
         </Box>

@@ -27,6 +27,7 @@ export interface INewShipments {
     lading_number: string;
     lading_file_path?: string | null;
     photo_file_path?: string | null;
+    photo_file_paths?: string[];
     receiving_is_receiving?: boolean;
     receiving_date?: number | null;
     receiving_author_id?: string | null;

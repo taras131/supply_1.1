@@ -6,6 +6,7 @@ import {setupStore} from "./store";
 import {Provider} from "react-redux";
 import {BrowserRouter} from "react-router-dom";
 import './index.css';
+import "yet-another-react-lightbox/styles.css";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
