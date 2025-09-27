@@ -1,28 +1,12 @@
 import React from 'react';
-import Typography from "@mui/material/Typography";
-import {Stack} from "@mui/material";
-import {useNavigate} from "react-router-dom";
-import MyButton from "../../../styles/theme/customizations/MyButton";
+import PageHeaderTemplate from "../../../components/templates/PageHeaderTemplate";
+import BackButton from "../../../components/common/BackButton";
 
 const OrderDetailsPageHeader = () => {
-    const navigate = useNavigate();
-    const backClickHandler = () => {
-        navigate(-1);
-    }
     return (
-        <Stack direction="row"
-               spacing={3}
-               justifyContent="space-between"
-               alignItems="center"
-               sx={{mb: 2, mt: 2}}>
-            <Typography component="h2" variant="h6">
-                Заявка
-            </Typography>
-            <MyButton onClick={backClickHandler}
-                      variant={"outlined"}>
-                Назад
-            </MyButton>
-        </Stack>
+        <PageHeaderTemplate title={"Заявка"}>
+          <BackButton/>
+        </PageHeaderTemplate>
     );
 };
 

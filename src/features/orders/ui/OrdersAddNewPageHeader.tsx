@@ -3,14 +3,13 @@ import {Stack} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import AddIcon from "@mui/icons-material/Add";
 import MyButton from "../../../styles/theme/customizations/MyButton";
-import {useNavigate} from "react-router-dom";
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import ConfirmDeleteDialog from "../../../components/common/ConfirmDeleteDialog";
 import OrderExcelReader from "./OrderExcelReader";
 import {INewOrder} from "../../../models/iOrders";
 import {ValidationErrors} from "../../../utils/validators";
 import Box from "@mui/material/Box";
+import BackButton from "../../../components/common/BackButton";
 
 interface IProps {
     isLoading: boolean;
@@ -27,7 +26,6 @@ const OrdersAddNewPageHeader: FC<IProps> = ({
                                                 setEditedValue,
                                                 errors
                                             }) => {
-    const navigate = useNavigate();
     const [resetDialogOpen, setResetDialogOpen] = React.useState(false);
     const openResetDialog = () => {
         setResetDialogOpen(true);
@@ -35,9 +33,6 @@ const OrdersAddNewPageHeader: FC<IProps> = ({
     const closeResetDialog = () => {
         setResetDialogOpen(false);
     };
-    const backClickHandler = () => {
-        navigate(-1)
-    }
     const resetOrderHandler = () => {
         resetOrder();
         setResetDialogOpen(true);
@@ -48,19 +43,12 @@ const OrdersAddNewPageHeader: FC<IProps> = ({
                spacing={3}
                justifyContent="space-between"
                alignItems="center"
-               sx={{mb: 2, mt: 2}}
                position={"relative"}>
             <Typography component="h2" variant="h6">
                 Новая заявка
             </Typography>
             <Stack direction="row" spacing={1}>
-                <MyButton
-                    onClick={backClickHandler}
-                    startIcon={<ArrowBackIosIcon sx={{fontSize: "var(--icon-fontSize-md)"}}/>}
-                    variant="outlined"
-                >
-                    Назад
-                </MyButton>
+                <BackButton/>
                 <MyButton
                     onClick={openResetDialog}
                     startIcon={<RestartAltIcon
@@ -97,7 +85,6 @@ const OrdersAddNewPageHeader: FC<IProps> = ({
                     </Typography>
                 </Box>
             )}
-
         </Stack>
     );
 };

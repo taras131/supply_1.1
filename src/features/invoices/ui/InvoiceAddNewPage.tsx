@@ -22,6 +22,7 @@ import {ParsedInvoice} from "../utils/invoiceParsers";
 import {parseDocxInvoice, parsePdfInvoiceText} from "../utils/invoiceFileReaders";
 import {parseExcelInvoice} from "../utils/parseExcelInvoice";
 import {useNavigate} from "react-router-dom";
+import PageTemplate from "../../../components/templates/PageTemplate";
 
 export type SelectedByOrder = Record<string, string[]>; // { [orderId]: [positionId, ...] }
 
@@ -116,11 +117,7 @@ const InvoiceAddNewPage = () => {
         }
     }
     return (
-        <Stack sx={{
-            width: '100%',
-            maxWidth: {sm: '100%', md: '1700px'},
-            pt: 1.5,
-        }}>
+        <PageTemplate>
             <InvoiceAddNewPageHeader isValid={!Object.keys(errors).length && !!file}
                                      saveClickHandler={saveClickHandler}/>
             <Card sx={{padding: "28px"}}>
@@ -210,7 +207,7 @@ const InvoiceAddNewPage = () => {
             <OrdersSection orders={orders}
                            selectedByOrder={selectedByOrder}
                            onPositionsSelectionChange={handleOrderSelectionChange}/>
-        </Stack>
+        </PageTemplate>
     );
 };
 

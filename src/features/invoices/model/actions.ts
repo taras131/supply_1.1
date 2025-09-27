@@ -6,6 +6,8 @@ import {IInvoice, INewInvoice} from "../../../models/iInvoices";
 import {filesAPI} from "../../files/api";
 import {nestServerPath} from "../../../api";
 import {setOrdersPositions} from "../../orders_positions/model/slice";
+import {setShipments} from "../../shipments/model/slice";
+import {IShipments} from "../../../models/iShipments";
 
 function mergeInvoicesPreserveLocal(
     oldArr: IInvoice[],
@@ -93,9 +95,17 @@ export const fetchGetInvoiceById = createAsyncThunk(
     "invoices/get_by_id",
     async (id: string, {dispatch, rejectWithValue}) => {
         try {
-            const {positions, ...res} = await invoicesAPI.getById(id);
+            const {positions, shipment_invoices, ...res} = await invoicesAPI.getById(id);
             if (positions) {
                 dispatch(setOrdersPositions(positions));
+            }
+            if (shipment_invoices) {
+                const shipments: IShipments[] = [];
+                shipment_invoices.forEach((si: any) => {
+                    const {shipment, ...shipment_invoices} = si
+                    shipments.push({...shipment, shipment_invoices: [shipment_invoices]});
+                })
+                dispatch(setShipments(shipments));
             }
             return res;
         } catch (e) {

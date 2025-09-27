@@ -21,6 +21,9 @@ import {EditableSpan} from "../../../components/common/EditableSpan";
 import Box from "@mui/material/Box";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import {catalogNumberColumn, countColumn, nameColumn} from "./Columns";
+import {useNavigate} from "react-router-dom";
+import {routes} from "../../../utils/routes";
 
 
 interface IProps {
@@ -59,6 +62,7 @@ const OrderPositionsTable: FC<IProps> = ({
                                              isNewOrder = false,
                                          }) => {
     const apiRef = useGridApiRef();
+    const navigate = useNavigate();
     const [cellModesModel, setCellModesModel] = useState<GridCellModesModel>({});
     const [photoDialogOpen, setPhotoDialogOpen] = useState(false);
     const [commentDialogOpen, setCommentDialogOpen] = useState(false);
@@ -67,9 +71,7 @@ const OrderPositionsTable: FC<IProps> = ({
     const canManageComments = !!commentChangeHandler;
     const canManagePhotos = !!addPhotoHandler || !!deletePhotoHandler;
     const canDelete = !!deletePositionHandler;
-    // Вместо хранения целого объекта строки — храним только id
     const [activeRowId, setActiveRowId] = useState<string | null>(null);
-    // Находим актуальную строку по id только при необходимости
     const currentRow = useMemo(
         () => (activeRowId ? rows.find((r: any) => r.id === activeRowId) ?? null : null),
         [rows, activeRowId]
@@ -170,10 +172,11 @@ const OrderPositionsTable: FC<IProps> = ({
                 renderCell: (params: any) => (
                     <Tooltip title={params.row.invoice_id ? "Заказано" : "ещё не заказано"}>
                         <Box
-                            sx={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%" }}
+                            sx={{display: "flex", alignItems: "center", justifyContent: "center", height: "100%"}}
                             onClick={(e) => e.stopPropagation()}
                         >
-                            {params.row.invoice_id ? <CheckCircleIcon color="success" /> : <AccessTimeIcon color="warning" />}
+                            {params.row.invoice_id ? <CheckCircleIcon color="success"/> :
+                                <AccessTimeIcon color="warning"/>}
                         </Box>
                     </Tooltip>
                 ),
@@ -181,31 +184,9 @@ const OrderPositionsTable: FC<IProps> = ({
         }
         base.push(
             numberCol,
-            {
-                field: "name",
-                headerName: "Наименование",
-                flex: 1,
-                editable: canEditInline,
-                disableColumnMenu: true,
-                cellClassName: "editable-cell",
-            },
-            {
-                field: "catalog_number",
-                headerName: "Каталожный номер",
-                flex: 0.75,
-                editable: canEditInline,
-                disableColumnMenu: true,
-                cellClassName: "editable-cell",
-            },
-            {
-                field: "count",
-                headerName: "Количество",
-                width: 100,
-                type: "number",
-                editable: canEditInline,
-                disableColumnMenu: true,
-                cellClassName: "editable-cell",
-            },
+            nameColumn(canEditInline),
+            catalogNumberColumn(canEditInline),
+            countColumn(canEditInline),
             {
                 field: "unit_measure",
                 headerName: "Ед. изм.",
@@ -234,7 +215,7 @@ const OrderPositionsTable: FC<IProps> = ({
                         <Tooltip title={isComment ? "Посмотреть примечание" : "Добавить примечание"}>
               <span onClick={(e) => e.stopPropagation()}>
                 <IconButton size="small" aria-label="Примечание" onClick={() => openCommentDialog(params.row)}>
-                  <ModeCommentIcon color={isComment ? "primary" : "secondary"} fontSize="small" />
+                  <ModeCommentIcon color={isComment ? "primary" : "secondary"} fontSize="small"/>
                 </IconButton>
               </span>
                         </Tooltip>
@@ -260,7 +241,7 @@ const OrderPositionsTable: FC<IProps> = ({
                         <Tooltip title="Открыть фото">
               <span onClick={(e) => e.stopPropagation()}>
                 <IconButton size="small" aria-label="Фото" onClick={() => openPhotosDialog(params.row)}>
-                  <PhotoCameraIcon color={count ? "primary" : "secondary"} fontSize="small" />
+                  <PhotoCameraIcon color={count ? "primary" : "secondary"} fontSize="small"/>
                 </IconButton>
               </span>
                         </Tooltip>
@@ -278,11 +259,15 @@ const OrderPositionsTable: FC<IProps> = ({
                 editable: false,
                 renderCell: (params: any) => {
                     const inv = params.row.invoice;
+                    const clickHandler = () => {
+                        navigate(`${routes.invoicesDetails.replace(':invoiceId', inv.id)}`);
+                    }
                     return (
-                        <Box sx={{ display: "flex", height: "100%", alignItems: "center" }} onClick={(e) => e.stopPropagation()}>
+                        <Box sx={{display: "flex", height: "100%", alignItems: "center"}}
+                             onClick={(e) => e.stopPropagation()}>
                             {inv ? (
                                 <Tooltip title={`${inv.supplier.name} Счёт № ${inv.number}`}>
-                  <span>
+                  <span onClick={clickHandler} style={{cursor: "pointer"}}>
                     <Typography color="primary" variant="subtitle2">
                       {inv.supplier.name}
                     </Typography>
@@ -317,7 +302,7 @@ const OrderPositionsTable: FC<IProps> = ({
                   disabled={!!params.row.invoice_id}
                   onClick={() => openDeletePositionDialog(params.row)}
               >
-                <DeleteOutlineIcon color={params.row.invoice_id ? undefined : "warning"} fontSize="small" />
+                <DeleteOutlineIcon color={params.row.invoice_id ? undefined : "warning"} fontSize="small"/>
               </IconButton>
             </span>
                     </Tooltip>
@@ -343,17 +328,17 @@ const OrderPositionsTable: FC<IProps> = ({
     ]);
     const processRowUpdate = useCallback(
         (newRow: INewOrderPosition, oldRow: INewOrderPosition) => {
-            const normalized: INewOrderPosition = { ...oldRow, ...newRow, count: Number(newRow.count) || 0 };
+            const normalized: INewOrderPosition = {...oldRow, ...newRow, count: Number(newRow.count) || 0};
             onRowsChange?.(normalized);
             return normalized;
         },
         [onRowsChange]
     );
     return (
-        <div style={{ position: "relative" }}>
+        <div style={{position: "relative"}}>
             {titleChangeHandler && (
-                <Box sx={{ position: "absolute", left: "10px", top: "10px", zIndex: 3 }}>
-                    <EditableSpan onChange={titleChangeHandler} value={title} label={"Добавить заголовок"} />
+                <Box sx={{position: "absolute", left: "10px", top: "10px", zIndex: 3}}>
+                    <EditableSpan onChange={titleChangeHandler} value={title} label={"Добавить заголовок"}/>
                 </Box>
             )}
             <MyDataGrid
@@ -373,8 +358,8 @@ const OrderPositionsTable: FC<IProps> = ({
             {handleAddRow && (
                 <MyButton
                     onClick={handleAddRow}
-                    startIcon={<AddIcon sx={{ fontSize: "var(--icon-fontSize-md)" }} />}
-                    sx={{ position: "absolute", left: 10, bottom: 10 }}
+                    startIcon={<AddIcon sx={{fontSize: "var(--icon-fontSize-md)"}}/>}
+                    sx={{position: "absolute", left: 10, bottom: 10}}
                 >
                     Строка
                 </MyButton>
@@ -405,7 +390,8 @@ const OrderPositionsTable: FC<IProps> = ({
                     description={
                         currentRow ? (
                             <>
-                                Вы уверены, что хотите удалить позицию <b>{(currentRow as any).name || "без наименования"}</b>
+                                Вы уверены, что хотите удалить
+                                позицию <b>{(currentRow as any).name || "без наименования"}</b>
                                 {(currentRow as any).catalog_number ? (
                                     <>
                                         {" "}
@@ -413,7 +399,7 @@ const OrderPositionsTable: FC<IProps> = ({
                                     </>
                                 ) : null}
                                 ?
-                                <br />
+                                <br/>
                                 Это действие нельзя отменить.
                             </>
                         ) : (

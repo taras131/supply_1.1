@@ -1,5 +1,5 @@
-import React, {FC, useEffect, useState} from "react";
-import {Drawer, Stack} from "@mui/material";
+import React, {FC, useEffect, useMemo, useState} from "react";
+import {Alert, Divider, Drawer, Stack, Typography} from "@mui/material";
 import Box from "@mui/material/Box";
 import {useEditor} from "../../../hooks/useEditor";
 import {problemValidate} from "../../../utils/validators";
@@ -13,10 +13,11 @@ import ButtonsEditCancelSave from "../../../components/common/ButtonsEditCancelS
 import ProblemDetailsPhotos from "./ProblemDetailsPhotos";
 import CreateUpdateUserInfo from "../../../components/common/CreateUpdateUserInfo";
 import RelatedTasks from "../../machinery_tasks/ui/RelatedTasks";
-import TitleWithValue from "../../../components/TitleWithValue";
 import ProblemDetailsHeader from "./ProblemDetailsHeader";
 import {Link} from "react-router-dom";
 import {routes} from "../../../utils/routes";
+import AiSolutionView from "./AiSolutionView";
+import {AiSolution, parseAiSolution} from "../../../utils/aiSolution";
 
 const ProblemDetails: FC = () => {
     const dispatch = useAppDispatch();
@@ -31,6 +32,22 @@ const ProblemDetails: FC = () => {
             setEditedValue(currentProblem);
         }
     }, [currentProblem, setEditedValue]);
+    const rawSolution = useMemo<unknown>(() => {
+        return (currentProblem as any)?.solution ?? null;
+    }, [currentProblem]);
+    const aiSolution = useMemo<AiSolution | null>(() => {
+        try {
+            return parseAiSolution(rawSolution);
+        } catch (e) {
+            console.warn("Failed to parse AI solution", e, rawSolution);
+            return null;
+        }
+    }, [rawSolution]);
+    const solutionSummary = useMemo<string | null>(() => {
+        const s = currentProblem?.solution_summary;
+        if (typeof s === "string" && s.trim()) return s.trim();
+        return aiSolution?.summary ?? null;
+    }, [currentProblem?.solution_summary, aiSolution]);
     if (!currentProblem) return null;
     const onClose = () => {
         dispatch(setCurrentProblem(null));
@@ -47,7 +64,7 @@ const ProblemDetails: FC = () => {
             <Box
                 sx={{
                     padding: "28px",
-                    width: "900px",
+                    width: "500px",
                     height: "100%",
                     display: "flex",
                     flexDirection: "column",
@@ -72,6 +89,7 @@ const ProblemDetails: FC = () => {
                         cancelUpdateHandler={toggleIsEditMode}
                     />
                 </Stack>
+                <Divider color={"primary"}/>
                 {!isEditMode && (
                     <>
                         <RelatedTasks
@@ -79,21 +97,54 @@ const ProblemDetails: FC = () => {
                             tasks={currentProblem.tasks || null}
                             problemId={currentProblem.id}
                         />
+                        <Divider color={"primary"}/>
                         <Stack spacing={1}>
-                            {currentProblem.machinery && (
-                                <Link to={routes.machineryDetails.replace(":machineryId", currentProblem.machinery.id)}>
-                                    <TitleWithValue
-                                        title={"Техника:"}
-                                        value={`${currentProblem.machinery.brand} ${currentProblem.machinery.model}`}
-                                    />
-                                </Link>
-                            )}
-                            <CreateUpdateUserInfo
-                                author={currentProblem.author || null}
-                                updatedAuthor={currentProblem.updated_author || null}
-                                createdAT={currentProblem.created_at}
-                                updatedAt={currentProblem.updated_at || null}
-                            />
+                            <>
+                                {currentProblem.machinery && (
+                                    <>
+                                        <Typography variant={"h5"} fontSize={20} sx={{marginBottom: "16px"}}>
+                                            Техника:
+                                        </Typography>
+                                        <Link
+                                            style={{textDecoration: 'none'}}
+                                            to={routes.machineryDetails.replace(":machineryId", currentProblem.machinery.id)}>
+                                            {`${currentProblem.machinery.brand} ${currentProblem.machinery.model} VIN: ${currentProblem.machinery.vin}`}
+                                        </Link>
+                                        <Divider color={"primary"}/>
+                                    </>
+                                )}
+                                {(solutionSummary || aiSolution || rawSolution) && (
+                                    <Stack spacing={2}>
+                                        {aiSolution ? (
+                                            <AiSolutionView solution={aiSolution}/>
+                                        ) : rawSolution ? (
+                                            <>
+                                                <Alert severity="warning">
+                                                    Не удалось разобрать JSON рекомендации. Показан исходный текст.
+                                                </Alert>
+                                                <Box
+                                                    component="pre"
+                                                    sx={{
+                                                        whiteSpace: "pre-wrap",
+                                                        p: 1.5,
+                                                        border: "1px solid #eee",
+                                                        borderRadius: 1
+                                                    }}
+                                                >
+                                                    {String(rawSolution)}
+                                                </Box>
+                                            </>
+                                        ) : null}
+                                        <Divider color={"primary"}/>
+                                    </Stack>
+                                )}
+                                <CreateUpdateUserInfo
+                                    author={currentProblem.author || null}
+                                    updatedAuthor={currentProblem.updated_author || null}
+                                    createdAT={currentProblem.created_at}
+                                    updatedAt={currentProblem.updated_at || null}
+                                />
+                            </>
                         </Stack>
                     </>
                 )}

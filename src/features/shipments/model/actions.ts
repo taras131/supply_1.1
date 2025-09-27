@@ -101,7 +101,6 @@ export const fetchChangeShipmentLadingFile = createAsyncThunk("shipments/change_
                 lading_file_path: `${nestServerPath}/static/${res}`
             })).unwrap();
         } catch (e) {
-            console.log(e)
             const msg = handlerError(e);
             dispatch(setModalMessage(msg));
             return rejectWithValue(msg);

@@ -16,12 +16,16 @@ import {selectCurrentUserId} from "../../users/model/selectors";
 import {fetchUpdateInvoice, TInvoiceFilter} from "../model/actions";
 import EditableSelect from "../../../components/common/EditableSelect";
 import {
-    amountColumn, approvedColumn,
-    authorDateColumn, invoiceFileLinkColumn, invoiceNumberColumn,
-    paidColumn, paymentFileLinkColumn,
+    amountColumn,
+    approvedColumn,
+    authorDateColumn,
+    invoiceFileLinkColumn,
+    invoiceNumberColumn, isShipmentColumn,
+    paidColumn,
+    paymentFileLinkColumn, supplierINNColumn,
     supplierNameColumn,
     withWatColumn
-} from "../../shipments/ui/Сolumns";
+} from "./Сolumns";
 
 const filterOptions: TInvoiceFilter[] = ["all", "only_no_paid", "only_cancel"]
 const filterOptionLabels = {all: "Все", only_no_paid: "Не оплаченные", only_cancel: "Отменённые"}
@@ -45,6 +49,8 @@ const InvoicesTable: FC<IProps> = ({
         return rows.map((row) => ({
             ...row,
             supplierName: row.supplier?.name ?? "",
+            supplierINN: row.supplier?.INN ?? "",
+            isShipment: row.shipment_invoices && row.shipment_invoices.length > 0,
             author_date_text: convertMillisecondsToDateWithTextMonths(+row.author_date),
             paid_date_text: row.paid_is_paid && row.paid_date
                 ? convertMillisecondsToDateWithTextMonths(+row.paid_date)
@@ -74,15 +80,17 @@ const InvoicesTable: FC<IProps> = ({
     );
     const columns = useMemo(
         () => [
-            approvedColumn(onToggleApproved),
-            authorDateColumn(),
             paidColumn(),
+            authorDateColumn(),
             supplierNameColumn(),
+            supplierINNColumn(),
             invoiceNumberColumn(),
             amountColumn(),
             withWatColumn(),
             invoiceFileLinkColumn(),
             paymentFileLinkColumn(),
+            isShipmentColumn(),
+            approvedColumn(onToggleApproved),
         ],
         [onToggleApproved]
     );

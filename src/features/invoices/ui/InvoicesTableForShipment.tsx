@@ -8,7 +8,7 @@ import {
     invoiceNumberColumn,
     paidColumn, showVolumeColumn,
     supplierNameColumn,
-} from "../../shipments/ui/Сolumns";
+} from "./Сolumns";
 import Box from "@mui/material/Box";
 import {MyDataGrid} from "../../../styles/theme/customizations/MyDataGrid";
 import {GridEventListener} from "@mui/x-data-grid";

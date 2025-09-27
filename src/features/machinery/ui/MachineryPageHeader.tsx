@@ -1,28 +1,22 @@
 import React from "react";
-import {Stack} from "@mui/material";
-import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import {routes} from "../../../utils/routes";
 import {Link} from "react-router-dom";
+import PageHeaderTemplate from "../../../components/templates/PageHeaderTemplate";
 
 const MachineryPageHeader = () => {
     return (
-        <Stack direction="row" spacing={3} justifyContent="space-between" alignItems="center" sx={{mb: 2, mt: 2}}>
-            <Typography component="h2" variant="h6">
-                Техника
-            </Typography>
-            <div>
-                <Button
-                    component={Link}
-                    to={routes.addNewMachinery}
-                    startIcon={<AddIcon sx={{fontSize: "var(--icon-fontSize-md)"}}/>}
-                    variant="contained"
-                >
-                    Добавить
-                </Button>
-            </div>
-        </Stack>
+        <PageHeaderTemplate title={"Техника"}>
+            <Button
+                component={Link}
+                to={routes.addNewMachinery}
+                startIcon={<AddIcon sx={{fontSize: "var(--icon-fontSize-md)"}}/>}
+                variant="contained"
+            >
+                Добавить
+            </Button>
+        </PageHeaderTemplate>
     );
 };
 

@@ -24,7 +24,7 @@ interface IProps {
     setActiveShipmentId: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
-const ShipmentsSectionNavigation:FC<IProps> = ({activeShipmentId, setActiveShipmentId}) => {
+const ShipmentsSectionNavigation: FC<IProps> = ({activeShipmentId, setActiveShipmentId}) => {
     const allShipments = useAppSelector(selectShipments);
     const [shipmentsFilter, setShipmentsFilter] = useState<string>('');
     const listboxRef = useRef<HTMLDivElement | null>(null);
@@ -140,7 +140,11 @@ const ShipmentsSectionNavigation:FC<IProps> = ({activeShipmentId, setActiveShipm
 
             {/* Список */}
             <Box
-                sx={{height: '70vh', overflow: 'auto', p: 1}}
+                sx={{
+                    maxHeight: '70vh',
+                    overflow: 'auto',
+                    p: 1
+                }}
                 ref={listboxRef}
                 tabIndex={0}
                 onKeyDown={handleKeyDown}

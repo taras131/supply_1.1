@@ -9,7 +9,11 @@ import ShipmentsSectionNavigation from "./ShipmentsSectionNavigation";
 import {useAppSelector} from "../../../hooks/redux";
 import {selectShipmentById} from "../model/selectors";
 
-const ShipmentsSection: FC = () => {
+interface IProps {
+    invoiceMode?: boolean;
+}
+
+const ShipmentsSection: FC<IProps> = ({invoiceMode = false}) => {
     const [activeShipmentId, setActiveShipmentId] = useState<string | null>(null);
     const activeShipment = useAppSelector(state => selectShipmentById(state, activeShipmentId));
     return (
@@ -20,7 +24,7 @@ const ShipmentsSection: FC = () => {
             {/* Правая колонка */}
             <Stack spacing={3} sx={{width: '100%'}}>
                 <ShipmentShow shipment={activeShipment}/>
-                {activeShipment && (
+                {activeShipment && !invoiceMode && (
                     <ShipmentsSectionInvoices activeShipment={activeShipment}/>
                 )}
             </Stack>

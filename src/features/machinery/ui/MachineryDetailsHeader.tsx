@@ -1,31 +1,20 @@
 import React, {FC} from "react";
-import {Stack, Typography} from "@mui/material";
-import {useNavigate} from "react-router-dom";
+import {Stack} from "@mui/material";
 import {useAppSelector} from "../../../hooks/redux";
 import {getCurrentMachineryTitle} from "../model/selectors";
 import MachineryStatusButtons from "./MachineryStatusButtons";
-import MyButton from "../../../styles/theme/customizations/MyButton";
+import PageHeaderTemplate from "../../../components/templates/PageHeaderTemplate";
+import BackButton from "../../../components/common/BackButton";
 
 const MachineryDetailsHeader: FC = () => {
-    const navigate = useNavigate();
     const title = useAppSelector(getCurrentMachineryTitle);
-    const handleBackClick = () => {
-        navigate(-1);
-    };
     return (
-        <Stack direction="row"
-               spacing={3}
-               justifyContent="space-between"
-               alignItems="center"
-               sx={{mb: 2, mt: 2}}>
-            <Typography component="h2" variant="h6">
-                {title}
-            </Typography>
-            <MyButton onClick={handleBackClick} variant={"outlined"}>
-                Назад
-            </MyButton>
-            <MachineryStatusButtons/>
-        </Stack>
+        <PageHeaderTemplate title={title}>
+            <Stack direction="row" spacing={2}>
+                <BackButton/>
+                <MachineryStatusButtons/>
+            </Stack>
+        </PageHeaderTemplate>
     );
 };
 

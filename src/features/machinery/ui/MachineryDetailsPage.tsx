@@ -1,10 +1,10 @@
 import React, {useEffect} from "react";
 import {useAppDispatch} from "../../../hooks/redux";
 import {useParams} from "react-router-dom";
-import {Stack} from "@mui/material";
 import {fetchGetMachineryById} from "../model/actions";
 import MachineryDetailsHeader from "./MachineryDetailsHeader";
 import MachineryDetailsTabs from "./MachineryDetailsTabs";
+import PageTemplate from "../../../components/templates/PageTemplate";
 
 const MachineryDetailsPage = () => {
     const dispatch = useAppDispatch();
@@ -15,14 +15,10 @@ const MachineryDetailsPage = () => {
         }
     }, [dispatch, machineryId]);
     return (
-        <Stack spacing={4} sx={{
-            width: '100%',
-            maxWidth: {sm: '100%', md: '1700px'},
-            pt: 1.5,
-        }}>
+        <PageTemplate>
             <MachineryDetailsHeader/>
             <MachineryDetailsTabs/>
-        </Stack>
+        </PageTemplate>
     );
 };
 

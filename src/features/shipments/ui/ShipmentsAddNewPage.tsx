@@ -25,6 +25,7 @@ import {fetchGetInvoicesForNewShipment} from "../../invoices/model/actions";
 import {fetchAddShipment} from "../model/actions";
 import {useNavigate} from "react-router-dom";
 import InvoicesTableForNewShipment from "../../invoices/ui/InvoicesTableForNewShipment";
+import PageTemplate from "../../../components/templates/PageTemplate";
 
 export interface IInvoiceValue {
     value: TShipmentInvoiceValue;
@@ -95,11 +96,7 @@ const ShipmentsAddNewPage: FC = () => {
         );
     }, []);
     return (
-        <Stack sx={{
-            width: '100%',
-            maxWidth: {sm: '100%', md: '1700px'},
-            pt: 1.5,
-        }}>
+        <PageTemplate>
             <ShipmentsAddNewPageHeader isValid={!Object.keys(errors).length}
                                        saveClickHandler={saveClickHandler}/>
             <Card sx={{padding: "36px 28px"}}>
@@ -170,7 +167,7 @@ const ShipmentsAddNewPage: FC = () => {
                 selectedInvoicesWithVolume={selectedInvoicesWithVolume}
                 onToggleChecked={onToggleChecked}
                 onChangeVolume={onChangeInvoiceVolume}/>
-        </Stack>);
+        </PageTemplate>);
 };
 
 export default ShipmentsAddNewPage;

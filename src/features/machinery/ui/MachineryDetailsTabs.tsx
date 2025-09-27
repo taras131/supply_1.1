@@ -1,6 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
-import { Tab, Tabs } from "@mui/material";
 import MachineryDocs from "../../machinery_docs/ui/MachineryDocs";
 import { useAppSelector } from "../../../hooks/redux";
 import { selectCurrentMachinery } from "../model/selectors";
@@ -33,7 +32,7 @@ const MachineryDetailsTabs: FC = () => {
   return (
     <Box sx={{ width: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <MyTabs value={value} onChange={handleChange} aria-label="basic tabs example">
+        <MyTabs value={value} onChange={handleChange} aria-label="machinery tabs">
           <MyTab label="Обзор" {...a11yProps(0)} />
           <MyTab label="Документы" {...a11yProps(1)} />
           <MyTab label="Проблемы" {...a11yProps(2)} />

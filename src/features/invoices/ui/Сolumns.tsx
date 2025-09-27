@@ -1,5 +1,5 @@
 import {Button, Checkbox, Stack, Typography} from "@mui/material";
-import React, {useMemo} from "react";
+import React from "react";
 import Box from "@mui/material/Box";
 import EditableSelect from "../../../components/common/EditableSelect";
 import {TShipmentInvoiceValue} from "../../../models/iShipments";
@@ -8,10 +8,11 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import {convertMillisecondsToDateWithTextMonths} from "../../../utils/services";
 import {CANCEL_TEXT, NO_TEXT} from "../../../utils/const";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import FiberNewIcon from "@mui/icons-material/FiberNew";
 import DownloadIcon from "@mui/icons-material/Download";
 import {IInvoice} from "../../../models/iInvoices";
-import UploadPayment from "../../invoices/ui/UploadPayment";
+import UploadPayment from "./UploadPayment";
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import IconWrapper from "../../../components/common/IconWrapper";
 
 export const approvedColumn = (onToggleApproved: (invoice: IInvoice, checked: boolean) => void) => {
     return ({
@@ -98,7 +99,7 @@ export const volumeColumn = (onChangeVolume:
 
 export const paidColumn = () => {
     return ({
-        field: "paid_is_paid",
+        field: "paid_date_text",
         headerName: "Оплачен",
         disableColumnMenu: true,
         renderCell: (params: any) => (<Box sx={{
@@ -130,11 +131,11 @@ export const paidColumn = () => {
                             {
                                 params.row.approved_is_approved
                                     ? (<AccessTimeIcon color={"warning"}/>)
-                                    : (<FiberNewIcon color={"disabled"}/>)
+                                    : (<AccessTimeIcon color={"warning"}/>)
                             }
                             <Typography color={params.row.approved_is_approved
                                 ? "warning"
-                                : "text.disabled"}
+                                : "warning"}
                                         fontWeight={600}>
                                 {NO_TEXT}
                             </Typography>
@@ -151,10 +152,19 @@ export const supplierNameColumn = () => {
         field: "supplierName",
         headerName: "Поставщик",
         disableColumnMenu: true,
-        renderCell: (params: any) => (params.row?.supplier?.name),
         sortable: true,
         filterable: true,
         flex: 1,
+    })
+}
+
+export const supplierINNColumn = () => {
+    return ({
+        field: "supplierINN",
+        headerName: "ИНН",
+        disableColumnMenu: true,
+        sortable: true,
+        filterable: true,
     })
 }
 
@@ -180,7 +190,7 @@ export const amountColumn = () => {
     return ({
         field: 'amount',
         headerName: 'Сумма',
-        width: 140,
+        width: 120,
         disableColumnMenu: true,
     })
 }
@@ -259,5 +269,19 @@ export const showVolumeColumn = () => {
         disableColumnMenu: true,
         sortable: false,
         width: 100,
+    })
+}
+
+export const isShipmentColumn = () => {
+    return ({
+        field: "isShipment",
+        headerName: "",
+        disableColumnMenu: true,
+        renderCell: (params: any) => (params.row.isShipment
+            ? (<IconWrapper>
+                <LocalShippingIcon/>
+            </IconWrapper>)
+            : ""),
+        width: 20,
     })
 }

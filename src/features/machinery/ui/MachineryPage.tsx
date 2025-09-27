@@ -5,7 +5,7 @@ import MachineryPageHeader from "./MachineryPageHeader";
 import {fetchGetAllMachinery} from "../model/actions";
 import AMachineryMigration from "./AMachineryMigration";
 import MachineryTable from "./MachineryTable";
-import {Stack} from "@mui/material";
+import PageTemplate from "../../../components/templates/PageTemplate";
 
 const MachineryPage = () => {
     const dispatch = useAppDispatch();
@@ -14,15 +14,11 @@ const MachineryPage = () => {
         dispatch(fetchGetAllMachinery());
     }, [dispatch]);
     return (
-        <Stack spacing={4} sx={{
-            width: '100%',
-            maxWidth: {sm: '100%', md: '1700px'},
-            pt: 1.5,
-        }}>
+        <PageTemplate>
             <MachineryPageHeader/>
             <MachineryTable rows={machinery}/>
             <AMachineryMigration/>
-        </Stack>
+        </PageTemplate>
     );
 };
 

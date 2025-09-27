@@ -20,11 +20,11 @@ const Header: FC = () => {
         >
             <NavbarBreadcrumbs/>
             <Stack direction="row" sx={{gap: 1}}>
+                <ColorModeIconDropdown/>
                 <CustomDatePicker/>
          {/*       <MenuButton showBadge aria-label="Open notifications">
                     <NotificationsRoundedIcon/>
                 </MenuButton>*/}
-                <ColorModeIconDropdown/>
             </Stack>
         </Stack>
     );

@@ -1,11 +1,11 @@
 import React from 'react';
 import {Stack} from "@mui/material";
-import Typography from "@mui/material/Typography";
 import MyButton from "../../../styles/theme/customizations/MyButton";
 import AddIcon from "@mui/icons-material/Add";
 import {useNavigate} from "react-router-dom";
 import {routes} from "../../../utils/routes";
 import UploadPayments from "./UploadPayments";
+import PageHeaderTemplate from "../../../components/templates/PageHeaderTemplate";
 
 const InvoicesPageHeader = () => {
     const navigate = useNavigate();
@@ -13,14 +13,7 @@ const InvoicesPageHeader = () => {
         navigate(routes.invoicesAddNew)
     }
     return (
-        <Stack direction="row"
-               spacing={3}
-               justifyContent="space-between"
-               alignItems="center"
-               sx={{mb: 2, mt: 2}}>
-            <Typography component="h2" variant="h6">
-                Счета
-            </Typography>
+        <PageHeaderTemplate title={"Счета"}>
             <Stack direction="row" spacing={1}>
                 <UploadPayments/>
                 <MyButton
@@ -31,7 +24,7 @@ const InvoicesPageHeader = () => {
                     Добавить
                 </MyButton>
             </Stack>
-        </Stack>
+        </PageHeaderTemplate>
     );
 };
 

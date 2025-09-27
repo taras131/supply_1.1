@@ -13,13 +13,15 @@ import {routes} from "../../../utils/routes";
 import {Typography} from "@mui/material";
 import {MyDataGrid} from "../../../styles/theme/customizations/MyDataGrid";
 
+
 interface IProps {
     rows: IMachineryProblem[] | null;
     isShowMachineryInfo: boolean;
     activeRowId?: number | null;
+    onProblemClick: (problem: IMachineryProblem) => void;
 }
 
-const ProblemsTable: FC<IProps> = ({rows, isShowMachineryInfo, }) => {
+const ProblemsTable: FC<IProps> = ({rows, isShowMachineryInfo, onProblemClick}) => {
         const navigate = useNavigate();
         const isLoading = useAppSelector(selectMachineryProblemsIsLoading)
         const adaptiveRows = rows?.map(row => ({
@@ -30,9 +32,9 @@ const ProblemsTable: FC<IProps> = ({rows, isShowMachineryInfo, }) => {
         }))
         const handleRowClick = useCallback<GridEventListener<"rowClick">>(
             ({row}) => {
-                navigate(routes.machineryProblemDetails.replace(":problemId", row.id));
+                onProblemClick(row);
             },
-            [navigate],
+            [onProblemClick],
         );
         let columns = useMemo<any>(() => [
                 {
@@ -132,6 +134,14 @@ const ProblemsTable: FC<IProps> = ({rows, isShowMachineryInfo, }) => {
                     flex: 1,
                 },
                 {
+                    field: "solution",
+                    headerName: "Рекомендации",
+                    disableColumnMenu: true,
+                    sortable: false,
+                    renderCell: (params: any) => (params.row.solution ? "есть" : ""),
+                    width: 70,
+                },
+                {
                     field: "priority_id",
                     headerName: "Приоритет",
                     disableColumnMenu: true,
@@ -139,7 +149,7 @@ const ProblemsTable: FC<IProps> = ({rows, isShowMachineryInfo, }) => {
                     flex: 0.3,
                 },
             ],
-            [navigate]);
+            [navigate, rows]);
 
         return (
             <MyDataGrid

@@ -27,7 +27,7 @@ import ShipmentsAddNewPage from "../features/shipments/ui/ShipmentsAddNewPage";
 import ProblemDetailsPage from "../features/machinery_problems/ui/ProblemDetailsPage";
 
 export interface IRouteConfig {
-    icon: React.ReactNode;
+    icon?: React.ReactNode;
     path: string;
     element: React.ReactNode;
     label: string; // Название для меню
@@ -37,7 +37,13 @@ export interface IRouteConfig {
 
 export const routesConfig: IRouteConfig[] = [
     /* {icon: <HomeRoundedIcon />, path: routes.main, element:  <MainGrid />, label: "Главная", showInMenu: true},*/
-    {icon: <HomeRoundedIcon/>, path: routes.invoices, element: <InvoicesPage/>, label: "Счета", showInMenu: true},
+    {
+        icon: <HomeRoundedIcon/>,
+        path: routes.invoices,
+        element: <InvoicesPage/>,
+        label: "Счета",
+        showInMenu: true
+    },
     {
         icon: <HomeRoundedIcon/>,
         path: routes.invoicesDetails,
@@ -73,7 +79,13 @@ export const routesConfig: IRouteConfig[] = [
         label: "Новая отгрузка",
         showInMenu: false
     },
-    {icon: <HomeRoundedIcon/>, path: routes.orders, element: <OrdersPage/>, label: "Заявки", showInMenu: true},
+    {
+        icon: <HomeRoundedIcon/>,
+        path: routes.orders,
+        element: <OrdersPage/>,
+        label: "Заявки",
+        showInMenu: true
+    },
     {
         icon: <HomeRoundedIcon/>,
         path: routes.ordersAddNew,
@@ -88,8 +100,20 @@ export const routesConfig: IRouteConfig[] = [
         label: "Подробности",
         showInMenu: false
     },
-    {icon: <HomeRoundedIcon/>, path: routes.users, element: <UsersPage/>, label: "Сотрудники", showInMenu: true},
-    {icon: <HomeRoundedIcon/>, path: routes.login, element: <LoginForm/>, label: "Вход", showInMenu: false},
+    {
+        icon: <HomeRoundedIcon/>,
+        path: routes.users,
+        element: <UsersPage/>,
+        label: "Сотрудники",
+        showInMenu: true
+    },
+    {
+        icon: <HomeRoundedIcon/>,
+        path: routes.login,
+        element: <LoginForm/>,
+        label: "Вход"
+        , showInMenu: false
+    },
     {
         icon: <HomeRoundedIcon/>,
         path: routes.register,
@@ -109,43 +133,41 @@ export const routesConfig: IRouteConfig[] = [
         path: routes.machinery,
         element: <MachineryPage/>,
         label: "Техника",
-        showInMenu: true
-    },
-    {
-        icon: <HomeRoundedIcon/>,
-        path: routes.machineryMaintenance,
-        element: <MachineryMaintenancePage/>,
-        label: "Календарь ТО",
-        showInMenu: true
-    },
-    {
-        icon: <HomeRoundedIcon/>,
-        path: routes.machineryProblems,
-        element: <ProblemsPage/>,
-        label: "Проблемы",
-        showInMenu: true
-    },
-    {
-        icon: <HomeRoundedIcon/>,
-        path: routes.machineryProblemDetails,
-        element: <ProblemDetailsPage/>,
-        label: "Проблемы",
-        showInMenu: false
-    },
-    {
-        icon: <HomeRoundedIcon/>,
-        path: routes.machineryTasks,
-        element: <TasksPage/>,
-        label: "Задачи",
         showInMenu: true,
+        children: [
+            {
+                path: routes.machinery,
+                element: <MachineryPage/>,
+                label: "Список",
+                showInMenu: true,
+            },
+            {
+                path: routes.machineryMaintenance,
+                element: <MachineryMaintenancePage/>,
+                label: "Календарь ТО",
+                showInMenu: true,
+            },
+            {
+                path: routes.machineryProblems,
+                element: <ProblemsPage/>,
+                label: "Проблемы",
+                showInMenu: true,
+            },
+            {
+                path: routes.machineryTasks,
+                element: <TasksPage/>,
+                label: "Задачи",
+                showInMenu: true,
+            },
+            {
+                path: routes.machineryComments,
+                element: <MachineryCommentsPage/>,
+                label: "Заметки",
+                showInMenu: true,
+            },
+        ],
     },
-    {
-        icon: <HomeRoundedIcon/>,
-        path: routes.machineryComments,
-        element: <MachineryCommentsPage/>,
-        label: "Заметки",
-        showInMenu: true
-    },
+
     {
         icon: <HomeRoundedIcon/>,
         path: routes.machineryDetails,
@@ -174,5 +196,10 @@ export const routesConfig: IRouteConfig[] = [
         label: "Подробности задачи",
         showInMenu: false
     },
-    {icon: <HomeRoundedIcon/>, path: "*", element: <Navigate to={routes.main}/>, label: "Not found", showInMenu: false},
+    {
+        icon: <HomeRoundedIcon/>,
+        path: "*", element: <Navigate to={routes.main}/>,
+        label: "Not found",
+        showInMenu: false
+    },
 ];

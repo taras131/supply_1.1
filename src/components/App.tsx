@@ -5,7 +5,7 @@ import {fetchCheckAuth} from "../features/auth/model/actions";
 import {fetchGetAllUsers} from "../features/users/model/actions";
 import {alpha, CssBaseline, Stack, ThemeProvider} from "@mui/material";
 import Box from "@mui/material/Box";
-import {routesConfig} from "../config/routes";
+import {IRouteConfig, routesConfig} from "../config/routes";
 import SideMenu from "./SideMenu";
 import AppNavbar from "./AppNavbar";
 import Header from "./Header";
@@ -19,6 +19,17 @@ function App() {
         dispatch(fetchCheckAuth());
         dispatch(fetchGetAllUsers());
     }, [dispatch]);
+    const getAllRoutes = (routes: IRouteConfig[]): IRouteConfig[] => {
+        const result: IRouteConfig[] = [];
+        routes.forEach(route => {
+            result.push(route);
+            if (route.children) {
+                result.push(...getAllRoutes(route.children));
+            }
+        });
+        return result;
+    };
+    const allRoutes = getAllRoutes(routesConfig);
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline/>
@@ -49,8 +60,9 @@ function App() {
                     >
                         <Header/>
                         <Routes>
-                            {routesConfig.map(route => (
-                                <Route key={route.path} path={route.path} element={route.element}/>))}
+                            {allRoutes.map(route => (
+                                <Route key={route.path} path={route.path} element={route.element} />
+                            ))}
                         </Routes>
                     </Stack>
                 </Box>

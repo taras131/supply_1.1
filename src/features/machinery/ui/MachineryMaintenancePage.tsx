@@ -3,26 +3,20 @@ import {useAppDispatch, useAppSelector} from "../../../hooks/redux";
 import {fetchGetAllMachinery} from "../model/actions";
 import {selectAllMachinery} from "../model/selectors";
 import MachineryMaintenanceTable from "./MachineryMaintenanceTable";
-import Typography from "@mui/material/Typography";
-import Stack from "@mui/material/Stack";
+import PageTemplate from "../../../components/templates/PageTemplate";
+import PageHeaderTemplate from "../../../components/templates/PageHeaderTemplate";
 
 const MachineryMaintenancePage = () => {
     const dispatch = useAppDispatch();
     const machinery = useAppSelector(selectAllMachinery);
     useEffect(() => {
         dispatch(fetchGetAllMachinery());
-    }, []);
+    }, [dispatch]);
     return (
-        <Stack spacing={4} sx={{
-            width: '100%',
-            maxWidth: {sm: '100%', md: '1700px'},
-            pt: 1.5,
-        }}>
-            <Typography variant={"h1"} fontSize={"26px"}>
-                Календарь проведения ТО
-            </Typography>
+        <PageTemplate>
+            <PageHeaderTemplate title={"Календарь проведения ТО"}/>
             <MachineryMaintenanceTable rows={machinery}/>
-        </Stack>
+        </PageTemplate>
     );
 };
 

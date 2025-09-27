@@ -3,8 +3,8 @@ import {useAppDispatch} from "../../../hooks/redux";
 import {fetchGetAllOrders} from "../model/actions";
 import OrdersTable from "./OrdersTable";
 import OrdersPageHeader from "./OrdersPageHeader";
-import {Stack} from "@mui/material";
 import AOrdersMigration from "./AOrderMigration";
+import PageTemplate from "../../../components/templates/PageTemplate";
 
 const OrdersPage = () => {
     const dispatch = useAppDispatch();
@@ -12,15 +12,11 @@ const OrdersPage = () => {
         dispatch(fetchGetAllOrders());
     }, [dispatch]);
     return (
-        <Stack sx={{
-            width: '100%',
-            maxWidth: {sm: '100%', md: '1700px'},
-            pt: 1.5,
-        }}>
+        <PageTemplate>
             <OrdersPageHeader/>
             <OrdersTable/>
             <AOrdersMigration/>
-        </Stack>
+        </PageTemplate>
     );
 };
 

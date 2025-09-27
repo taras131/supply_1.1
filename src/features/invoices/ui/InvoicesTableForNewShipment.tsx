@@ -14,7 +14,7 @@ import {
     selectedColumn,
     supplierNameColumn,
     volumeColumn
-} from "../../shipments/ui/Сolumns";
+} from "./Сolumns";
 
 interface IProps {
     selectedInvoicesWithVolume: IShipmentsInvoice[];

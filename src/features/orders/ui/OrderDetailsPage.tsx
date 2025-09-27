@@ -2,7 +2,6 @@ import React, {useCallback, useEffect} from "react";
 import {useAppDispatch, useAppSelector} from "../../../hooks/redux";
 import {useParams} from "react-router-dom";
 import {fetchGetOrderById, fetchUpdateOrder} from "../model/actions";
-import {Stack} from "@mui/material";
 import OrderPositionsTable from "../../orders_positions/ui/OrderPositionsTable";
 import {selectAllOrdersPositions, selectOrdersPositionsIsLoading} from "../../orders_positions/model/selectors";
 import {
@@ -14,6 +13,7 @@ import {emptyOrderPosition, INewOrderPosition, IOrderPosition} from "../../../mo
 import OrderDetailsPageHeader from "./OrderDetailsPageHeader";
 import {selectCurrentOrder} from "../model/selectors";
 import OrderDetailsView from "./OrderDetailsView";
+import PageTemplate from "../../../components/templates/PageTemplate";
 
 const OrderDetailsPage = () => {
     const dispatch = useAppDispatch();
@@ -59,12 +59,7 @@ const OrderDetailsPage = () => {
         }
     };
     return (
-        <Stack sx={{
-            width: '100%',
-            maxWidth: {sm: '100%', md: '1700px'},
-            pt: 1.5,
-        }}
-               spacing={2}>
+        <PageTemplate>
             <OrderDetailsPageHeader/>
             {order && (
                 <OrderDetailsView order={order}/>
@@ -82,7 +77,7 @@ const OrderDetailsPage = () => {
                 title={order?.title || ""}
                 titleChangeHandler={titleChangeHandler}
             />
-        </Stack>
+        </PageTemplate>
     );
 };
 

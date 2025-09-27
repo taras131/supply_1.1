@@ -13,6 +13,8 @@ import {filesAPI} from "../../files/api";
 import OrdersAddNewPageHeader from "./OrdersAddNewPageHeader";
 import {useNavigate} from "react-router-dom";
 import OrderDetailsForm from "./OrderDetailsForm";
+import PageHeaderTemplate from "../../../components/templates/PageHeaderTemplate";
+import PageTemplate from "../../../components/templates/PageTemplate";
 
 const LOCAL_STORAGE_NEW_ORDER_KEY = "new_order"
 
@@ -153,12 +155,7 @@ const OrdersAddNewPage = () => {
         }
     };
     return (
-        <Stack sx={{
-            width: '100%',
-            maxWidth: {sm: '100%', md: '1700px'},
-            pt: 1.5,
-        }}
-               spacing={3}>
+        <PageTemplate>
             <OrdersAddNewPageHeader saveClickHandler={saveClickHandler}
                                     resetOrder={resetOrder}
                                     isLoading={isLoading}
@@ -182,7 +179,7 @@ const OrdersAddNewPage = () => {
                 title={editedValue.title}
                 isNewOrder
             />
-        </Stack>
+        </PageTemplate>
     );
 };
 

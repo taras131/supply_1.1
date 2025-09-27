@@ -1,7 +1,6 @@
 import React, {FC, useCallback, useMemo} from 'react';
 import {IMachinery} from "../../../models/iMachinery";
 import {
-    GridActionsCellItem,
     GridEventListener,
 } from "@mui/x-data-grid";
 import {useAppSelector} from "../../../hooks/redux";
@@ -11,7 +10,6 @@ import {useNavigate} from "react-router-dom";
 import {machineryTypes} from "../utils/const";
 import {MachineryStatus} from "../../../utils/const";
 import Chip from "@mui/material/Chip";
-import EditIcon from "@mui/icons-material/Edit";
 import {nestServerPath} from "../../../api";
 import photoPlaceholder from "../../../assets/images/placeholder.png";
 import {styled} from "@mui/material/styles";

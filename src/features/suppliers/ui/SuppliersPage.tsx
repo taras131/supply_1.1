@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import {Stack} from '@mui/material';
 import SuppliersPageHeader from './SuppliersPageHeader';
 import {fetchGetSupplierById, fetchGetSuppliers} from '../model/actions';
 import SuppliersTable from './SuppliersTable';
@@ -8,6 +7,7 @@ import {ISupplier} from '../../../models/iSuppliers';
 import SupplierDetails from './SupplierDetails';
 import ASuppliersMigration from './ASuppliersMigration';
 import {useAppDispatch} from "../../../hooks/redux";
+import PageTemplate from "../../../components/templates/PageTemplate";
 
 function SuppliersPage() {
     const dispatch = useAppDispatch();
@@ -22,11 +22,7 @@ function SuppliersPage() {
         dispatch(fetchGetSupplierById(supplier.id));
     };
     return (
-        <Stack sx={{
-            width: '100%',
-            maxWidth: {sm: '100%', md: '1700px'},
-            pt: 1.5,
-        }}>
+        <PageTemplate>
             <SuppliersPageHeader
                 handleAddClick={toggleIsOpenAddDrawer}
             />
@@ -36,7 +32,7 @@ function SuppliersPage() {
             )}
             <SupplierDetails/>
             <ASuppliersMigration/>
-        </Stack>
+        </PageTemplate>
     );
 }
 
