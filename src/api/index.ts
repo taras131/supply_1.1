@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const nestServerPath = "";
+export const nestServerPath = "/api";
 
 export async function getNewAccessToken() {
   const response = await fetch(`${nestServerPath}/auth/refresh`, {
