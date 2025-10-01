@@ -1,43 +1,49 @@
-import { ILoginData, IRegisterData } from "../../../models/iAuth";
-import { appAPI, nestServerPath } from "../../../api";
+import {ILoginData, IRegisterData} from "../../../models/iAuth";
+import {appAPI, nestServerPath} from "../../../api";
+import {IChangePassword} from "../model/actions";
 
 const registerPath = `${nestServerPath}/auth/register`;
 const loginPath = `${nestServerPath}/auth/login`;
 const mePath = `${nestServerPath}/auth/me`;
 const logoutPath = `${nestServerPath}/auth/logout`;
+const changePasswordPath = `${nestServerPath}/auth/change_password`;
 
 export const authAPI = {
-  login: async (authData: ILoginData) => {
-    try {
-      const res = await appAPI.post(loginPath, authData);
-      return res.data;
-    } catch (error: any) {
-      throw new Error(
-        error.response?.data?.message || `Ошибка сервера: ${error.response?.status} ${error.response?.statusText}`,
-      );
-    }
-  },
-  register: async (registerData: IRegisterData) => {
-    try {
-      const res = await appAPI.post(registerPath, registerData);
-      return res.data;
-    } catch (error: any) {
-      throw new Error(
-        error.response?.data?.message || `Ошибка сервера: ${error.response?.status} ${error.response?.statusText}`,
-      );
-    }
-  },
-  me: async () => {
-    try {
-      const res = await appAPI.get(mePath);
-      return res.data;
-    } catch (error: any) {
-      throw new Error(
-        error.response?.data?.message || `Ошибка сервера: ${error.response?.status} ${error.response?.statusText}`,
-      );
-    }
-  },
-  out: async () => {
-    return await appAPI.post(logoutPath);
-  },
+    login: async (authData: ILoginData) => {
+        try {
+            const res = await appAPI.post(loginPath, authData);
+            return res.data;
+        } catch (error: any) {
+            throw new Error(
+                error.response?.data?.message || `Ошибка сервера: ${error.response?.status} ${error.response?.statusText}`,
+            );
+        }
+    },
+    register: async (registerData: IRegisterData) => {
+        try {
+            const res = await appAPI.post(registerPath, registerData);
+            return res.data;
+        } catch (error: any) {
+            throw new Error(
+                error.response?.data?.message || `Ошибка сервера: ${error.response?.status} ${error.response?.statusText}`,
+            );
+        }
+    },
+    me: async () => {
+        try {
+            const res = await appAPI.get(mePath);
+            return res.data;
+        } catch (error: any) {
+            throw new Error(
+                error.response?.data?.message || `Ошибка сервера: ${error.response?.status} ${error.response?.statusText}`,
+            );
+        }
+    },
+    out: async () => {
+        return await appAPI.post(logoutPath);
+    },
+    changePassword: async (changeData: IChangePassword) => {
+        const res = await appAPI.post(changePasswordPath, changeData);
+        return res.data;
+    },
 };

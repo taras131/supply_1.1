@@ -30,9 +30,9 @@ export const MyTab = (props: TabProps) => {
                     color: 'text.secondary',
                     borderRadius: theme.shape.borderRadius,
                     border: '1px solid transparent',
+                    fontWeight: 600,
                     '&:hover': {
                         color: 'text.primary',
-                        bgcolor: theme.palette.mode === 'dark' ? theme.palette.grey[800] : theme.palette.grey[100],
                     },
                     '&.Mui-selected': {
 /*

@@ -72,3 +72,19 @@ export const fetchCheckAuth = createAsyncThunk("fetch_check_auth", async (_, { d
     return rejectWithValue(handlerError(e));
   }
 });
+
+export interface IChangePassword {
+    oldPassword: string;
+    newPassword: string;
+}
+
+export const fetchChangePassword = createAsyncThunk(
+    "auth/change_password",
+    async (changeData: IChangePassword, { dispatch, rejectWithValue }) => {
+        try {
+            return await authAPI.changePassword(changeData);
+        } catch (e) {
+            return rejectWithValue(thunkHandlers.error(e, dispatch));
+        }
+    },
+);

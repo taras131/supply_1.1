@@ -17,11 +17,14 @@ import Box from "@mui/material/Box";
 import PageTemplate from "../../../components/templates/PageTemplate";
 import PageHeaderTemplate from "../../../components/templates/PageHeaderTemplate";
 import BackButton from "../../../components/common/BackButton";
+import {PhotoGallery} from "../../../components/common/PhotoGallery";
+import CardTemplate from "../../../components/templates/CardTemplate";
+import DetailsGrid from "../../../components/templates/DetailsGrid";
 
 const MachineryAddNewPage = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const {tempFiles, onAddPhoto, onDeletePhoto, clearPhotos} = usePhotoManager();
+    const {tempFiles, onAddPhotos, onDeletePhoto, clearPhotos} = usePhotoManager();
     const {editedValue, errors, handleFieldChange, resetValue} = useEditor<INewMachinery>({
         initialValue: JSON.parse(JSON.stringify(emptyMachinery)),
         validate: machineryValidate,
@@ -65,29 +68,41 @@ const MachineryAddNewPage = () => {
                     gap: "16px",
                 }}
             >
-                <ViewCardPattern title={"Основные сведения:"} isEditMode>
-                    <MachineryBasicView
-                        editedMachinery={editedValue}
-                        errors={errors}
-                        machineryFieldChangeHandler={handleFieldChange}
-                        isEditMode
+                <CardTemplate title={"Основные сведения:"}>
+                    <DetailsGrid>
+                        <MachineryBasicView
+                            editedMachinery={editedValue}
+                            errors={errors}
+                            machineryFieldChangeHandler={handleFieldChange}
+                            isEditMode
+                        />
+                    </DetailsGrid>
+                </CardTemplate>
+                <CardTemplate title={"Дополнительные сведения:"}>
+                    <DetailsGrid>
+                        <MachineryAdditionalView
+                            editedMachinery={editedValue}
+                            errors={errors}
+                            machineryFieldChangeHandler={handleFieldChange}
+                            isEditMode
+                        />
+                    </DetailsGrid>
+                </CardTemplate>
+                <CardTemplate title={"Фото:"}>
+                    <PhotoGallery
+                        srcArr={tempFiles.map((fileData) => fileData.preview)}
+                        onUpload={onAddPhotos}
+                        onDelete={onDeletePhoto}
+                        height={280}
+                        emptyStateText="Фотографии пока отсутствуют"
+                        uploadButtonText="Загрузить фото"
                     />
-                </ViewCardPattern>
-                <ViewCardPattern title={"Дополнительные сведения:"} isEditMode>
-                    <MachineryAdditionalView
-                        editedMachinery={editedValue}
-                        errors={errors}
-                        machineryFieldChangeHandler={handleFieldChange}
-                        isEditMode
-                    />
-                </ViewCardPattern>
-                <ViewCardPattern title={"Фото:"} isEditMode>
-                    <PhotosManager
+                    {/*  <PhotosManager
                         onAddPhoto={onAddPhoto}
                         onDeletePhoto={onDeletePhoto}
                         photosPaths={tempFiles.map((fileData) => fileData.preview)}
-                    />
-                </ViewCardPattern>
+                    />*/}
+                </CardTemplate>
             </Box>
         </PageTemplate>
     );

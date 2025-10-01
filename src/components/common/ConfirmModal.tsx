@@ -24,8 +24,10 @@ const ConfirmModal: FC<ConfirmModalProps> = ({
   children,
   loading = false,
 }) => (
-  <ModalWindow isOpenModal={isOpen} title={title} handleToggleOpen={onCancel}>
-    <Box sx={{ my: 2 }}>{children}</Box>
+  <ModalWindow isOpenModal={isOpen}
+               title={title}
+               handleToggleOpen={onCancel}>
+    <Box sx={{ my: 2, zIndex: 99100000 }}>{children}</Box>
     <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1, mt: 2 }}>
       <Button onClick={onCancel} variant="outlined" disabled={loading}>
         {cancelLabel}

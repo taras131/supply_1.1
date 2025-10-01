@@ -10,7 +10,9 @@ const MachineryReportMaintenance = () => {
   const maintenances = useAppSelector(selectMachineryMaintenanceTasks);
   return (
     <Card sx={{ padding: "24px" }}>
-      <RelatedTasks tasks={maintenances} title={"TO:"} machineryId={currentMachineryId || "-1"} isMaintenanceMode />
+      <RelatedTasks tasks={maintenances}
+                    title={"TO:"}
+                    machineryId={currentMachineryId || "-1"} isMaintenanceMode />
     </Card>
   );
 };

@@ -99,16 +99,22 @@ export const fetchUpdateMachinery = createAsyncThunk(
     },
 );
 
-export const fetchUploadMachineryPhoto = createAsyncThunk<ICurrentMachinery, File, { state: RootState }>(
+export const fetchUploadMachineryPhoto = createAsyncThunk<ICurrentMachinery, FileList, { state: RootState }>(
     "fetch_update_machinery_photo",
-    async (file: File, {rejectWithValue, dispatch, getState}) => {
+    async (files: FileList, {rejectWithValue, dispatch, getState}) => {
         try {
             const currentMachinery = selectCurrentMachinery(getState());
             if (!currentMachinery) return;
-            const res = await filesAPI.upload(file);
+            const fileArr = Array.from(files);             // FileList -> File[]
+            const uploads = fileArr.map(async (file, i) => {
+                const fileName = await filesAPI.upload(file);
+                return fileName as string;
+            });
+            const file_names = await Promise.all(uploads);
+
             const updatedMachinery = {
                 ...currentMachinery,
-                photos: [...currentMachinery.photos, res],
+                photos: [...currentMachinery.photos, ...file_names]
             };
             return dispatch(fetchUpdateMachinery(updatedMachinery)).unwrap();
         } catch (e) {

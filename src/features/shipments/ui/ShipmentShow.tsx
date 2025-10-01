@@ -22,8 +22,8 @@ import ShipmentTypeIcon from "./ShipmentTypeIcon";
 import MyButton from "../../../styles/theme/customizations/MyButton";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
-import ShipmentPhotos from "./ShipmentPhotos";
 import {nestServerPath} from "../../../api";
+import {PhotoGallery} from "../../../components/common/PhotoGallery";
 
 interface IProps {
     shipment: IShipments | null;
@@ -206,9 +206,14 @@ const ShipmentShow: FC<IProps> = ({shipment}) => {
                             </Typography>
                         </Box>
                     </Stack>
-                    <ShipmentPhotos srcArr={photoFilePaths}
-                                    onUpload={photosUploadHandler}
-                                    onDelete={photoDeleteHandler}/>
+                    <PhotoGallery
+                        srcArr={photoFilePaths}
+                        onUpload={photosUploadHandler}
+                        onDelete={photoDeleteHandler}
+                        height={280}
+                        emptyStateText="Фотографии пока отсутствуют"
+                        uploadButtonText="Загрузить фото"
+                    />
                 </Box>
             </CardContent>
         </Card>

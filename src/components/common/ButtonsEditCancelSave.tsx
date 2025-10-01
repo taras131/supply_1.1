@@ -1,6 +1,5 @@
 import React, {FC} from "react";
 import {IconButton, Stack} from "@mui/material";
-import Button from "@mui/material/Button";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import MyButton from "../../styles/theme/customizations/MyButton";
 
@@ -22,15 +21,19 @@ const ButtonsEditCancelSave: FC<IProps> = ({
                                                isLoading = false,
                                            }) => {
     return (
-        <Stack direction="row" sx={{width: "100%"}} alignItems="center" justifyContent="end" spacing={2}>
-            {isEditMode ? (
-                <>
+        <>
+            {isEditMode
+                ? (<Stack direction="row"
+                          sx={{width: "100%"}}
+                          alignItems="center"
+                          justifyContent="end"
+                          spacing={2}>
                     <MyButton onClick={cancelUpdateHandler}
                               variant={"outlined"}
                               size={"small"}>
                         Отменить
                     </MyButton>
-                    <Button
+                    <MyButton
                         onClick={updateHandler}
                         variant={"contained"}
                         disabled={!isValid}
@@ -38,19 +41,17 @@ const ButtonsEditCancelSave: FC<IProps> = ({
                         size={"small"}
                     >
                         Сохранить
-                    </Button>
-                </>
-            ) : (
-                <IconButton
+                    </MyButton>
+                </Stack>)
+                : (<IconButton
                     size="large"
                     aria-label="on edit mode"
                     onClick={toggleIsEditMode}
                     sx={{position: "absolute", right: "5px", top: "5px"}}
                 >
                     <EditNoteIcon fontSize={"inherit"} color={"inherit"}/>
-                </IconButton>
-            )}
-        </Stack>
+                </IconButton>)}
+        </>
     );
 };
 

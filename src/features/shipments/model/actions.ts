@@ -124,7 +124,9 @@ export const fetchAddShipmentPhotos = createAsyncThunk("shipments/add_photos",
             const file_names = await Promise.all(uploads);
             return await dispatch(fetchUpdateShipment({
                 ...shipment,
-                photo_file_paths: file_names
+                photo_file_paths: shipment.photo_file_paths
+                    ? [...shipment.photo_file_paths, ...file_names]
+                    : file_names
             })).unwrap();
         } catch (e) {
             const msg = handlerError(e);
