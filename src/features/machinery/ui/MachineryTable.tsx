@@ -65,8 +65,8 @@ const MachineryTable: FC<IProps> = ({rows}) => {
             disableColumnMenu: true,
             sortable: false,
             renderCell: (params: any) => {
-                const photoPath = `${nestServerPath}/static/${params.row.photos[0]}`
-                    ? `${fileServerPath}/${params.row.photos[0]}`
+                const photoPath = params.row.photos[0]
+                    ? `${nestServerPath}/static/${params.row.photos[0]}`
                     : photoPlaceholder;
                 return <StyledImage src={photoPath} alt="machinery_photo" />;
             },

@@ -13,17 +13,18 @@ interface IProps {
     dialogOpen: boolean,
     closeDialog: () => void,
     handleDeletePhoto: (src: string) => void,
-    handleAddFiles: (e: React.ChangeEvent<HTMLInputElement>)=>void,
+    handleAddFiles: (e: React.ChangeEvent<HTMLInputElement>) => void,
     photos: string[]
 }
-const PhotoDialog:FC<IProps> = ({
-                                    dialogOpen,
-                                    closeDialog,
-                                    handleDeletePhoto,
-                                    handleAddFiles,
-                                    photos,
 
-                                }) => {
+const PhotoDialog: FC<IProps> = ({
+                                     dialogOpen,
+                                     closeDialog,
+                                     handleDeletePhoto,
+                                     handleAddFiles,
+                                     photos,
+
+                                 }) => {
 
     const fileInputRef = React.useRef<HTMLInputElement | null>(null);
     return (
@@ -40,14 +41,14 @@ const PhotoDialog:FC<IProps> = ({
                         Нет фотографий
                     </Box>
                 ) : (
-                    <ImageList cols={4} gap={8} sx={{ mt: 0 }}>
+                    <ImageList cols={4} gap={8} sx={{mt: 0}}>
                         {photos.map((src, idx) => (
-                            <ImageListItem key={`${src}-${idx}`} sx={{ overflow: 'hidden' }}>
+                            <ImageListItem key={`${src}-${idx}`} sx={{overflow: 'hidden'}}>
                                 <img
-                                    src={`${fileServerPath}/${src}`}
+                                    src={`${nestServerPath}/static/${src}`}
                                     alt={`Фото ${idx + 1}`}
                                     loading="lazy"
-                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                    style={{width: '100%', height: '100%', objectFit: 'cover'}}
                                 />
                                 <Box
                                     position="absolute"
@@ -61,7 +62,7 @@ const PhotoDialog:FC<IProps> = ({
                                             size="small"
                                             onClick={() => handleDeletePhoto(src)}
                                         >
-                                            <DeleteOutlineIcon htmlColor="#fff" fontSize="small" />
+                                            <DeleteOutlineIcon htmlColor="#fff" fontSize="small"/>
                                         </IconButton>
                                     </Tooltip>
                                 </Box>
