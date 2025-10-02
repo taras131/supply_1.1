@@ -18,10 +18,11 @@ import Box from "@mui/material/Box";
 
 const StyledImage = styled("img")({
     width: "100%",
-    height: "60px",
+    height: "90px",
     objectFit: "contain",
     backgroundColor: 'background.default',
     borderRadius: "3px",
+    padding: "10px",
 });
 
 function renderStatus(status: MachineryStatus) {
