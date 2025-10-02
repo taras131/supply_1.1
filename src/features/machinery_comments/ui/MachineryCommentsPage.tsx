@@ -3,6 +3,8 @@ import {useAppDispatch} from "../../../hooks/redux";
 import {fetchGetAllMachineryComment} from "../model/actions";
 import MachineryComments from "./MachineryComments";
 import {fetchGetAllMachinery} from "../../machinery/model/actions";
+import PageTemplate from "../../../components/templates/PageTemplate";
+import PageHeaderTemplate from "../../../components/templates/PageHeaderTemplate";
 
 const MachineryCommentsPage = () => {
     const dispatch = useAppDispatch();
@@ -11,10 +13,10 @@ const MachineryCommentsPage = () => {
         dispatch(fetchGetAllMachinery());
     }, [dispatch]);
     return (
-        <div>
-            MachineryCommentsPage
+        <PageTemplate>
+            <PageHeaderTemplate title={"Заметки"}/>
             <MachineryComments isShowMachineryInfo/>
-        </div>
+        </PageTemplate>
     );
 };
 

@@ -12,7 +12,6 @@ interface IProps {
 }
 
 const ShipmentsAddNewPageHeader: FC<IProps> = ({isValid, saveClickHandler}) => {
-    const navigate = useNavigate();
     return (
         <PageHeaderTemplate title={"Новая отгрузка"}>
             <Stack direction="row" spacing={1}>

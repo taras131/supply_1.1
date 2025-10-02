@@ -6,6 +6,8 @@ import {selectAllUsers, selectIsUsersLoading} from "../model/selectors";
 import AUsersMigration from "./AUsersMigration";
 import Preloader from "../../../components/common/Preloader";
 import Box from "@mui/material/Box";
+import PageTemplate from "../../../components/templates/PageTemplate";
+import PageHeaderTemplate from "../../../components/templates/PageHeaderTemplate";
 
 const UsersPage = () => {
     const users = useAppSelector(selectAllUsers);
@@ -17,18 +19,11 @@ const UsersPage = () => {
         return null;
     }
     return (
-        <Box sx={{width: '100%', maxWidth: {sm: '100%', md: '1700px'}}}>
-            <Stack direction="row" spacing={3} justifyContent="space-between" alignItems="center" sx={{mb: 2, mt: 2}}>
-                <Typography component="h2" variant="h6">
-                    Сотрудники
-                </Typography>
-                <div>
-
-                </div>
-            </Stack>
+        <PageTemplate>
+            <PageHeaderTemplate title={"Сотрудники"}/>
             <UsersTable rows={users}/>
             <AUsersMigration/>
-        </Box>
+        </PageTemplate>
     );
 };
 

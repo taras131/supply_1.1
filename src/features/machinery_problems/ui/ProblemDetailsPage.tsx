@@ -21,6 +21,7 @@ import {defaultProblem, IMachineryProblem} from "../../../models/IMachineryProbl
 import {problemValidate} from "../../../utils/validators";
 import {setCurrentProblem} from "../model/slice";
 import {AiSolution, parseAiSolution} from "../../../utils/aiSolution";
+import PageTemplate from "../../../components/templates/PageTemplate";
 
 const ProblemDetailsPage = () => {
     const dispatch = useAppDispatch();
@@ -73,11 +74,7 @@ const ProblemDetailsPage = () => {
     };
 
     return (
-        <Stack sx={{
-            width: '100%',
-            maxWidth: {sm: '100%', md: '1700px'},
-            pt: 1.5,
-        }}>
+        <PageTemplate>
             <ProblemDetailsPageHeader/>
             <Stack direction={"row"} spacing={4} sx={{width: '100%'}}>
                 <Card sx={{width: '100%', p: 4}}>
@@ -155,7 +152,7 @@ const ProblemDetailsPage = () => {
                     )}
                 </>
             </Stack>
-        </Stack>
+        </PageTemplate>
     );
 };
 

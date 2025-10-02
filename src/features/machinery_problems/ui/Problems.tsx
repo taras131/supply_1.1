@@ -1,6 +1,5 @@
 import React, {FC, useState} from "react";
 import {Stack} from "@mui/material";
-import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import ProblemsTable from "./ProblemsTable";

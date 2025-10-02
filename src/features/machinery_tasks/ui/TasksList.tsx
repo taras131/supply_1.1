@@ -29,6 +29,7 @@ export const TaskList: FC<IProps> = ({ isShowMachineryInformation }) => {
           minHeight: "690px",
           gap: "16px",
           padding: "16px",
+            width: "100%",
         }}
       >
         {taskStatus.map((status) => (

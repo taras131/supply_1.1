@@ -14,6 +14,9 @@ import Card from "@mui/material/Card";
 import {fetchAddMachineryTask} from "../model/actions";
 import {fetchGetAllMachinery} from "../../machinery/model/actions";
 import MyButton from "../../../styles/theme/customizations/MyButton";
+import PageTemplate from "../../../components/templates/PageTemplate";
+import PageHeaderTemplate from "../../../components/templates/PageHeaderTemplate";
+import BackButton from "../../../components/common/BackButton";
 
 const TaskAddNewPage = () => {
     const dispatch = useAppDispatch();
@@ -60,23 +63,10 @@ const TaskAddNewPage = () => {
         navigate(-1);
     };
     return (
-        <Stack sx={{
-            width: '100%',
-            maxWidth: {sm: '100%', md: '1700px'},
-            pt: 1.5,
-        }}>
-            <Stack direction="row"
-                   spacing={3}
-                   justifyContent="space-between"
-                   alignItems="center"
-                   sx={{mb: 2, mt: 2}}>
-                <Typography component="h2" variant="h6">
-                    Новая задача
-                </Typography>
-                <Stack direction="row" spacing={1}>
-                    <MyButton variant="outlined" onClick={() => navigate(-1)}>
-                        Назад
-                    </MyButton>
+        <PageTemplate>
+            <PageHeaderTemplate title={"Новая задача"}>
+                <Stack direction="row" spacing={3}>
+                   <BackButton/>
                     <MyButton
                         onClick={handleAddClick}
                         variant={"contained"}
@@ -86,7 +76,7 @@ const TaskAddNewPage = () => {
                         Сохранить
                     </MyButton>
                 </Stack>
-            </Stack>
+            </PageHeaderTemplate>
             <Box
                 sx={{
                     width: "100%",
@@ -114,7 +104,7 @@ const TaskAddNewPage = () => {
                     />
                 </Card>
             </Box>
-        </Stack>
+        </PageTemplate>
     );
 };
 
