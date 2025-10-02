@@ -96,9 +96,7 @@ export const fetchDeleteOrdersPositionPhoto = createAsyncThunk<
                 ...position,
                 photos: [...position.photos.filter((photo) => photo !== deletePhotoName)],
             };
-            console.log(deletePhotoName)
-            const res = await filesAPI.delete(deletePhotoName);
-            console.log(res)
+            await filesAPI.delete(deletePhotoName);
             return dispatch(fetchUpdateOrdersPositions(updatedPosition)).unwrap();
         } catch (e) {
             return rejectWithValue(handlerError(e));
