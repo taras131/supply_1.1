@@ -27,6 +27,7 @@ const PhotoDialog: FC<IProps> = ({
                                  }) => {
 
     const fileInputRef = React.useRef<HTMLInputElement | null>(null);
+    console.log(photos)
     return (
         <Dialog
             open={dialogOpen}

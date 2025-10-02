@@ -73,10 +73,12 @@ const OrderPositionsTable: FC<IProps> = ({
     const canDelete = !!deletePositionHandler;
     const [activeRowId, setActiveRowId] = useState<string | null>(null);
     const currentRow = useMemo(
-        () => (activeRowId ? rows.find((r: any) => r.id === activeRowId) ?? null : null),
+        () => (activeRowId ? rows.find((r: any) => `${r.id}` === `${activeRowId}`) ?? null : null),
         [rows, activeRowId]
     );
-    const photos = (Array.isArray((currentRow as any)?.photos) ? (currentRow as any).photos : []) as string[];
+    const photos = (Array.isArray((currentRow as any)?.photos)
+        ? (currentRow as any).photos
+        : []) as string[];
     const comment = ((currentRow as any)?.comment ?? "") as string;
     const getRowId = useCallback((row: any) => row.id, []);
     const openPhotosDialog = useCallback((row: any) => {

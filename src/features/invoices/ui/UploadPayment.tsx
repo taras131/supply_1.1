@@ -69,7 +69,7 @@ const UploadPayment: FC<IProps> = ({invoice, forDetailsMode = false}) => {
     return (
         <>
             <Button
-                sx={{textTransform: 'none', width: "150px"}}
+                sx={{textTransform: 'none', width: "160px"}}
                 component={LABEL}
                 loading={isLoading || invoiceLoading}
                 variant={"contained"}
