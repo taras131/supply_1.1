@@ -10,7 +10,7 @@ import {useNavigate} from "react-router-dom";
 import {machineryTypes} from "../utils/const";
 import {MachineryStatus} from "../../../utils/const";
 import Chip from "@mui/material/Chip";
-import {nestServerPath} from "../../../api";
+import {fileServerPath, nestServerPath} from "../../../api";
 import photoPlaceholder from "../../../assets/images/placeholder.png";
 import {styled} from "@mui/material/styles";
 import {MyDataGrid} from "../../../styles/theme/customizations/MyDataGrid";
@@ -66,7 +66,7 @@ const MachineryTable: FC<IProps> = ({rows}) => {
             sortable: false,
             renderCell: (params: any) => {
                 const photoPath = params.row.photos[0]
-                    ? `${nestServerPath}/static/${params.row.photos[0]}`
+                    ? `${fileServerPath}/${params.row.photos[0]}`
                     : photoPlaceholder;
                 return <StyledImage src={photoPath} alt="machinery_photo" />;
             },

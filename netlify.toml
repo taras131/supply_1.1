@@ -1,25 +1,32 @@
-# 1. Сначала отдать статику из билда
+# 1. Статика из билда
 [[redirects]]
 from = "/static/*"
 to = "/static/:splat"
 status = 200
 force = false
 
-# 2. Затем проксировать server-files
+# 2. Серверные файлы (uploads)
 [[redirects]]
 from = "/static/uploads/*"
 to = "http://77.110.104.31:3000/static/:splat"
 status = 200
 force = true
 
-# 3. API
+# 3. Файловый API (загрузка/удаление)
+[[redirects]]
+from = "/api/file/*"
+to = "http://77.110.104.31:3000/api/file/:splat"
+status = 200
+force = true
+
+# 4. Остальной API
 [[redirects]]
 from = "/api/*"
 to = "http://77.110.104.31:3000/:splat"
 status = 200
 force = true
 
-# 4. Fallback to index.html
+# 5. Fallback на index.html
 [[redirects]]
 from = "/*"
 to = "/index.html"

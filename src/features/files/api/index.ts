@@ -1,4 +1,4 @@
-import { appAPI, nestServerPath } from "../../../api";
+import {appAPI, fileServerPath, nestServerPath} from "../../../api";
 import { transliterate } from "../../../utils/services";
 
 export const filesPath = `${nestServerPath}/file`;
