@@ -44,7 +44,7 @@ export const fetchUpdateOrdersPositions = createAsyncThunk(
 );
 
 export interface IPositionUploadPhotoData {
-    file: File;
+    files: FileList;
     orderPositionId: string;
 }
 
@@ -56,13 +56,20 @@ export const fetchUploadOrdersPositionsPhoto = createAsyncThunk<
     "orders_positions/upload_photo",
     async (data_in: IPositionUploadPhotoData, {dispatch, getState, rejectWithValue}) => {
         try {
-            const {file, orderPositionId} = data_in;
-            const res = await filesAPI.upload(file);
+            const {files, orderPositionId} = data_in;
+            const fileArr = Array.from(files);
+            const uploads = fileArr.map(async (file, i) => {
+                const fileName = await filesAPI.upload(file);
+                return fileName as string;
+            });
+            const file_names = await Promise.all(uploads);
             const ordersPosition = selectOrdersPositionById(getState(), orderPositionId);
             if (!ordersPosition) return;
             const updatedOrdersPosition = {
                 ...ordersPosition,
-                photos: ordersPosition.photos ? [...ordersPosition.photos, res] : [res],
+                photos: ordersPosition.photos
+                    ? [...ordersPosition.photos, ...file_names]
+                    : [...file_names],
             };
             return dispatch(fetchUpdateOrdersPositions(updatedOrdersPosition)).unwrap();
         } catch (e) {

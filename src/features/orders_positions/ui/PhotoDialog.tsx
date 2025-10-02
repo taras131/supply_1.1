@@ -2,7 +2,7 @@ import React, {FC} from 'react';
 import Dialog from "@mui/material/Dialog";
 import {DialogActions, DialogContent, DialogTitle, ImageList, ImageListItem, Tooltip} from "@mui/material";
 import Box from "@mui/material/Box";
-import {fileServerPath, nestServerPath} from "../../../api";
+import {nestServerPath} from "../../../api";
 import IconButton from "@mui/material/IconButton";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import AddPhotoAlternateOutlinedIcon from '@mui/icons-material/AddPhotoAlternateOutlined';

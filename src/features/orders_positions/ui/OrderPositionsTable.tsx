@@ -33,7 +33,7 @@ interface IProps {
     onRowsChange?: (newRow: INewOrderPosition | IOrderPosition) => void;
     handleAddRow?: () => void;
     loading?: boolean;
-    addPhotoHandler?: (file: File, orderPositionId: string) => void;
+    addPhotoHandler?: (files: FileList, orderPositionId: string) => void;
     deletePhotoHandler?: (deletePhotoName: string, orderPositionId: string) => void;
     commentChangeHandler?: (newValue: string | number, orderPositionId: string) => void;
     deletePositionHandler?: (id: string) => void;
@@ -105,9 +105,9 @@ const OrderPositionsTable: FC<IProps> = ({
     }, []);
     const handleAddFiles = useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => {
-            const file = e.currentTarget.files?.[0];
-            if (!file || !addPhotoHandler || activeRowId == null) return;
-            addPhotoHandler(file, activeRowId);
+            const files = e.currentTarget.files;
+            if (!files || !addPhotoHandler || activeRowId == null) return;
+            addPhotoHandler(files, activeRowId);
         },
         [addPhotoHandler, activeRowId]
     );

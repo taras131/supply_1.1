@@ -72,14 +72,18 @@ const OrdersAddNewPage = () => {
         [setEditedValue]
     );
     const addPhotoHandler = useCallback(
-        async (file: File, orderPositionId: string) => {
-            console.log(file)
-            const photoName = await filesAPI.upload(file);
+        async (files: FileList, orderPositionId: string) => {
+            const fileArr = Array.from(files);
+            const uploads = fileArr.map(async (file, i) => {
+                const fileName = await filesAPI.upload(file);
+                return fileName as string;
+            });
+            const file_names = await Promise.all(uploads);
             setEditedValue(prev => ({
                 ...prev,
                 positions: prev.positions.map(p =>
                     `${p.id}` === orderPositionId
-                        ? {...p, photos: [...(p.photos ?? []), photoName]}
+                        ? {...p, photos: [...(p.photos ?? []), ...file_names]}
                         : p
                 ),
             }));

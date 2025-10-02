@@ -35,8 +35,8 @@ const OrderDetailsPage = () => {
     const handleAddRow = () => {
         dispatch(fetchCreateOrdersPositions({...emptyOrderPosition, order_id: orderId}))
     }
-    const addPhotoHandler = (file: File, orderPositionId: string) => {
-        const data_in: IPositionUploadPhotoData = {file, orderPositionId}
+    const addPhotoHandler = (files: FileList, orderPositionId: string) => {
+        const data_in: IPositionUploadPhotoData = {files, orderPositionId}
         dispatch(fetchUploadOrdersPositionsPhoto(data_in))
     }
     const deletePhotoHandler = (deletePhotoName: string, orderPositionId: string) => {
