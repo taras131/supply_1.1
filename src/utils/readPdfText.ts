@@ -4,6 +4,7 @@ export const readText = async (
     file: File,
     setPaymentErrorMessage: (message: string) => void
 ): Promise<string> => {
+    console.log(file)
     try {
         const fileBuffer = await file.arrayBuffer();
         const loadingTask = pdfjs.getDocument({
@@ -27,6 +28,7 @@ export const readText = async (
         }
         return fullText.trim();
     } catch (error) {
+        console.error("PDF.js error:", error);
         setPaymentErrorMessage("Ошибка чтения файла");
         return "";
     }

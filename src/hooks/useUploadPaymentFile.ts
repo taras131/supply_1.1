@@ -85,6 +85,7 @@ export const useUploadPaymentFile = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [paymentErrorMessage, setPaymentErrorMessage] = useState('');
     const onFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+        console.log(e)
         setIsLoading(true);
         setPaymentErrorMessage('');
         setFilesWithAmount(null);
@@ -106,6 +107,7 @@ export const useUploadPaymentFile = () => {
                 continue;
             }
             const text = await readText(file, setPaymentErrorMessage);
+            console.log(text)
             if (!text) {
                 entry.error = `Не удаётся прочитать pdf файл: ${file.name}`;
                 tempArr.push(entry);
