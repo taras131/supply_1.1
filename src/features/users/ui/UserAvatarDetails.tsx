@@ -1,6 +1,5 @@
 import React, {FC, useState} from "react";
 import ButtonsEditCancel from "../../../components/common/ButtonsEditCancel";
-import Card from "@mui/material/Card";
 import PhotosManager from "../../../components/common/PhotosManager";
 import {useAppDispatch} from "../../../hooks/redux";
 import {nestServerPath} from "../../../api";
@@ -20,8 +19,11 @@ const UserAvatarDetails: FC<IProps> = ({user}) => {
         setIsEditMode((prev) => !prev);
     };
     if (!user) return null;
-    const onAddPhoto = (newFile: File) => {
-        dispatch(fetchUploadUserPhoto({user, file: newFile}));
+    const onAddPhotos = (files: FileList) => {
+        const file = files[0];
+        if(file) {
+            dispatch(fetchUploadUserPhoto({user, file: file}));
+        }
         toggleIsEditMode();
     };
     const onDeletePhoto = () => {
@@ -32,7 +34,7 @@ const UserAvatarDetails: FC<IProps> = ({user}) => {
         <CardTemplate>
             <PhotosManager
                 photosPaths={photosPaths}
-                onAddPhoto={onAddPhoto}
+                onAddPhotos={onAddPhotos}
                 onDeletePhoto={onDeletePhoto}
                 isViewingOnly={!isEditMode}
                 isAvatar

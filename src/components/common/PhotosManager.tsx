@@ -89,7 +89,7 @@ const VisuallyHiddenInput = styled("input")({
 interface IProps {
     photosPaths: string[];
     isViewingOnly?: boolean;
-    onAddPhoto?: (newFile: File) => void;
+    onAddPhotos?: (files: FileList) => void;
     onDeletePhoto?: (deletedFileIndex: number) => void;
     photosCountLimit?: number;
     isAvatar?: boolean;
@@ -97,7 +97,7 @@ interface IProps {
 
 const PhotosManager: FC<IProps> = ({
                                        photosPaths,
-                                       onAddPhoto,
+                                       onAddPhotos,
                                        onDeletePhoto,
                                        isViewingOnly = false,
                                        photosCountLimit = 10,
@@ -118,10 +118,9 @@ const PhotosManager: FC<IProps> = ({
     };
 
     const addPhotoHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!onAddPhoto) return;
-        const selectedFile = e.target.files?.[0];
-        if (selectedFile) {
-            onAddPhoto(selectedFile);
+        if (!onAddPhotos) return;
+        if (e.target.files &&  e.target.files.length > 0) {
+            onAddPhotos(e.target.files);
             setActivePhoto(photosPaths.length);
         }
     };

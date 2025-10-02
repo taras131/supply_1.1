@@ -30,7 +30,7 @@ const ModalCard = styled(Card)(() => ({
 const MachineryDocsAddNew = () => {
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
-  const { tempFiles, onAddPhoto, onDeletePhoto, clearPhotos } = usePhotoManager();
+  const { tempFiles, onAddPhotos, onDeletePhoto, clearPhotos } = usePhotoManager();
   const { editedValue, errors, resetValue, handleFieldChange } = useEditor<INewMachineryDoc>({
     initialValue: emptyMachineryDoc,
     validate: docValidate,
@@ -98,7 +98,7 @@ const MachineryDocsAddNew = () => {
               </Typography>
               <PhotosManager
                 photosPaths={tempFiles.map((file) => file.preview)}
-                onAddPhoto={onAddPhoto}
+                onAddPhotos={onAddPhotos}
                 onDeletePhoto={onDeletePhoto}
                 isViewingOnly={false}
                 photosCountLimit={1}

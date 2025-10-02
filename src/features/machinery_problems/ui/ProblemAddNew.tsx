@@ -22,7 +22,7 @@ interface IProps {
 const ProblemAddNew: FC<IProps> = ({ isOpen, isShowMachineryInfo, onClose }) => {
   const dispatch = useAppDispatch();
   const machineryList = useAppSelector(selectAllMachineryForOptions);
-  const { tempFiles, onAddPhoto, onDeletePhoto, clearPhotos } = usePhotoManager();
+  const { tempFiles, onAddPhotos, onDeletePhoto, clearPhotos } = usePhotoManager();
   const { editedValue, errors, handleFieldChange, resetValue } = useEditor<INewMachineryProblem>({
     initialValue: JSON.parse(JSON.stringify(emptyProblem)),
     validate: problemValidate,
@@ -30,7 +30,7 @@ const ProblemAddNew: FC<IProps> = ({ isOpen, isShowMachineryInfo, onClose }) => 
   useEffect(() => {
     dispatch(fetchGetAllMachinery());
     return () => clearPhotos();
-  }, [isShowMachineryInfo]);
+  }, [dispatch, isShowMachineryInfo, clearPhotos]);
   const addClickHandler = async () => {
     const newFiles = [...tempFiles.map((fileData) => fileData.file)];
     clearPhotos();
@@ -78,7 +78,7 @@ const ProblemAddNew: FC<IProps> = ({ isOpen, isShowMachineryInfo, onClose }) => 
         )}
         <ProblemView problem={editedValue} errors={errors} fieldChangeHandler={handleFieldChange} isEditMode={true} />
         <PhotosManager
-          onAddPhoto={onAddPhoto}
+          onAddPhotos={onAddPhotos}
           onDeletePhoto={onDeletePhoto}
           photosPaths={tempFiles.map((fileData) => fileData.preview)}
         />

@@ -18,7 +18,7 @@ import MyButton from "../../../styles/theme/customizations/MyButton";
 const TaskAddNewPage = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const {tempFiles, onAddPhoto, onDeletePhoto, clearPhotos} = usePhotoManager();
+    const {tempFiles, onAddPhotos, onDeletePhoto, clearPhotos} = usePhotoManager();
     const location = useLocation();
     const problemId = location.state?.problemId;
     const taskTypeId = location.state?.taskTypeId;
@@ -108,7 +108,7 @@ const TaskAddNewPage = () => {
                 </Card>
                 <Card sx={{display: "flex", justifyContent: "center", alignItems: "center"}}>
                     <PhotosManager
-                        onAddPhoto={onAddPhoto}
+                        onAddPhotos={onAddPhotos}
                         onDeletePhoto={onDeletePhoto}
                         photosPaths={tempFiles.map((fileData) => fileData.preview)}
                     />

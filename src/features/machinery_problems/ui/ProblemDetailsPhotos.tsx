@@ -16,8 +16,8 @@ const ProblemDetailsPhotos: FC<IProps> = ({ currentProblemPhotos }) => {
   const toggleIsEditMode = () => {
     setIsEditMode((prev) => !prev);
   };
-  const onAddPhoto = (newFile: File) => {
-    dispatch(fetchUploadMachineryProblemPhoto(newFile));
+  const onAddPhotos = (files: FileList) => {
+    dispatch(fetchUploadMachineryProblemPhoto(files));
   };
   const onDeletePhoto = (deletedFileIndex: number) => {
     dispatch(fetchDeleteMachineryProblemPhoto(currentProblemPhotos[deletedFileIndex]));
@@ -27,7 +27,7 @@ const ProblemDetailsPhotos: FC<IProps> = ({ currentProblemPhotos }) => {
     <Box sx={{ position: "relative" }}>
       <PhotosManager
         photosPaths={photosPaths}
-        onAddPhoto={onAddPhoto}
+        onAddPhotos={onAddPhotos}
         onDeletePhoto={onDeletePhoto}
         isViewingOnly={!isEditMode}
       />

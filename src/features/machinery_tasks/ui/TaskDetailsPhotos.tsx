@@ -18,8 +18,8 @@ const TaskDetailsPhotos: FC<IProps> = ({ photos, viewType }) => {
   const toggleIsEditMode = () => {
     setIsEditMode((prev) => !prev);
   };
-  const onAddPhoto = (newFile: File) => {
-    dispatch(fetchUploadTaskPhoto({ file: newFile, type }));
+  const onAddPhotos = (files: FileList) => {
+    dispatch(fetchUploadTaskPhoto({ files: files, type }));
   };
   const onDeletePhoto = (deletedFileIndex: number) => {
     dispatch(fetchDeleteTaskPhoto({ deletePhotoName: photos[deletedFileIndex], type }));
@@ -38,7 +38,7 @@ const TaskDetailsPhotos: FC<IProps> = ({ photos, viewType }) => {
     >
       <PhotosManager
         photosPaths={photosPaths}
-        onAddPhoto={onAddPhoto}
+        onAddPhotos={onAddPhotos}
         onDeletePhoto={onDeletePhoto}
         isViewingOnly={!isEditMode}
       />
