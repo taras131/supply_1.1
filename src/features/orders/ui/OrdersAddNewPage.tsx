@@ -73,30 +73,37 @@ const OrdersAddNewPage = () => {
     );
     const addPhotoHandler = useCallback(
         async (files: FileList, orderPositionId: string) => {
+            console.log(files)
             const fileArr = Array.from(files);
             const uploads = fileArr.map(async (file, i) => {
                 const fileName = await filesAPI.upload(file);
                 return fileName as string;
             });
             const file_names = await Promise.all(uploads);
+            const targetId = Number(orderPositionId);
+            console.log('Updating photos for id:', {
+                orderPositionId,
+                positions: editedValue.positions.map(p => ({id: p.id, idType: typeof p.id})),
+            });
             setEditedValue(prev => ({
                 ...prev,
                 positions: prev.positions.map(p =>
-                    `${p.id}` === orderPositionId
+                    p.id === targetId
                         ? {...p, photos: [...(p.photos ?? []), ...file_names]}
                         : p
                 ),
             }));
         },
-        [setEditedValue]
+        [setEditedValue, editedValue.positions]
     );
+    console.log(editedValue.positions)
     const deletePhotoHandler = useCallback(
         async (deletePhoto: string, orderPositionId: string) => {
             await filesAPI.delete(deletePhoto);
             setEditedValue(prev => ({
                 ...prev,
                 positions: prev.positions.map(p =>
-                    `${p.id}` === orderPositionId
+                    `${p.id}` === `${orderPositionId}`
                         ? {...p, photos: (p.photos ?? []).filter(photo => photo !== deletePhoto)}
                         : p
                 ),
