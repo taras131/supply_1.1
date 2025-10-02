@@ -128,6 +128,7 @@ export const fetchDeleteMachineryPhoto = createAsyncThunk<ICurrentMachinery, str
     async (deletePhotoName: string, {rejectWithValue, dispatch, getState}) => {
         try {
             const currentMachinery = selectCurrentMachinery(getState());
+            console.log(deletePhotoName)
             if (!currentMachinery) return;
             const res = await filesAPI.delete(deletePhotoName);
             if (!res) return;

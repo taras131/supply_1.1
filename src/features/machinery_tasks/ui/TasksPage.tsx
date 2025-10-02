@@ -1,16 +1,19 @@
-import React, { useEffect } from "react";
-import { TaskList } from "./TasksList";
-import { useAppDispatch } from "../../../hooks/redux";
-import { fetchGetAllMachineryTasks } from "../model/actions";
-import { useMediaQuery } from "@mui/material";
+import React, {useEffect} from "react";
+import {TaskList} from "./TasksList";
+import {useAppDispatch} from "../../../hooks/redux";
+import {fetchGetAllMachineryTasks} from "../model/actions";
+import PageTemplate from "../../../components/templates/PageTemplate";
 
 const TasksPage = () => {
-  const dispatch = useAppDispatch();
-  //   const isMobile = useMediaQuery(theme => theme.breakpoints.down("sm"));
-  useEffect(() => {
-    dispatch(fetchGetAllMachineryTasks());
-  }, []);
-  return <TaskList isShowMachineryInformation />;
+    const dispatch = useAppDispatch();
+    useEffect(() => {
+        dispatch(fetchGetAllMachineryTasks());
+    }, [dispatch]);
+    return (
+        <PageTemplate>
+            <TaskList isShowMachineryInformation/>
+        </PageTemplate>
+    );
 };
 
 export default TasksPage;

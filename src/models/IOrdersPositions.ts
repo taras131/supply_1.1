@@ -6,7 +6,7 @@ export interface ISelectedOrderPosition {
 }
 
 export interface INewOrderPosition {
-    id: number;
+    id: number | string;
     name: string;
     catalog_number: string;
     count: number;
@@ -29,7 +29,7 @@ export interface IOrderPosition extends INewOrderPosition {
 export const unitMeasures = ["шт", "комп", "метр", "кг", "литр"]
 
 export const emptyOrderPosition: INewOrderPosition = {
-    id: 0,
+    id: "0",
     name: "",
     catalog_number: "",
     count: 1,
