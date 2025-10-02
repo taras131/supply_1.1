@@ -1,7 +1,7 @@
 import {appAPI, nestServerPath} from "../../../api";
 import { transliterate } from "../../../utils/services";
 
-export const filesPath = `/api/file`;
+export const filesPath = `/file`;
 
 export const filesAPI = {
   upload: async (file: File) => {
