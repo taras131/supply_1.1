@@ -131,6 +131,7 @@ export const fetchDeleteMachineryPhoto = createAsyncThunk<ICurrentMachinery, str
             console.log(deletePhotoName)
             if (!currentMachinery) return;
             const res = await filesAPI.delete(deletePhotoName);
+            console.log(res)
             if (!res) return;
             const updatedMachinery = {
                 ...currentMachinery,
