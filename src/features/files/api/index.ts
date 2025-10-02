@@ -1,11 +1,11 @@
-import {appAPI, fileServerPath, nestServerPath} from "../../../api";
+import {appAPI, nestServerPath} from "../../../api";
 import { transliterate } from "../../../utils/services";
 
-export const filesPath = `${nestServerPath}/file`;
+export const filesPath = `/api/file`;
 
 export const filesAPI = {
   upload: async (file: File) => {
-
+    console.log(filesPath)
     const ext = file.name.split(".").pop();
     const baseNameRaw = file.name.replace(/\.[^/.]+$/, "");
     const baseNameTranslit = transliterate(baseNameRaw).replace(/[^a-zA-Z0-9]/g, "_");
