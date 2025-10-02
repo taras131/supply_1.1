@@ -18,11 +18,10 @@ import Box from "@mui/material/Box";
 
 const StyledImage = styled("img")({
     width: "100%",
-    height: "90px",
+    height: "110px",
     objectFit: "contain",
     backgroundColor: 'background.default',
     borderRadius: "3px",
-    padding: "5px",
 });
 
 function renderStatus(status: MachineryStatus) {
@@ -69,7 +68,15 @@ const MachineryTable: FC<IProps> = ({rows}) => {
                 const photoPath = params.row.photos[0]
                     ? `${nestServerPath}/static/${params.row.photos[0]}`
                     : photoPlaceholder;
-                return <StyledImage src={photoPath} alt="machinery_photo"/>;
+                return (<Box sx={{
+                    height: "100%",
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center"
+                }}>
+                    <StyledImage src={photoPath} alt="machinery_photo"/>
+                </Box>);
             },
             flex: 0.5,
         },
@@ -169,7 +176,7 @@ const MachineryTable: FC<IProps> = ({rows}) => {
                 filterModel={filterModel}
                 onFilterModelChange={setFilterModel}
                 disableRowSelectionOnClick
-                heightRow={100}
+                heightRow={120}
                 columnHeaderHeight={70}
                 loading={isLoading}
                 onRowClick={handleRowClick}
