@@ -10,7 +10,7 @@ import {useNavigate} from "react-router-dom";
 import {machineryTypes} from "../utils/const";
 import {MachineryStatus} from "../../../utils/const";
 import Chip from "@mui/material/Chip";
-import {fileServerPath, nestServerPath} from "../../../api";
+import {nestServerPath} from "../../../api";
 import photoPlaceholder from "../../../assets/images/placeholder.png";
 import {styled} from "@mui/material/styles";
 import {MyDataGrid} from "../../../styles/theme/customizations/MyDataGrid";
@@ -68,7 +68,7 @@ const MachineryTable: FC<IProps> = ({rows}) => {
                 const photoPath = params.row.photos[0]
                     ? `${nestServerPath}/static/${params.row.photos[0]}`
                     : photoPlaceholder;
-                return <StyledImage src={photoPath} alt="machinery_photo" />;
+                return <StyledImage src={photoPath} alt="machinery_photo"/>;
             },
             flex: 0.5,
         },
@@ -123,25 +123,25 @@ const MachineryTable: FC<IProps> = ({rows}) => {
             },
             disableColumnMenu: true,
         },
-     /*   {
-            field: "actions",
-            type: "actions",
-            headerName: '',
-            width: 56,
-            align: "right",
-            getActions: (params: any) => [
-                <GridActionsCellItem
-                    key="edit-item"
-                    icon={<EditIcon fontSize="small"/>}
-                    label="Edit"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        handleRowEdit(params.row as IMachinery);
-                    }}
-                />
-            ],
-            disableColumnMenu: true,
-        },*/
+        /*   {
+               field: "actions",
+               type: "actions",
+               headerName: '',
+               width: 56,
+               align: "right",
+               getActions: (params: any) => [
+                   <GridActionsCellItem
+                       key="edit-item"
+                       icon={<EditIcon fontSize="small"/>}
+                       label="Edit"
+                       onClick={(e) => {
+                           e.stopPropagation();
+                           handleRowEdit(params.row as IMachinery);
+                       }}
+                   />
+               ],
+               disableColumnMenu: true,
+           },*/
     ], [handleRowEdit]);
 
     return (
@@ -159,20 +159,20 @@ const MachineryTable: FC<IProps> = ({rows}) => {
                 }),
             }}
         >
-        <MyDataGrid
-            tableName={"machinery"}
-            rows={rows}
-            columns={columns}
-            sortModel={sortModel}
-            onSortModelChange={setSortModel}
-            filterModel={filterModel}
-            onFilterModelChange={setFilterModel}
-            disableRowSelectionOnClick
-            rowHeight={90}
-            columnHeaderHeight={70}
-            loading={isLoading}
-            onRowClick={handleRowClick}
-        />
+            <MyDataGrid
+                tableName={"machinery"}
+                rows={rows}
+                columns={columns}
+                sortModel={sortModel}
+                onSortModelChange={setSortModel}
+                filterModel={filterModel}
+                onFilterModelChange={setFilterModel}
+                disableRowSelectionOnClick
+                rowHeight={130}
+                columnHeaderHeight={70}
+                loading={isLoading}
+                onRowClick={handleRowClick}
+            />
         </Box>
     );
 };
