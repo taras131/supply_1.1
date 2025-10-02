@@ -68,6 +68,7 @@ export const MyDataGrid = ({
                 ...slotPropsProp,
             }}
             sx={(theme) => ({
+                fontFamily: '"Courier Prime", monospace',
                 [`& .${gridClasses.row}:hover > .${gridClasses.cell}`]: {
                     backgroundColor: 'background.paper',
                     boxShadow: `inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(255,255,255,0.2)`,

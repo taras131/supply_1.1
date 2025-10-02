@@ -25,7 +25,6 @@ const UploadInvoice: FC<IProps> = ({invoice, forDetailsMode = false}) => {
     }
     return (
         <Button
-            size={"small"}
             sx={{textTransform: 'none', width: "160px"}}
             component={LABEL}
             loading={isLoading}

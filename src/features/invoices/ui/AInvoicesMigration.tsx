@@ -1,12 +1,13 @@
 import React from 'react';
 import {collection, getDocs, query} from 'firebase/firestore';
-import {useAppDispatch} from "../../../hooks/redux";
+import {useAppDispatch, useAppSelector} from "../../../hooks/redux";
 import {db} from "../../../firebase";
 import {INewInvoice} from "../../../models/iInvoices";
 import {fetchAddInvoice} from "../model/actions";
 import {Button} from "@mui/material";
 import {suppliersAPI} from "../../suppliers/api";
 import {userAPI} from "../../users/api";
+import {selectCurrentUser} from "../../users/model/selectors";
 
 async function mapDocToNewInvoiceAsync(doc: any): Promise<INewInvoice> {
     const data = doc.data() ?? {};
@@ -39,6 +40,7 @@ async function mapDocToNewInvoiceAsync(doc: any): Promise<INewInvoice> {
 }
 
 const AInvoicesMigration: React.FC = () => {
+    const currentUser = useAppSelector(selectCurrentUser);
     const dispatch = useAppDispatch();
     const clickHandler = async () => {
         try {
@@ -54,6 +56,7 @@ const AInvoicesMigration: React.FC = () => {
                     try {
                         items[index].supplier_id = await suppliersAPI.getByFirebaseId(items[index].supplier_id)
                     } catch (e) {
+
                         console.log(e)
                     }
                 }
@@ -62,6 +65,9 @@ const AInvoicesMigration: React.FC = () => {
                     try {
                         items[index].author_id = await userAPI.getByFirebaseId(authorId);
                     } catch (e) {
+                        if(currentUser) {
+                            items[index].author_id = currentUser.id;
+                        }
                         console.log(e)
                     }
                 }
@@ -70,6 +76,9 @@ const AInvoicesMigration: React.FC = () => {
                     try {
                         items[index].paid_user_id = await userAPI.getByFirebaseId(paidUserId);
                     } catch (e) {
+                        if(currentUser) {
+                            items[index].paid_user_id = currentUser.id;
+                        }
                         console.log(e)
                     }
                 }
@@ -79,6 +88,9 @@ const AInvoicesMigration: React.FC = () => {
                         items[index].cancel_user_id = await userAPI.getByFirebaseId(cancelUserId);
                     } catch (e) {
                         console.log(e)
+                        if(currentUser) {
+                            items[index].cancel_user_id = currentUser.id;
+                        }
                     }
                 }
                 const approvedUserId = items[index].approved_user_id
@@ -87,6 +99,9 @@ const AInvoicesMigration: React.FC = () => {
                         items[index].approved_user_id = await userAPI.getByFirebaseId(approvedUserId);
                     } catch (e) {
                         console.log(e)
+                        if(currentUser) {
+                            items[index].approved_user_id = currentUser.id;
+                        }
                     }
                 }
                 if (index >= items.length) return;

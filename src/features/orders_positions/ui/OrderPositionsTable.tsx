@@ -106,14 +106,14 @@ const OrderPositionsTable: FC<IProps> = ({
     const handleAddFiles = useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => {
             const file = e.currentTarget.files?.[0];
-            if (!file || !addPhotoHandler || !activeRowId) return;
+            if (!file || !addPhotoHandler || activeRowId == null) return;
             addPhotoHandler(file, activeRowId);
         },
         [addPhotoHandler, activeRowId]
     );
     const handleDeletePhoto = useCallback(
         (src: string) => {
-            if (!deletePhotoHandler || !activeRowId) return;
+            if (!deletePhotoHandler || activeRowId === null) return;
             deletePhotoHandler(src, activeRowId);
         },
         [deletePhotoHandler, activeRowId]
@@ -312,6 +312,7 @@ const OrderPositionsTable: FC<IProps> = ({
         }
         return base;
     }, [
+        navigate,
         numberCol,
         selectable,
         onToggleChecked,

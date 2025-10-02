@@ -1,5 +1,5 @@
 import React from 'react';
-import {useAppDispatch} from "../../../hooks/redux";
+import {useAppDispatch, useAppSelector} from "../../../hooks/redux";
 import {collection, getDocs, query} from "firebase/firestore";
 import {db} from "../../../firebase";
 import {userAPI} from "../../users/api";
@@ -7,16 +7,16 @@ import {Button} from "@mui/material";
 import {INewShipments} from "../../../models/iShipments";
 import {fetchAddShipment} from "../model/actions";
 import {invoicesAPI} from "../../invoices/api";
+import {selectCurrentUser} from "../../users/model/selectors";
 
 async function mapDocToNewShipmentAsync(doc: any): Promise<INewShipments> {
     const data = doc.data() ?? {};
-    console.log(data)
     return {
         firebase_id: doc.id,
         transporter: data.transporter,
         lading_number: data.ladingNumber,
         lading_file_path: data.ladingNumberFilePath ?? null,
-        receiving_is_receiving: data.receiving?.dateCreating ?? false,
+        receiving_is_receiving: Boolean(data.receiving?.dateCreating ?? false),
         receiving_date: data.receiving?.dateCreating ?? 0,
         type: data.type,
         shipment_invoices: [...data.invoicesList.map((invoice: any) => (
@@ -29,6 +29,7 @@ async function mapDocToNewShipmentAsync(doc: any): Promise<INewShipments> {
 
 const AShipmentsMigration = () => {
     const dispatch = useAppDispatch();
+    const currentUser = useAppSelector(selectCurrentUser);
     const clickHandler = async () => {
         try {
             const qRef = query(collection(db, 'shipments'));
@@ -42,7 +43,9 @@ const AShipmentsMigration = () => {
                     try {
                         shipments[index].author_id = await userAPI.getByFirebaseId(authorId);
                     } catch (e) {
-                        console.log(e)
+                        if(currentUser) {
+                            shipments[index].author_id = currentUser.id
+                        }
                     }
                 }
                 const receivingAuthorId = shipments[index].receiving_author_id
@@ -50,7 +53,9 @@ const AShipmentsMigration = () => {
                     try {
                         shipments[index].receiving_author_id = await userAPI.getByFirebaseId(receivingAuthorId);
                     } catch (e) {
-                        console.log(e)
+                        if(currentUser) {
+                            shipments[index].author_id = currentUser.id
+                        }
                     }
                 }
                 const invoicesList = shipments[index].shipment_invoices ?? [];

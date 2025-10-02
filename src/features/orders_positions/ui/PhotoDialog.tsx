@@ -2,7 +2,7 @@ import React, {FC} from 'react';
 import Dialog from "@mui/material/Dialog";
 import {DialogActions, DialogContent, DialogTitle, ImageList, ImageListItem, Tooltip} from "@mui/material";
 import Box from "@mui/material/Box";
-import {nestServerPath} from "../../../api";
+import {fileServerPath, nestServerPath} from "../../../api";
 import IconButton from "@mui/material/IconButton";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import AddPhotoAlternateOutlinedIcon from '@mui/icons-material/AddPhotoAlternateOutlined';
@@ -44,7 +44,7 @@ const PhotoDialog:FC<IProps> = ({
                         {photos.map((src, idx) => (
                             <ImageListItem key={`${src}-${idx}`} sx={{ overflow: 'hidden' }}>
                                 <img
-                                    src={`${nestServerPath}/static/${src}`}
+                                    src={`${fileServerPath}/${src}`}
                                     alt={`Фото ${idx + 1}`}
                                     loading="lazy"
                                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
@@ -78,7 +78,10 @@ const PhotoDialog:FC<IProps> = ({
                     accept="image/*"
                     multiple
                     hidden
-                    onChange={handleAddFiles}
+                    onChange={(e) => {
+                        console.log(e)
+                        handleAddFiles(e)
+                    }}
                 />
                 <Box flex={1}/>
                 <MyButton

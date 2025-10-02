@@ -1,5 +1,4 @@
 import React, {useCallback, useEffect, useMemo} from "react";
-import {Stack} from "@mui/material";
 import Card from "@mui/material/Card";
 import {useEditor} from "../../../hooks/useEditor";
 import {orderValidate} from "../../../utils/validators";
@@ -13,7 +12,6 @@ import {filesAPI} from "../../files/api";
 import OrdersAddNewPageHeader from "./OrdersAddNewPageHeader";
 import {useNavigate} from "react-router-dom";
 import OrderDetailsForm from "./OrderDetailsForm";
-import PageHeaderTemplate from "../../../components/templates/PageHeaderTemplate";
 import PageTemplate from "../../../components/templates/PageTemplate";
 
 const LOCAL_STORAGE_NEW_ORDER_KEY = "new_order"
@@ -75,6 +73,7 @@ const OrdersAddNewPage = () => {
     );
     const addPhotoHandler = useCallback(
         async (file: File, orderPositionId: string) => {
+            console.log(file)
             const photoName = await filesAPI.upload(file);
             setEditedValue(prev => ({
                 ...prev,

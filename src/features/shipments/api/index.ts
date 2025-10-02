@@ -5,6 +5,7 @@ const shipmentsPath = `${nestServerPath}/shipment`
 
 export const shipmentsAPI = {
     add: async (shipment: INewShipments) => {
+        console.log(shipment);
         const res = await appAPI.post(shipmentsPath, shipment)
         return await res.data;
     },

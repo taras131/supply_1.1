@@ -1,6 +1,11 @@
 import axios from "axios";
 
 export const nestServerPath = "/api";
+//export const nestServerPath = "http://localhost:3000/api";
+
+export const fileServerPath = "/static";
+//export const fileServerPath = "http://localhost:3000/static";
+
 
 export async function getNewAccessToken() {
   const response = await fetch(`${nestServerPath}/auth/refresh`, {
