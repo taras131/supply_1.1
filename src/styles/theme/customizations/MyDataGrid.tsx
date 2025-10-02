@@ -5,6 +5,7 @@ import {GridToolbar} from "@mui/x-data-grid/internals";
 interface IProps extends DataGridProps {
     tableName: string;
     showToolbar?: boolean;
+    heightRow?: number;
 }
 
 export const MyDataGrid = ({
@@ -13,6 +14,7 @@ export const MyDataGrid = ({
                                slots: slotsProp,
                                slotProps: slotPropsProp,
                                columns,
+                               heightRow = 70,
                                ...rest
                            }: IProps) => {
     const STORAGE_KEY = `my-grid:${tableName}/columnVisibility`;
@@ -46,7 +48,7 @@ export const MyDataGrid = ({
         <DataGrid
             {...rest}
             columns={columns}
-            rowHeight={70}
+            rowHeight={heightRow}
             columnHeaderHeight={90}
             density="compact"
             pagination

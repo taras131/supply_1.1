@@ -22,7 +22,7 @@ const StyledImage = styled("img")({
     objectFit: "contain",
     backgroundColor: 'background.default',
     borderRadius: "3px",
-    padding: "10px",
+    padding: "5px",
 });
 
 function renderStatus(status: MachineryStatus) {
@@ -169,7 +169,7 @@ const MachineryTable: FC<IProps> = ({rows}) => {
                 filterModel={filterModel}
                 onFilterModelChange={setFilterModel}
                 disableRowSelectionOnClick
-                rowHeight={130}
+                heightRow={100}
                 columnHeaderHeight={70}
                 loading={isLoading}
                 onRowClick={handleRowClick}
