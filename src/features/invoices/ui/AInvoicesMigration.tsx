@@ -56,7 +56,7 @@ const AInvoicesMigration: React.FC = () => {
                     try {
                         items[index].supplier_id = await suppliersAPI.getByFirebaseId(items[index].supplier_id)
                     } catch (e) {
-
+                        items[index].supplier_id = "8ba0b8d9-b8d6-44df-8c8a-9dd0ff014986"
                         console.log(e)
                     }
                 }
@@ -65,7 +65,7 @@ const AInvoicesMigration: React.FC = () => {
                     try {
                         items[index].author_id = await userAPI.getByFirebaseId(authorId);
                     } catch (e) {
-                        if(currentUser) {
+                        if (currentUser) {
                             items[index].author_id = currentUser.id;
                         }
                         console.log(e)
@@ -76,7 +76,7 @@ const AInvoicesMigration: React.FC = () => {
                     try {
                         items[index].paid_user_id = await userAPI.getByFirebaseId(paidUserId);
                     } catch (e) {
-                        if(currentUser) {
+                        if (currentUser) {
                             items[index].paid_user_id = currentUser.id;
                         }
                         console.log(e)
@@ -88,7 +88,7 @@ const AInvoicesMigration: React.FC = () => {
                         items[index].cancel_user_id = await userAPI.getByFirebaseId(cancelUserId);
                     } catch (e) {
                         console.log(e)
-                        if(currentUser) {
+                        if (currentUser) {
                             items[index].cancel_user_id = currentUser.id;
                         }
                     }
@@ -99,7 +99,7 @@ const AInvoicesMigration: React.FC = () => {
                         items[index].approved_user_id = await userAPI.getByFirebaseId(approvedUserId);
                     } catch (e) {
                         console.log(e)
-                        if(currentUser) {
+                        if (currentUser) {
                             items[index].approved_user_id = currentUser.id;
                         }
                     }
