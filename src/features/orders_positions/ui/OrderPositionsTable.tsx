@@ -106,7 +106,7 @@ const OrderPositionsTable: FC<IProps> = ({
     const handleAddFiles = useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => {
             const files = e.currentTarget.files;
-            if (!files || !addPhotoHandler || activeRowId == null) return;
+            if (!files || !addPhotoHandler || activeRowId === null) return;
             addPhotoHandler(files, activeRowId);
         },
         [addPhotoHandler, activeRowId]
