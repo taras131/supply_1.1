@@ -18,7 +18,7 @@ const TaskDetailsPageHeader: FC<IProps> = ({ currentTask }) => {
   };
   return (
     <PageHeaderTemplate title={"Задача"}>
-      <Stack spacing={3}>
+      <Stack spacing={3} direction={"row"}>
           <BackButton/>
           <ButtonGroup size="small" aria-label="Small button group">
               <Button variant={currentTask.status_id === 1 ? "contained" : "outlined"} onClick={() => statusChangeHandler(1)}>
