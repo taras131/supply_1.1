@@ -12,19 +12,19 @@ to = "http://77.110.104.31:3000/static/:splat"
 status = 200
 force = true
 
-# 3. Файловый API: точный путь для POST/DELETE без сплэта
 [[redirects]]
 from = "/api/file"
 to = "http://77.110.104.31:3000/api/file"
 status = 200
 force = true
+methods = ["POST"]
 
-# 4. Файловый API: вложенные пути, если используются
 [[redirects]]
 from = "/api/file/*"
 to = "http://77.110.104.31:3000/api/file/:splat"
 status = 200
 force = true
+methods = ["GET","DELETE"]
 
 # 5. Остальной API
 [[redirects]]
