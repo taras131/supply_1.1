@@ -10,6 +10,7 @@ import {selectAllMachineryProblems} from "../model/selectors";
 import ProblemDetails from "./ProblemDetails";
 import {IMachineryProblem} from "../../../models/IMachineryProblems";
 import {fetchGetMachineryProblemById} from "../model/actions";
+import PageHeaderTemplate from "../../../components/templates/PageHeaderTemplate";
 
 interface IProps {
     isShowMachineryInfo?: boolean;
@@ -29,15 +30,13 @@ const Problems: FC<IProps> = ({isShowMachineryInfo = false}) => {
     return (
         <Stack sx={{
             width: '100%',
-            maxWidth: {sm: '100%', md: '1700px'},
             pt: 1.5,
-        }}>
-            <Stack direction="row" spacing={3} justifyContent="space-between" alignItems="center">
-                <Typography variant="h4">Замечания</Typography>
+        }} spacing={3}>
+            <PageHeaderTemplate title={"Замечания"}>
                 <Button onClick={toggleIsOpenAddDrawer} startIcon={<AddIcon/>} variant="contained">
                     Добавить
                 </Button>
-            </Stack>
+            </PageHeaderTemplate>
             <ProblemsTable rows={problems}
                            isShowMachineryInfo={isShowMachineryInfo}
                            onProblemClick={handleProblemClick}/>

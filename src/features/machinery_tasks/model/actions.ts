@@ -120,12 +120,12 @@ export const fetchDeleteTaskPhoto = createAsyncThunk<ITask, IDeleteTaskPhoto, { 
             const {deletePhotoName, type} = deleteDate;
             const currentTask = selectCurrentTask(getState());
             if (!currentTask) return;
-            const res = await filesAPI.delete(deletePhotoName);
             const updatedTask = {
                 ...currentTask,
-                [type]: [...currentTask[type].filter((photo) => photo !== res.name)],
+                [type]: [...currentTask[type].filter((photo) => photo !== deletePhotoName)],
             };
-            return dispatch(fetchUpdateMachineryTask(updatedTask)).unwrap();
+            dispatch(fetchUpdateMachineryTask(updatedTask));
+            return  await filesAPI.delete(deletePhotoName);
         } catch (e) {
             const errorMessage = e instanceof Error ? e.message : "Неизвестная ошибка";
             dispatch(
