@@ -2,10 +2,7 @@ import {ChangeEvent, useState} from "react";
 import {pdfjs} from "react-pdf";
 import {readText} from "../utils/readPdfText";
 
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-    "pdfjs-dist/build/pdf.worker.min.mjs",
-    import.meta.url
-).toString();
+pdfjs.GlobalWorkerOptions.workerSrc = '/pdfjs/pdf.worker.min.mjs';
 
 const extractInnsByOrder = (text: string): string[] => {
     const inns = Array.from(text.matchAll(/ИНН\D{0,12}(\d{10,12})/giu)).map(m => m[1]);
