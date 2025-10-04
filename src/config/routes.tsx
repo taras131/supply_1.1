@@ -24,7 +24,13 @@ import InvoiceAddNewPage from "../features/invoices/ui/InvoiceAddNewPage";
 import InvoiceDetailsPage from "../features/invoices/ui/InvoiceDetailsPage";
 import ShipmentsPage from "../features/shipments/ui/ShipmentsPage";
 import ShipmentsAddNewPage from "../features/shipments/ui/ShipmentsAddNewPage";
-import ProblemDetailsPage from "../features/machinery_problems/ui/ProblemDetailsPage";
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import GroupIcon from '@mui/icons-material/Group';
+import AgricultureIcon from '@mui/icons-material/Agriculture';
+import GradingIcon from '@mui/icons-material/Grading';
+import AirlineSeatIndividualSuiteIcon from '@mui/icons-material/AirlineSeatIndividualSuite';
+import ShoppingBasketIcon from '@mui/icons-material/ShoppingBasket';
+import MainPage from "../features/main/ui/MainPage";
 
 export interface IRouteConfig {
     icon?: React.ReactNode;
@@ -36,9 +42,15 @@ export interface IRouteConfig {
 }
 
 export const routesConfig: IRouteConfig[] = [
-    /* {icon: <HomeRoundedIcon />, path: routes.main, element:  <MainGrid />, label: "Главная", showInMenu: true},*/
     {
         icon: <HomeRoundedIcon/>,
+        path: routes.main,
+        element: <MainPage/>,
+        label: "Главная",
+        showInMenu: true
+    },
+    {
+        icon: <GradingIcon/>,
         path: routes.invoices,
         element: <InvoicesPage/>,
         label: "Счета",
@@ -59,14 +71,14 @@ export const routesConfig: IRouteConfig[] = [
         showInMenu: false
     },
     {
-        icon: <HomeRoundedIcon/>,
+        icon: <AirlineSeatIndividualSuiteIcon/>,
         path: routes.suppliers,
         element: <SuppliersPage/>,
         label: "Поставщики",
         showInMenu: true
     },
     {
-        icon: <HomeRoundedIcon/>,
+        icon: <LocalShippingIcon/>,
         path: routes.shipments,
         element: <ShipmentsPage/>,
         label: "Отгрузки",
@@ -80,7 +92,7 @@ export const routesConfig: IRouteConfig[] = [
         showInMenu: false
     },
     {
-        icon: <HomeRoundedIcon/>,
+        icon: <ShoppingBasketIcon/>,
         path: routes.orders,
         element: <OrdersPage/>,
         label: "Заявки",
@@ -101,7 +113,7 @@ export const routesConfig: IRouteConfig[] = [
         showInMenu: false
     },
     {
-        icon: <HomeRoundedIcon/>,
+        icon: <GroupIcon/>,
         path: routes.users,
         element: <UsersPage/>,
         label: "Сотрудники",
@@ -129,7 +141,7 @@ export const routesConfig: IRouteConfig[] = [
         showInMenu: false
     },
     {
-        icon: <HomeRoundedIcon/>,
+        icon: <AgricultureIcon/>,
         path: routes.machinery,
         element: <MachineryPage/>,
         label: "Техника",

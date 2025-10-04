@@ -12,12 +12,14 @@ import Header from "./Header";
 import {theme} from "../styles/theme/theme";
 import MessageWindow from "../features/messages/ui/MessageWindow";
 import Message from "../features/messages/ui/Message";
+import {fetchGetInvoicesStatistics} from "../features/invoices/model/actions";
 
 function App() {
     const dispatch = useAppDispatch()
     useEffect(() => {
         dispatch(fetchCheckAuth());
         dispatch(fetchGetAllUsers());
+        dispatch(fetchGetInvoicesStatistics());
     }, [dispatch]);
     const getAllRoutes = (routes: IRouteConfig[]): IRouteConfig[] => {
         const result: IRouteConfig[] = [];
@@ -61,7 +63,7 @@ function App() {
                         <Header/>
                         <Routes>
                             {allRoutes.map(route => (
-                                <Route key={route.path} path={route.path} element={route.element} />
+                                <Route key={route.path} path={route.path} element={route.element}/>
                             ))}
                         </Routes>
                     </Stack>

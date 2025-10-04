@@ -222,3 +222,16 @@ export const fetchUploadInvoice = createAsyncThunk(
         }
     },
 );
+
+export const fetchGetInvoicesStatistics = createAsyncThunk(
+    "invoices/get_statistics",
+    async (_, {dispatch, rejectWithValue}) => {
+        try {
+            return await invoicesAPI.getStatistics();
+        } catch (e) {
+            const msg = handlerError(e);
+            dispatch(setModalMessage(msg));
+            return rejectWithValue(msg);
+        }
+    },
+);

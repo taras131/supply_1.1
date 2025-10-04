@@ -33,4 +33,8 @@ export const invoicesAPI = {
     const res = await appAPI.get(`${invoicePath}/firebase/${firebase_id}`);
     return res.data.id;
   },
+  getStatistics: async () => {
+    const res = await appAPI.get(`${invoicePath}/statistics`);
+    return res.data;
+  },
 }

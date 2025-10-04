@@ -5,12 +5,15 @@ import {RootState} from "../../../store";
 const selectInvoicesState = (state: RootState) => state.invoices;
 
 export const selectInvoices = createSelector([selectInvoicesState],
-    (ordersState) => ordersState.list);
+    (invoiceState) => invoiceState.list);
 
 export const selectCurrentInvoice = createSelector([selectInvoicesState],
-    (ordersState) => ordersState.current);
+    (invoiceState) => invoiceState.current);
 
 export const selectInvoicesIsLoading = createSelector([selectInvoicesState],
-    (ordersState) => ordersState.isLoading);
+    (invoiceState) => invoiceState.isLoading);
+
+export const selectInvoicesStatistics = createSelector([selectInvoicesState],
+    (invoiceState) => invoiceState.statistics);
 
 

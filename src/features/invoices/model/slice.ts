@@ -1,19 +1,14 @@
 import {createSlice, isFulfilled, isPending, isRejected, PayloadAction} from "@reduxjs/toolkit";
-import {IInvoice} from "../../../models/iInvoices";
+import {IInvoice, IInvoiceStatistics} from "../../../models/iInvoices";
 import {ISelectedOrderPosition} from "../../../models/IOrdersPositions";
 import {
     fetchAddInvoice,
     fetchGetAllInvoices,
-    fetchGetInvoiceById, fetchGetInvoicesForNewShipment,
+    fetchGetInvoiceById, fetchGetInvoicesForNewShipment, fetchGetInvoicesStatistics,
     fetchUpdateInvoice,
     fetchUploadInvoice,
     fetchUploadPayment
 } from "./actions";
-
-interface ISelectedOrderPositionData {
-    orderId: string;
-    positionId: number;
-}
 
 const handledThunks = [
     fetchAddInvoice,
@@ -30,6 +25,7 @@ interface IInvoiceState {
     current: IInvoice | null;
     isLoading: boolean;
     selectedPosition: ISelectedOrderPosition;
+    statistics: IInvoiceStatistics | null;
 }
 
 const initialState: IInvoiceState = {
@@ -37,6 +33,7 @@ const initialState: IInvoiceState = {
     current: null,
     isLoading: false,
     selectedPosition: {},
+    statistics: null,
 };
 
 export const InvoicesSlice = createSlice({
@@ -69,6 +66,9 @@ export const InvoicesSlice = createSlice({
             .addCase(fetchUpdateInvoice.fulfilled, (state, action: PayloadAction<IInvoice>) => {
                 state.current = action.payload;
                 state.list = [...state.list.map(invoice => invoice.id === action.payload.id ? action.payload : invoice)];
+            })
+            .addCase(fetchGetInvoicesStatistics.fulfilled, (state, action: PayloadAction<IInvoiceStatistics>) => {
+                state.statistics = action.payload;
             })
             .addCase(fetchGetInvoiceById.fulfilled, (state, action: PayloadAction<IInvoice>) => {
                 state.current = action.payload;

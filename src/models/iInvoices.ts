@@ -75,3 +75,22 @@ export const defaultInvoice: IInvoice = {
     ...emptyInvoice,
     id: "0",
 }
+
+export interface IInvoiceStatistics {
+    unpaid_statistics: {
+        count: number;
+        total_amount: number;
+    };
+    chart_data: Array<{
+        month: string;
+        current_year: number;
+        previous_year: number;
+        year: number;
+        month_number: number;
+    }>;
+    meta: {
+        current_year: number;
+        previous_year: number;
+        current_month: number;
+    };
+}

@@ -21,6 +21,7 @@ export const authAPI = {
     },
     register: async (registerData: IRegisterData) => {
         try {
+            console.log(registerPath)
             const res = await appAPI.post(registerPath, registerData);
             return res.data;
         } catch (error: any) {
