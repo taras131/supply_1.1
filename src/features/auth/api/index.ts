@@ -3,7 +3,7 @@ import {appAPI, nestServerPath} from "../../../api";
 import {IChangePassword} from "../model/actions";
 
 const registerPath = `/auth/register`;
-const loginPath = `auth/login`;
+const loginPath = `/auth/login`;
 const mePath = `/auth/me`;
 const logoutPath = `/auth/logout`;
 const changePasswordPath = `/auth/change_password`;

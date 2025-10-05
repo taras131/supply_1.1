@@ -33,14 +33,14 @@ to = "http://77.110.104.31:3000/:splat"
 status = 200
 force = true
 
-# 6. Fallback на index.html
-[[redirects]]
-from = "/*"
-to = "/index.html"
-status = 200
-
 [[headers]]
 for = "/pdfjs/*.mjs"
 [headers.values]
 Content-Type = "application/javascript"
 X-Content-Type-Options = "nosniff"
+
+# 6. Fallback на index.html
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200
