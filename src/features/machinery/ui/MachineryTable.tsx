@@ -10,7 +10,7 @@ import {useNavigate} from "react-router-dom";
 import {machineryTypes} from "../utils/const";
 import {MachineryStatus} from "../../../utils/const";
 import Chip from "@mui/material/Chip";
-import {fileServerPath, nestServerPath} from "../../../api";
+import {fileServerPath} from "../../../api";
 import photoPlaceholder from "../../../assets/images/placeholder.png";
 import {styled} from "@mui/material/styles";
 import {MyDataGrid} from "../../../styles/theme/customizations/MyDataGrid";
@@ -18,7 +18,7 @@ import Box from "@mui/material/Box";
 
 const StyledImage = styled("img")({
     width: "100%",
-    height: "110px",
+    height: "120px",
     objectFit: "contain",
     backgroundColor: 'background.default',
     borderRadius: "3px",
@@ -73,7 +73,8 @@ const MachineryTable: FC<IProps> = ({rows}) => {
                     width: "100%",
                     display: "flex",
                     justifyContent: "center",
-                    alignItems: "center"
+                    alignItems: "center",
+                    padding: "5px",
                 }}>
                     <StyledImage src={photoPath} alt="machinery_photo"/>
                 </Box>);
