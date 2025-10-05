@@ -26,6 +26,9 @@ export const OrderPositionsSlice = createSlice({
         setOrdersPositions: (state, action: PayloadAction<IOrderPosition[]>) => {
             state.list = action.payload;
         },
+        setIsOrderPositionLoading: (state, action: PayloadAction<boolean>) => {
+            state.isLoading = action.payload;
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -63,5 +66,5 @@ export const OrderPositionsSlice = createSlice({
     },
 });
 
-export const {setOrdersPositions} = OrderPositionsSlice.actions;
+export const {setOrdersPositions, setIsOrderPositionLoading} = OrderPositionsSlice.actions;
 export default OrderPositionsSlice.reducer;

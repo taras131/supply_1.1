@@ -13,6 +13,7 @@ import OrdersAddNewPageHeader from "./OrdersAddNewPageHeader";
 import {useNavigate} from "react-router-dom";
 import OrderDetailsForm from "./OrderDetailsForm";
 import PageTemplate from "../../../components/templates/PageTemplate";
+import {setIsOrderPositionLoading} from "../../orders_positions/model/slice";
 
 const LOCAL_STORAGE_NEW_ORDER_KEY = "new_order"
 
@@ -73,28 +74,22 @@ const OrdersAddNewPage = () => {
     );
     const addPhotoHandler = useCallback(
         async (files: FileList, orderPositionId: string) => {
-            console.log(files)
-            const fileArr = Array.from(files);
-            const uploads = fileArr.map(async (file, i) => {
-                const fileName = await filesAPI.upload(file);
-                return fileName as string;
-            });
-            const file_names = await Promise.all(uploads);
+            dispatch(setIsOrderPositionLoading(true));
+            const fileNames = await Promise.all(Array.from(files).map(f => filesAPI.upload(f)));
             const targetId = Number(orderPositionId);
-            console.log('Updating photos for id:', {
-                orderPositionId,
-                positions: editedValue.positions.map(p => ({id: p.id, idType: typeof p.id})),
-            });
+
             setEditedValue(prev => ({
                 ...prev,
                 positions: prev.positions.map(p =>
                     p.id === targetId
-                        ? {...p, photos: [...(p.photos ?? []), ...file_names]}
+                        ? { ...p, photos: [...(p.photos ?? []), ...fileNames] }
                         : p
                 ),
             }));
+
+            dispatch(setIsOrderPositionLoading(false));
         },
-        [setEditedValue, editedValue.positions]
+        [dispatch, setEditedValue]
     );
     const deletePhotoHandler = useCallback(
         async (deletePhoto: string, orderPositionId: string) => {
@@ -111,20 +106,15 @@ const OrdersAddNewPage = () => {
         [setEditedValue]
     );
     const deletePositionHandler = useCallback(
-        async (id: string) => {
-            // Сначала удаляем фото на сервере
+        (id: string) => {
             setEditedValue(prev => {
-                const pos = prev.positions.find(p => `${p.id}` === id);
-                if (pos?.photos) {
-                    pos.photos.forEach(async photo => {
-                        try {
-                            await filesAPI.delete(photo);
-                        } catch (e) {
-                            console.warn("Failed to delete photo:", photo, e);
-                        }
-                    });
-                }
-                // Возвращаем новый стейт без удалённой позиции
+                // удаляем файлы синхронно в фоне
+                prev.positions
+                    .find(p => `${p.id}` === id)
+                    ?.photos?.forEach(photo =>
+                    filesAPI.delete(photo).catch(e => console.warn("Failed to delete photo:", photo, e))
+                );
+
                 return {
                     ...prev,
                     positions: prev.positions.filter(p => `${p.id}` !== id),
