@@ -29,7 +29,7 @@ const OrderDetailsView: FC<IProps> = ({order}) => {
         toggleIsBasicEditMode();
     }
     return (
-        <Card sx={{position: "relative"}}>
+        <Card sx={{position: "relative", paddingBottom: "24px"}}>
             {isEdit
                 ? (<OrderDetailsForm editedValue={editedValue}
                                      handleFieldChange={handleFieldChange}/>)

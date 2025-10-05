@@ -143,7 +143,7 @@ const InvoicesStatistics: React.FC = () => {
                     >
                         <CardContent>
                             <Typography variant="h6" color="error.main" gutterBottom>
-                                Сумма неоплаченных
+                                Сумма неоплаченных счетов
                             </Typography>
                             <Typography variant="h4" fontWeight="bold">
                                 {formatCurrency(data.unpaid_statistics.total_amount)}

@@ -10,7 +10,7 @@ interface IProps {
 
 const OrderDetailsShow: FC<IProps> = ({order}) => {
     return (
-        <Box sx={{padding: "24px 56px 24px 24px", display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: "26px"}}>
+        <Box sx={{padding: "24px 66px 0 24px", display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: "26px"}}>
             <TitleWithValue width={"130px"} title={"Срочность:"}>
                 {order.shipments_type === "railway" ? "ЖД" : "Авиа"}
             </TitleWithValue>
