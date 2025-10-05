@@ -4,7 +4,7 @@ import {handlerError} from "../../../store/thunkHandlers";
 import {setModalMessage} from "../../messages/model/slice";
 import {IInvoice, INewInvoice} from "../../../models/iInvoices";
 import {filesAPI} from "../../files/api";
-import {nestServerPath} from "../../../api";
+import {fileServerPath} from "../../../api";
 import {setOrdersPositions} from "../../orders_positions/model/slice";
 import {setShipments} from "../../shipments/model/slice";
 import {IShipments} from "../../../models/iShipments";
@@ -47,7 +47,7 @@ export const fetchAddInvoice = createAsyncThunk(
             const {invoice, file} = invoiceData;
             if (file) {
                 const uploadedFile = await filesAPI.upload(file);
-                invoice.invoice_file_link = `${nestServerPath}/static/${uploadedFile}`
+                invoice.invoice_file_link = `${fileServerPath}/${uploadedFile}`
             }
             if (invoice.author_date === 0) {
                 invoice.author_date = new Date().getTime()
@@ -149,7 +149,7 @@ export const fetchUploadPayment = createAsyncThunk(
             }
             if (file) {
                 const uploadedFile = await filesAPI.upload(file);
-                invoice.paid_payment_order_file_link = `${nestServerPath}/static/${uploadedFile}`
+                invoice.paid_payment_order_file_link = `${fileServerPath}/${uploadedFile}`
             }
             return await dispatch(fetchUpdateInvoice(invoice)).unwrap();
         } catch (e) {
@@ -212,7 +212,7 @@ export const fetchUploadInvoice = createAsyncThunk(
             if (file) {
                 const uploadedFile = await filesAPI.upload(file);
                 console.log(uploadedFile)
-                invoice_in.invoice_file_link = `${nestServerPath}/static/${uploadedFile}`
+                invoice_in.invoice_file_link = `${fileServerPath}/${uploadedFile}`
             }
             return await dispatch(fetchUpdateInvoice(invoice_in)).unwrap();
         } catch (e) {

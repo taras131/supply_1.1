@@ -2,7 +2,7 @@ import React, {FC, useState} from "react";
 import ButtonsEditCancel from "../../../components/common/ButtonsEditCancel";
 import PhotosManager from "../../../components/common/PhotosManager";
 import {useAppDispatch} from "../../../hooks/redux";
-import {nestServerPath} from "../../../api";
+import {fileServerPath, nestServerPath} from "../../../api";
 import {IUser} from "../../../models/IUser";
 import {fetchRemoveUserPhoto, fetchUploadUserPhoto} from "../model/actions";
 import {Typography} from "@mui/material";
@@ -29,7 +29,7 @@ const UserAvatarDetails: FC<IProps> = ({user}) => {
     const onDeletePhoto = () => {
         dispatch(fetchRemoveUserPhoto(user));
     };
-    const photosPaths = user.avatar_path ? [`${nestServerPath}/static/${user.avatar_path}`] : [];
+    const photosPaths = user.avatar_path ? [`${fileServerPath}/${user.avatar_path}`] : [];
     return (
         <CardTemplate>
             <PhotosManager

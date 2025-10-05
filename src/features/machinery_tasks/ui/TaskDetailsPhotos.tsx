@@ -3,7 +3,7 @@ import PhotosManager from "../../../components/common/PhotosManager";
 import { fetchDeleteTaskPhoto, fetchUploadTaskPhoto } from "../model/actions";
 import ButtonsEditCancel from "../../../components/common/ButtonsEditCancel";
 import { useAppDispatch } from "../../../hooks/redux";
-import { nestServerPath } from "../../../api";
+import {fileServerPath} from "../../../api";
 import Card from "@mui/material/Card";
 
 interface IProps {
@@ -24,7 +24,7 @@ const TaskDetailsPhotos: FC<IProps> = ({ photos, viewType }) => {
   const onDeletePhoto = (deletedFileIndex: number) => {
     dispatch(fetchDeleteTaskPhoto({ deletePhotoName: photos[deletedFileIndex], type }));
   };
-  const photosPaths = photos.map((photo) => `${nestServerPath}/static/${photo}`);
+  const photosPaths = photos.map((photo) => `${fileServerPath}/${photo}`);
   return (
     <Card
       sx={{

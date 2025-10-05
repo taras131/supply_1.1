@@ -1,7 +1,7 @@
 import React, { FC, useState } from "react";
 import PhotosManager from "../../../components/common/PhotosManager";
 import ButtonsEditCancel from "../../../components/common/ButtonsEditCancel";
-import { nestServerPath } from "../../../api";
+import {fileServerPath, nestServerPath} from "../../../api";
 import { fetchDeleteMachineryProblemPhoto, fetchUploadMachineryProblemPhoto } from "../model/actions";
 import { useAppDispatch } from "../../../hooks/redux";
 import Box from "@mui/material/Box";
@@ -22,7 +22,7 @@ const ProblemDetailsPhotos: FC<IProps> = ({ currentProblemPhotos }) => {
   const onDeletePhoto = (deletedFileIndex: number) => {
     dispatch(fetchDeleteMachineryProblemPhoto(currentProblemPhotos[deletedFileIndex]));
   };
-  const photosPaths = currentProblemPhotos?.map((photo) => `${nestServerPath}/static/${photo}`);
+  const photosPaths = currentProblemPhotos?.map((photo) => `${fileServerPath}/${photo}`);
   return (
     <Box sx={{ position: "relative" }}>
       <PhotosManager
