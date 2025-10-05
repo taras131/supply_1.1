@@ -210,6 +210,11 @@ export const colorSchemes = {
                 main: orange[400],
                 dark: orange[800],
             },
+            inputWarning: {
+                light: orange[400],
+                main: orange[500],
+                dark: orange[700]
+            },
             error: {
                 light: red[300],
                 main: red[400],
@@ -259,6 +264,11 @@ export const colorSchemes = {
                 light: orange[400],
                 main: orange[500],
                 dark: orange[700],
+            },
+            inputWarning: {
+                light: orange[600],
+                main: orange[700],
+                dark: orange[800]
             },
             error: {
                 light: red[400],

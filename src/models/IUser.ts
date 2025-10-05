@@ -40,7 +40,6 @@ export const defaultUser: IUserWithPassport = {
 };
 
 export const userRoles = [
-    {id: -1, title: "Не выбрано"},
     {id: 1, title: "Директор"},
     {id: 2, title: "Бухгалтер"},
     {id: 3, title: "Снабженец"},

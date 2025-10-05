@@ -28,7 +28,7 @@ const StyledInput = styled(TextField, {
     padding: "10px 12px",
     transition: theme.transitions.create(["border-color", "background-color", "box-shadow"]),
     ...theme.applyStyles("dark", {
-      backgroundColor: isError ? "#423A00" : "#1B5E20",
+      backgroundColor: isError ? "hsl(45, 90%, 35%)" : "#1B5E20",
     }),
   },
 
@@ -81,7 +81,7 @@ const StyledSelect = styled(Select, {
     padding: "10px 12px",
     transition: theme.transitions.create(["border-color", "background-color", "box-shadow"]),
     ...theme.applyStyles("dark", {
-      backgroundColor: isError ? "#423A00" : "#1B5E20",
+      backgroundColor: isError ? "hsl(45, 90%, 35%)" : "#1B5E20",
       borderColor: isError ? "#FFD54F" : "#66BB6A",
     }),
   },
