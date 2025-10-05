@@ -1,8 +1,9 @@
 import React, {FC, ReactNode, useEffect} from 'react';
 import {Stack} from "@mui/material";
 import {useAppSelector} from "../../hooks/redux";
-import {selectIsAuth} from "../../features/auth/model/selectors";
+import {selectIsAuth, selectIsAuthLoading} from "../../features/auth/model/selectors";
 import {useNavigate} from "react-router-dom";
+import Preloader from "../common/Preloader";
 
 interface IProps {
     children?: ReactNode;
@@ -18,6 +19,7 @@ const PageTemplate: FC<IProps> = ({
                                       authOnly = false,
                                   }) => {
     const isAuth = useAppSelector(selectIsAuth);
+    const isAuthLoading = useAppSelector(selectIsAuthLoading);
     const navigate = useNavigate();
     useEffect(() => {
         if (guestOnly && isAuth) {
@@ -28,6 +30,8 @@ const PageTemplate: FC<IProps> = ({
             navigate('/login', {replace: true});
         }
     }, [guestOnly, authOnly, isAuth, navigate]);
+    if (isAuthLoading) return (<Preloader/>);
+    if (!isAuth && authOnly) return null;
     return (
         <Stack sx={{
             width: '100%',

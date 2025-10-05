@@ -96,7 +96,6 @@ const OrdersAddNewPage = () => {
         },
         [setEditedValue, editedValue.positions]
     );
-    console.log(editedValue.positions)
     const deletePhotoHandler = useCallback(
         async (deletePhoto: string, orderPositionId: string) => {
             await filesAPI.delete(deletePhoto);
@@ -113,22 +112,26 @@ const OrdersAddNewPage = () => {
     );
     const deletePositionHandler = useCallback(
         async (id: string) => {
-            const pos = editedValue.positions.find(p => `${p.id}` === id);
-            if (pos && pos.photos) {
-                for (const photo of pos.photos) {
-                    try {
-                        await filesAPI.delete(photo);
-                    } catch (e) {
-                        console.warn("Failed to delete photo:", photo, e);
-                    }
+            // Сначала удаляем фото на сервере
+            setEditedValue(prev => {
+                const pos = prev.positions.find(p => `${p.id}` === id);
+                if (pos?.photos) {
+                    pos.photos.forEach(async photo => {
+                        try {
+                            await filesAPI.delete(photo);
+                        } catch (e) {
+                            console.warn("Failed to delete photo:", photo, e);
+                        }
+                    });
                 }
-            }
-            setEditedValue(prev => ({
-                ...prev,
-                positions: prev.positions.filter(p => `${p.id}` !== id),
-            }));
+                // Возвращаем новый стейт без удалённой позиции
+                return {
+                    ...prev,
+                    positions: prev.positions.filter(p => `${p.id}` !== id),
+                };
+            });
         },
-        [editedValue.positions, setEditedValue]
+        [setEditedValue]
     );
     const handleAddRow = () => {
         setEditedValue(prev => ({...prev, positions: [...prev.positions, {...emptyOrderPosition, id: getNextId()}]}));
