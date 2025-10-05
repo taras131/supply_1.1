@@ -1,7 +1,7 @@
-import {appAPI, nestServerPath} from "../../../api";
+import {appAPI} from "../../../api";
 import {INewSupplier, ISupplier} from "../../../models/iSuppliers";
 
-const suppliersPath = `${nestServerPath}/suppliers`;
+const suppliersPath = `/suppliers`;
 
 export const suppliersAPI = {
     add: async (supplier: INewSupplier) => {

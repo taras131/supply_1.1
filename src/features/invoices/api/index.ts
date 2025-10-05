@@ -1,8 +1,8 @@
-import {appAPI, nestServerPath} from "../../../api";
+import {appAPI} from "../../../api";
 import {IInvoice, INewInvoice} from "../../../models/iInvoices";
 import {TInvoiceFilter} from "../model/actions";
 
-const invoicePath =`${nestServerPath}/invoice`
+const invoicePath =`/invoice`
 
 export const invoicesAPI = {
   add: async (invoice: INewInvoice) => {

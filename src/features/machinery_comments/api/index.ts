@@ -1,7 +1,7 @@
-import { appAPI, nestServerPath } from "../../../api";
+import { appAPI } from "../../../api";
 import { IMachineryComment, INewMachineryComment } from "../../../models/IMachineryComment";
 
-const machineryCommentsPath = `${nestServerPath}/machinery-comment`;
+const machineryCommentsPath = `/machinery-comment`;
 
 export const machineryCommentAPI = {
   add: async (comment: INewMachineryComment) => {

@@ -1,7 +1,7 @@
-import { appAPI, nestServerPath } from "../../../api";
+import { appAPI } from "../../../api";
 import { INewTask, ITask } from "../../../models/IMachineryTasks";
 
-const machineryTasksPath = `${nestServerPath}/machinery-task`;
+const machineryTasksPath = `/machinery-task`;
 
 const prepareTaskDto = (dto: INewTask) => {
   if (!dto.assigned_to_id || dto.assigned_to_id === "-1") delete dto.assigned_to_id;

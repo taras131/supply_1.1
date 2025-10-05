@@ -1,7 +1,7 @@
-import { appAPI, nestServerPath } from "../../../api";
+import { appAPI } from "../../../api";
 import { ICompany } from "../../../models/iCompanies";
 
-export const companyPath = `${nestServerPath}/companies`;
+export const companyPath = `/companies`;
 
 export const companyAPI = {
   checkById: async (company_id: string) => {

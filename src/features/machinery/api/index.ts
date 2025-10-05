@@ -1,7 +1,7 @@
 import { IMachinery, INewMachinery } from "../../../models/iMachinery";
-import { appAPI, nestServerPath } from "../../../api";
+import { appAPI } from "../../../api";
 
-const machineryPath = `${nestServerPath}/machinery`;
+const machineryPath = `/machinery`;
 
 export const machineryAPI = {
   add: async (machinery: INewMachinery) => {

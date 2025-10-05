@@ -1,7 +1,7 @@
-import {appAPI, nestServerPath} from "../../../api";
+import {appAPI} from "../../../api";
 import {INewOrder, IOrder} from "../../../models/iOrders";
 
-const ordersPath = `${nestServerPath}/order`;
+const ordersPath = `/order`;
 
 export const ordersAPI = {
     add: async (order: INewOrder) => {

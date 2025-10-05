@@ -1,5 +1,5 @@
 import {ILoginData, IRegisterData} from "../../../models/iAuth";
-import {appAPI, nestServerPath} from "../../../api";
+import {appAPI} from "../../../api";
 import {IChangePassword} from "../model/actions";
 
 const registerPath = `/auth/register`;

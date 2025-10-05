@@ -1,7 +1,7 @@
-import { appAPI, nestServerPath } from "../../../api";
+import { appAPI } from "../../../api";
 import { IMachineryProblem, INewMachineryProblem } from "../../../models/IMachineryProblems";
 
-const machineryProblemsPath = `${nestServerPath}/machinery-problem`;
+const machineryProblemsPath = `/machinery-problem`;
 
 export const machineryProblemsAPI = {
   add: async (machinery_id: string, newProblem: INewMachineryProblem) => {

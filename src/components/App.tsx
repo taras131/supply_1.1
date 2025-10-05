@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {Routes, Route} from "react-router-dom";
-import {useAppDispatch} from "../hooks/redux";
+import {useAppDispatch, useAppSelector} from "../hooks/redux";
 import {fetchCheckAuth} from "../features/auth/model/actions";
 import {fetchGetAllUsers} from "../features/users/model/actions";
 import {alpha, CssBaseline, Stack, ThemeProvider} from "@mui/material";
@@ -13,14 +13,20 @@ import {theme} from "../styles/theme/theme";
 import MessageWindow from "../features/messages/ui/MessageWindow";
 import Message from "../features/messages/ui/Message";
 import {fetchGetInvoicesStatistics} from "../features/invoices/model/actions";
+import {selectIsAuth} from "../features/auth/model/selectors";
 
 function App() {
     const dispatch = useAppDispatch()
+    const isAuth = useAppSelector(selectIsAuth)
     useEffect(() => {
         dispatch(fetchCheckAuth());
-        dispatch(fetchGetAllUsers());
-        dispatch(fetchGetInvoicesStatistics());
     }, [dispatch]);
+    useEffect(() => {
+        if(isAuth) {
+            dispatch(fetchGetAllUsers());
+            dispatch(fetchGetInvoicesStatistics());
+        }
+    }, [isAuth, dispatch]);
     const getAllRoutes = (routes: IRouteConfig[]): IRouteConfig[] => {
         const result: IRouteConfig[] = [];
         routes.forEach(route => {

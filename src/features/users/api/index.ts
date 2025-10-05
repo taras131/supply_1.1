@@ -1,7 +1,7 @@
-import { appAPI, nestServerPath } from "../../../api";
+import { appAPI } from "../../../api";
 import { IUser } from "../../../models/IUser";
 
-const usersPath = `${nestServerPath}/users`;
+const usersPath = `/users`;
 
 export const userAPI = {
   getAll: async () => {
