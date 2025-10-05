@@ -69,7 +69,7 @@ export const fetchCheckAuth = createAsyncThunk("fetch_check_auth", async (_, { d
     dispatch(setCurrentCompany(currentUser.company));
     return currentUser;
   } catch (e) {
-    return true;
+      return rejectWithValue(handlerError(e));
   }
 });
 
