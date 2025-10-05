@@ -1,7 +1,7 @@
 import React, {FC} from "react";
 import { fetchDeleteMachineryPhoto, fetchUploadMachineryPhoto } from "../model/actions";
 import { useAppDispatch, useAppSelector } from "../../../hooks/redux";
-import { nestServerPath } from "../../../api";
+import {fileServerPath, nestServerPath} from "../../../api";
 import { selectCurrentMachineryPhotos } from "../model/selectors";
 import CardTemplate from "../../../components/templates/CardTemplate";
 import {PhotoGallery} from "../../../components/common/PhotoGallery";
@@ -15,7 +15,7 @@ const MachineryDetailsPhotos: FC = () => {
   const onDeletePhoto = (deletedFileIndex: number) => {
     dispatch(fetchDeleteMachineryPhoto(photos[deletedFileIndex]));
   };
-  const photosPaths = photos.map((photo) => `${nestServerPath}/static/${photo}`);
+  const photosPaths = photos.map((photo) => `${fileServerPath}/${photo}`);
   return (
     <CardTemplate>
         <PhotoGallery

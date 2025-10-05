@@ -22,7 +22,7 @@ import ShipmentTypeIcon from "./ShipmentTypeIcon";
 import MyButton from "../../../styles/theme/customizations/MyButton";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
-import {nestServerPath} from "../../../api";
+import {fileServerPath, nestServerPath} from "../../../api";
 import {PhotoGallery} from "../../../components/common/PhotoGallery";
 
 interface IProps {
@@ -70,7 +70,7 @@ const ShipmentShow: FC<IProps> = ({shipment}) => {
         dispatch(fetchDeleteShipmentPhoto({shipment, index}));
     }
     const photoFilePaths = shipment.photo_file_paths
-        ? shipment.photo_file_paths.map(fileName => (`${nestServerPath}/static/${fileName}`))
+        ? shipment.photo_file_paths.map(fileName => (`${fileServerPath}/${fileName}`))
         : []
     const received = shipment.receiving_is_receiving;
     return (
