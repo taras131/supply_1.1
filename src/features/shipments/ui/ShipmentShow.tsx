@@ -22,7 +22,7 @@ import ShipmentTypeIcon from "./ShipmentTypeIcon";
 import MyButton from "../../../styles/theme/customizations/MyButton";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
-import {fileServerPath, nestServerPath} from "../../../api";
+import {fileServerPath} from "../../../api";
 import {PhotoGallery} from "../../../components/common/PhotoGallery";
 
 interface IProps {

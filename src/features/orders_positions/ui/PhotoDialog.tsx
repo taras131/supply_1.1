@@ -7,6 +7,9 @@ import IconButton from "@mui/material/IconButton";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import AddPhotoAlternateOutlinedIcon from '@mui/icons-material/AddPhotoAlternateOutlined';
 import MyButton from "../../../styles/theme/customizations/MyButton";
+import {useAppSelector} from "../../../hooks/redux";
+import {selectOrdersIsLoading} from "../../orders/model/selectors";
+import {selectOrdersPositionsIsLoading} from "../model/selectors";
 
 
 interface IProps {
@@ -27,6 +30,8 @@ const PhotoDialog: FC<IProps> = ({
                                  }) => {
 
     const fileInputRef = React.useRef<HTMLInputElement | null>(null);
+    const orderIsLoading = useAppSelector(selectOrdersIsLoading);
+    const orderPositionIsLoading = useAppSelector(selectOrdersPositionsIsLoading);
     console.log(photos)
     return (
         <Dialog
@@ -90,6 +95,7 @@ const PhotoDialog: FC<IProps> = ({
                     startIcon={<AddPhotoAlternateOutlinedIcon/>}
                     variant={"contained"}
                     onClick={() => fileInputRef.current?.click()}
+                    loading={orderIsLoading || orderPositionIsLoading}
                 >
                     Добавить фото
                 </MyButton>
