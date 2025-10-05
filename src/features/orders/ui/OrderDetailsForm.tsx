@@ -35,8 +35,7 @@ const OrderDetailsForm: FC<IProps> = ({editedValue, isNewOrder, handleFieldChang
     return (
         <Stack direction={"row"}
                alignItems={"center"}
-               justifyContent={"space-between"}
-               sx={{p: 4}}>
+               justifyContent={"space-between"}>
             <FormControl>
                 <FormLabel id={shipmentTypeRadioId}>Срочность:</FormLabel>
                 <RadioGroup

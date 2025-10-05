@@ -16,9 +16,10 @@ import {selectInvoicesIsLoading} from "../model/selectors";
 interface IProps {
     invoice: IInvoice | null;
     forDetailsMode?: boolean;
+    size?: "small" | "medium" | "large";
 }
 
-const UploadPayment: FC<IProps> = ({invoice, forDetailsMode = false}) => {
+const UploadPayment: FC<IProps> = ({invoice, size = "medium",forDetailsMode = false}) => {
     const dispatch = useAppDispatch();
     const user = useAppSelector(selectCurrentUser);
     const [openModal, setOpenModal] = useState(false);
@@ -70,6 +71,7 @@ const UploadPayment: FC<IProps> = ({invoice, forDetailsMode = false}) => {
         <>
             <Button
                 sx={{textTransform: 'none', width: "160px"}}
+                size={size}
                 component={LABEL}
                 loading={isLoading || invoiceLoading}
                 variant={"contained"}

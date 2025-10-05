@@ -254,7 +254,7 @@ export const paymentFileLinkColumn = () => {
                                    sx={{textTransform: 'none', width: "150px"}}>
                             Скачать ПП
                         </Button>)
-                        : (<UploadPayment invoice={params.row}/>)
+                        : (<UploadPayment invoice={params.row} size={"small"}/>)
                 }
                 </>)
         },
