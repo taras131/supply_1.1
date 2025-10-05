@@ -8,28 +8,28 @@ force = false
 # 2. Серверные файлы (uploads)
 [[redirects]]
 from = "/static/uploads/*"
-to = "http://77.110.104.31:3000/static/:splat"
+to = "http://77.110.104.31/static/:splat"  # УБРАЛИ :3000
 status = 200
 force = true
 
 [[redirects]]
 from = "/api/file"
-to = "http://77.110.104.31:3000/api/file"
+to = "http://77.110.104.31/api/file"  # УБРАЛИ :3000
 status = 200
 force = true
 methods = ["POST"]
 
 [[redirects]]
 from = "/api/file/*"
-to = "http://77.110.104.31:3000/api/file/:splat"
+to = "http://77.110.104.31/api/file/:splat"  # УБРАЛИ :3000
 status = 200
 force = true
 methods = ["GET","DELETE"]
 
-# 5. Остальной API
+# 5. Остальной API - ИСПРАВЛЕНО
 [[redirects]]
 from = "/api/*"
-to = "http://77.110.104.31:3000/:splat"
+to = "http://77.110.104.31/api/:splat"  # УБРАЛИ :3000 И ДОБАВИЛИ /api/
 status = 200
 force = true
 

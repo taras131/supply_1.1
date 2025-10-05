@@ -6,6 +6,10 @@ export const nestServerPath = "/api";
 export const fileServerPath = "/static";
 //export const fileServerPath = "http://localhost:3000/static";
 
+export const appAPI = axios.create({
+  baseURL: `${nestServerPath}`,
+  withCredentials: true,
+});
 
 export async function getNewAccessToken() {
   const response = await fetch(`${nestServerPath}/auth/refresh`, {
@@ -19,11 +23,6 @@ export async function getNewAccessToken() {
   // Бэкенд присылает в ответе { access_token: ... }
   return data.access_token;
 }
-
-export const appAPI = axios.create({
-  baseURL: `${nestServerPath}`,
-  withCredentials: true,
-});
 
 appAPI.interceptors.response.use(
   (resp) => resp,
