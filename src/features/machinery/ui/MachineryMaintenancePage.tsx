@@ -13,7 +13,7 @@ const MachineryMaintenancePage = () => {
         dispatch(fetchGetAllMachinery());
     }, [dispatch]);
     return (
-        <PageTemplate>
+        <PageTemplate authOnly>
             <PageHeaderTemplate title={"Календарь проведения ТО"}/>
             <MachineryMaintenanceTable rows={machinery}/>
         </PageTemplate>

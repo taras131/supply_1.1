@@ -22,7 +22,7 @@ function SuppliersPage() {
         dispatch(fetchGetSupplierById(supplier.id));
     };
     return (
-        <PageTemplate>
+        <PageTemplate authOnly>
             <SuppliersPageHeader
                 handleAddClick={toggleIsOpenAddDrawer}
             />

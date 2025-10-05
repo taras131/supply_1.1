@@ -15,7 +15,7 @@ const MachineryDetailsPage = () => {
         }
     }, [dispatch, machineryId]);
     return (
-        <PageTemplate>
+        <PageTemplate authOnly>
             <MachineryDetailsHeader/>
             <MachineryDetailsTabs/>
         </PageTemplate>

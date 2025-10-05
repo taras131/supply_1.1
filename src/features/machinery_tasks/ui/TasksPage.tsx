@@ -10,7 +10,7 @@ const TasksPage = () => {
         dispatch(fetchGetAllMachineryTasks());
     }, [dispatch]);
     return (
-        <PageTemplate>
+        <PageTemplate authOnly>
             <TaskList isShowMachineryInformation/>
         </PageTemplate>
     );

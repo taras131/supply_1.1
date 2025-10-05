@@ -16,6 +16,7 @@ import {fetchOut} from "../../auth/model/actions";
 import {useNavigate} from "react-router-dom";
 import {routes} from "../../../utils/routes";
 import OptionsMenu from "../../../components/common/OptionsMenu";
+import {fileServerPath} from "../../../api";
 
 interface IProps {
     user: IUser;
@@ -52,7 +53,7 @@ const  UserAvatar: FC<IProps> = ({user}) => {
             <Avatar
                 sizes="small"
                 alt="Riley Carter"
-                src={user.avatar_path}
+                src={`${fileServerPath}/${user.avatar_path}`}
                 sx={{width: 36, height: 36}}
             />
             <Box sx={{mr: 'auto'}}>

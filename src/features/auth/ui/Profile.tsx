@@ -17,7 +17,7 @@ const Profile = () => {
     }, [isAuth]);
     if (isAuthLoading || !isAuth) return <Preloader/>;
     return (
-        <PageTemplate>
+        <PageTemplate authOnly>
             <ProfileHeader/>
             <ProfileTabs/>
         </PageTemplate>

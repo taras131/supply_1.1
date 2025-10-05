@@ -5,7 +5,7 @@ import InvoicesStatistics from "./InvoicesStatistics";
 
 const MainPage = () => {
     return (
-        <PageTemplate>
+        <PageTemplate authOnly>
             <PageHeaderTemplate title={"Главная"}/>
             <InvoicesStatistics/>
         </PageTemplate>

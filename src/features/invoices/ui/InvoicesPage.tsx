@@ -16,7 +16,7 @@ const InvoicesPage = () => {
         dispatch(fetchGetAllInvoices(filterValue));
     }, [dispatch, filterValue]);
     return (
-        <PageTemplate>
+        <PageTemplate authOnly>
             <InvoicesPageHeader/>
             <InvoicesTable filterValue={filterValue}
                            filterChangeHandler={filterChangeHandler}

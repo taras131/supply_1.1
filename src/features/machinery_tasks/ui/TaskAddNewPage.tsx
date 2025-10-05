@@ -63,7 +63,7 @@ const TaskAddNewPage = () => {
         navigate(-1);
     };
     return (
-        <PageTemplate>
+        <PageTemplate authOnly>
             <PageHeaderTemplate title={"Новая задача"}>
                 <Stack direction="row" spacing={3}>
                    <BackButton/>

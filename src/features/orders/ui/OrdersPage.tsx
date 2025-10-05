@@ -12,7 +12,7 @@ const OrdersPage = () => {
         dispatch(fetchGetAllOrders());
     }, [dispatch]);
     return (
-        <PageTemplate>
+        <PageTemplate authOnly>
             <OrdersPageHeader/>
             <OrdersTable/>
             <AOrdersMigration/>

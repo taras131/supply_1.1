@@ -13,7 +13,7 @@ const MachineryCommentsPage = () => {
         dispatch(fetchGetAllMachinery());
     }, [dispatch]);
     return (
-        <PageTemplate>
+        <PageTemplate authOnly>
             <PageHeaderTemplate title={"Заметки"}/>
             <MachineryComments isShowMachineryInfo/>
         </PageTemplate>

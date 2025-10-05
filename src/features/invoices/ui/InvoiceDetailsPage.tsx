@@ -18,7 +18,7 @@ const InvoiceDetailsPage = () => {
         dispatch(fetchGetInvoiceById(invoiceId))
     }, [dispatch, invoiceId])
     return (
-        <PageTemplate>
+        <PageTemplate authOnly>
             <InvoiceDetailsPageHeader/>
             <Box sx={{display: 'grid', gridTemplateColumns: '3fr 2fr ', gridGap: '24px'}}>
                 <InvoiceDetailsInfo invoice={invoice}/>

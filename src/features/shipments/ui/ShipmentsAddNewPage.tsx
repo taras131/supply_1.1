@@ -96,7 +96,7 @@ const ShipmentsAddNewPage: FC = () => {
         );
     }, []);
     return (
-        <PageTemplate>
+        <PageTemplate authOnly>
             <ShipmentsAddNewPageHeader isValid={!Object.keys(errors).length}
                                        saveClickHandler={saveClickHandler}/>
             <Card sx={{padding: "36px 28px"}}>

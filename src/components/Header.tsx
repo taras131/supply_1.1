@@ -1,5 +1,4 @@
 import Stack from '@mui/material/Stack';
-import CustomDatePicker from './CustomDatePicker';
 import NavbarBreadcrumbs from './NavbarBreadcrumbs';
 import {FC} from "react";
 import ColorModeIconDropdown from "./ColorModeIconDropdown";
@@ -21,7 +20,6 @@ const Header: FC = () => {
             <NavbarBreadcrumbs/>
             <Stack direction="row" sx={{gap: 1}}>
                 <ColorModeIconDropdown/>
-                <CustomDatePicker/>
          {/*       <MenuButton showBadge aria-label="Open notifications">
                     <NotificationsRoundedIcon/>
                 </MenuButton>*/}

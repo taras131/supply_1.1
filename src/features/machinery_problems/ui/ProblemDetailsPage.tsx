@@ -74,7 +74,7 @@ const ProblemDetailsPage = () => {
     };
 
     return (
-        <PageTemplate>
+        <PageTemplate authOnly>
             <ProblemDetailsPageHeader/>
             <Stack direction={"row"} spacing={4} sx={{width: '100%'}}>
                 <Card sx={{width: '100%', p: 4}}>

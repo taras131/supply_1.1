@@ -1,6 +1,5 @@
 import React, {useEffect} from "react";
 import {Stack} from "@mui/material";
-import PhotosManager from "../../../components/common/PhotosManager";
 import Button from "@mui/material/Button";
 import {useAppDispatch} from "../../../hooks/redux";
 import {emptyMachinery, INewMachinery} from "../../../models/iMachinery";
@@ -12,7 +11,6 @@ import {useEditor} from "../../../hooks/useEditor";
 import {machineryValidate} from "../../../utils/validators";
 import MachineryAdditionalView from "./MachineryAdditionalView";
 import MachineryBasicView from "./MachineryBasicView";
-import ViewCardPattern from "../../../components/common/ViewCardPattern";
 import Box from "@mui/material/Box";
 import PageTemplate from "../../../components/templates/PageTemplate";
 import PageHeaderTemplate from "../../../components/templates/PageHeaderTemplate";
@@ -46,7 +44,7 @@ const MachineryAddNewPage = () => {
         navigate(routes.machinery);
     };
     return (
-        <PageTemplate>
+        <PageTemplate authOnly>
             <PageHeaderTemplate title={"Новая Техника:"}>
                 <Stack direction={"row"} spacing={2}>
                     <BackButton/>

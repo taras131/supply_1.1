@@ -34,7 +34,6 @@ const MachineryDocsItem: FC<IProps> = ({ doc }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isOpenConfirmModal, setIsOpenConfirmModal] = useState(false);
   const photoPath = `${fileServerPath}/${doc.file_name}`;
-  console.log(photoPath)
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsExpanded(!isExpanded);

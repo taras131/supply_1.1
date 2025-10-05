@@ -101,7 +101,7 @@ export default function NavbarBreadcrumbs() {
     if (!currentMatch) {
       // Если роут не найден, показываем базовую навигацию
       return [{
-        label: 'Страница не найдена',
+        label: '',
         path: location.pathname,
         isLast: true
       }];

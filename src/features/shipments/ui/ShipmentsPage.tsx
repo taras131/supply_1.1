@@ -14,7 +14,7 @@ const ShipmentsPage = () => {
         dispatch(fetchGetAllShipment());
     }, [dispatch]);
     return (
-        <PageTemplate>
+        <PageTemplate authOnly>
             <ShipmentsPageHeader/>
             <ShipmentsSection/>
             <ShipmentsHelper/>

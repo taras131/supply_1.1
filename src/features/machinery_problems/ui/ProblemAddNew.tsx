@@ -12,6 +12,7 @@ import ProblemView from "./ProblemView";
 import {fetchGetAllMachinery} from "../../machinery/model/actions";
 import FieldControl from "../../../components/common/FieldControl";
 import {selectAllMachineryForOptions} from "../../machinery/model/selectors";
+import {selectMachineryProblemsIsLoading} from "../model/selectors";
 
 interface IProps {
     isOpen: boolean;
@@ -22,6 +23,7 @@ interface IProps {
 const ProblemAddNew: FC<IProps> = ({isOpen, isShowMachineryInfo, onClose}) => {
     const dispatch = useAppDispatch();
     const machineryList = useAppSelector(selectAllMachineryForOptions);
+    const isLoading = useAppSelector(selectMachineryProblemsIsLoading)
     const {tempFiles, onAddPhotos, onDeletePhoto, clearPhotos} = usePhotoManager();
     const {editedValue, errors, handleFieldChange, resetValue} = useEditor<INewMachineryProblem>({
         initialValue: JSON.parse(JSON.stringify(emptyProblem)),
@@ -46,8 +48,10 @@ const ProblemAddNew: FC<IProps> = ({isOpen, isShowMachineryInfo, onClose}) => {
             }),
         );
         const syntheticClickEvent = {
-            preventDefault: () => {},  // Пустая функция
-            stopPropagation: () => {}, // Пустая функция
+            preventDefault: () => {
+            },  // Пустая функция
+            stopPropagation: () => {
+            }, // Пустая функция
             nativeEvent: new MouseEvent('click'),  // Нативное событие
             currentTarget: document.createElement('div'),  // Фиктивный элемент
             target: document.createElement('div'),  // Фиктивный target
@@ -128,6 +132,7 @@ const ProblemAddNew: FC<IProps> = ({isOpen, isShowMachineryInfo, onClose}) => {
                         onClick={addClickHandler}
                         variant="contained"
                         color="success"
+                        loading={isLoading}
                         disabled={!!Object.keys(errors).length || (isShowMachineryInfo && editedValue.machinery_id === "-1")}
                     >
                         Сохранить

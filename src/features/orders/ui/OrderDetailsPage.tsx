@@ -59,7 +59,7 @@ const OrderDetailsPage = () => {
         }
     };
     return (
-        <PageTemplate>
+        <PageTemplate authOnly>
             <OrderDetailsPageHeader/>
             {order && (
                 <OrderDetailsView order={order}/>

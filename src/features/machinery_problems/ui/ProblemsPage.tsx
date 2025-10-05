@@ -10,7 +10,7 @@ const ProblemsPage = () => {
         dispatch(fetchGetAllMachineryProblem());
     }, [dispatch]);
     return (
-        <PageTemplate>
+        <PageTemplate authOnly>
             <Problems isShowMachineryInfo/>
         </PageTemplate>);
 };

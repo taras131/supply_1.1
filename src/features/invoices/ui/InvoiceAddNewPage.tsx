@@ -117,7 +117,7 @@ const InvoiceAddNewPage = () => {
         }
     }
     return (
-        <PageTemplate>
+        <PageTemplate authOnly>
             <InvoiceAddNewPageHeader isValid={!Object.keys(errors).length && !!file}
                                      saveClickHandler={saveClickHandler}/>
             <Card sx={{padding: "28px"}}>

@@ -165,7 +165,7 @@ const OrdersAddNewPage = () => {
         }
     };
     return (
-        <PageTemplate>
+        <PageTemplate authOnly>
             <OrdersAddNewPageHeader saveClickHandler={saveClickHandler}
                                     resetOrder={resetOrder}
                                     isLoading={isLoading}

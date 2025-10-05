@@ -43,7 +43,7 @@ const TaskDetailsPage = () => {
     }
   };
   return (
-    <PageTemplate>
+    <PageTemplate authOnly>
       <TaskDetailsPageHeader currentTask={currentTask} />
       <TaskStatusCard currentTask={currentTask} />
       <Box

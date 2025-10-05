@@ -14,7 +14,7 @@ const MachineryPage = () => {
         dispatch(fetchGetAllMachinery());
     }, [dispatch]);
     return (
-        <PageTemplate>
+        <PageTemplate authOnly>
             <MachineryPageHeader/>
             <MachineryTable rows={machinery}/>
             <AMachineryMigration/>

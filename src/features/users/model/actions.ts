@@ -40,7 +40,6 @@ export const fetchUploadUserPhoto = createAsyncThunk<IUser, IUploadPhoto, { stat
         await filesAPI.delete(user.avatar_path);
       }
       const res = await filesAPI.upload(file);
-      console.log(res);
       if (!res) return;
       const updatedUser = { ...user, avatar_path: res };
       return dispatch(fetchUpdateUser(updatedUser)).unwrap();
