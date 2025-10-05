@@ -5,4 +5,6 @@ const selectAuthState = (state: RootState) => state.auth;
 
 export const selectIsAuth = createSelector([selectAuthState], (authState) => authState.isAuth);
 
+export const selectIsAuthChecked = createSelector([selectAuthState], (authState) => authState.isAuthChecked);
+
 export const selectIsAuthLoading = createSelector([selectAuthState], (authState) => authState.isLoading);

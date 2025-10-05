@@ -1,7 +1,7 @@
 import React, {FC, ReactNode, useEffect} from 'react';
 import {Stack} from "@mui/material";
 import {useAppSelector} from "../../hooks/redux";
-import {selectIsAuth, selectIsAuthLoading} from "../../features/auth/model/selectors";
+import {selectIsAuth, selectIsAuthChecked, selectIsAuthLoading} from "../../features/auth/model/selectors";
 import {useNavigate} from "react-router-dom";
 import Preloader from "../common/Preloader";
 
@@ -20,17 +20,16 @@ const PageTemplate: FC<IProps> = ({
                                   }) => {
     const isAuth = useAppSelector(selectIsAuth);
     const isAuthLoading = useAppSelector(selectIsAuthLoading);
+    const isAuthChecked = useAppSelector(selectIsAuthChecked);
     const navigate = useNavigate();
     useEffect(() => {
+        if (!isAuthChecked) return;    // ← ждём завершения проверки
         if (guestOnly && isAuth) {
-            // Защита для гостей: если уже авторизован, редирект на главную
-            navigate('/main', {replace: true});
+            navigate('/main', { replace: true });
         } else if (authOnly && !isAuth) {
-            // Защита для авторизованных: если не авторизован, редирект на логин
-            navigate('/login', {replace: true});
+            navigate('/login', { replace: true });
         }
-    }, [guestOnly, authOnly, isAuth, navigate]);
-    if (isAuthLoading) return (<Preloader/>);
+    }, [guestOnly, authOnly, isAuth, isAuthChecked, navigate]);
     if (!isAuth && authOnly) return null;
     return (
         <Stack sx={{
