@@ -1,16 +1,15 @@
 # 1. Статика из билда
 [[redirects]]
-from = "/static/*"
-to = "/static/:splat"
-status = 200
-force = false
-
-# 2. Серверные файлы (uploads)
-[[redirects]]
 from = "/static/uploads/*"
-to = "http://77.110.104.31/static/:splat"  # УБРАЛИ :3000
+to = "http://77.110.104.31:3000/static/:splat"  # ← ДОБАВИЛИ :3000
 status = 200
 force = true
+
+# 3. Все остальные статические файлы с сервера - НОВОЕ ПРАВИЛО
+[[redirects]]
+from = "/static/*"
+to = "http://77.110.104.31:3000/static/:splat"  # ← ДОБАВИЛИ :3000
+status = 200
 
 [[redirects]]
 from = "/api/file"

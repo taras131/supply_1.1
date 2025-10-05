@@ -8,7 +8,6 @@ export const invoicesAPI = {
   add: async (invoice: INewInvoice) => {
     console.log(invoice)
     const res = await appAPI.post(invoicePath, invoice);
-    console.log(res.data)
     return res.data;
   },
   getAll: async (filter: TInvoiceFilter) => {
