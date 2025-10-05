@@ -2,11 +2,11 @@ import {ILoginData, IRegisterData} from "../../../models/iAuth";
 import {appAPI, nestServerPath} from "../../../api";
 import {IChangePassword} from "../model/actions";
 
-const registerPath = `${nestServerPath}/auth/register`;
-const loginPath = `${nestServerPath}/auth/login`;
-const mePath = `${nestServerPath}/auth/me`;
-const logoutPath = `${nestServerPath}/auth/logout`;
-const changePasswordPath = `${nestServerPath}/auth/change_password`;
+const registerPath = `/auth/register`;
+const loginPath = `auth/login`;
+const mePath = `/auth/me`;
+const logoutPath = `/auth/logout`;
+const changePasswordPath = `/auth/change_password`;
 
 export const authAPI = {
     login: async (authData: ILoginData) => {

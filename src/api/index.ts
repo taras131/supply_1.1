@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const nestServerPath = "/";
+export const nestServerPath = "/api";
 //export const nestServerPath = "http://localhost:3000/api";
 
 export const fileServerPath = "/static";
@@ -21,7 +21,7 @@ export async function getNewAccessToken() {
 }
 
 export const appAPI = axios.create({
-  baseURL: `${nestServerPath}/api`,
+  baseURL: `${nestServerPath}`,
   withCredentials: true,
 });
 
