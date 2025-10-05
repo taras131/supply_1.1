@@ -1,5 +1,4 @@
 import React, { FC, useState } from "react";
-import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { CardActions, CardMedia, Box, IconButton } from "@mui/material";
@@ -7,7 +6,7 @@ import Button from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
 import { CENTER } from "../../../styles/const";
 import { printImage } from "../../../utils/printUtils";
-import { nestServerPath } from "../../../api";
+import {fileServerPath, nestServerPath} from "../../../api";
 import { IMachineryDoc } from "../../../models/IMachineryDoc";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { useAppDispatch } from "../../../hooks/redux";
@@ -34,7 +33,8 @@ const MachineryDocsItem: FC<IProps> = ({ doc }) => {
   const dispatch = useAppDispatch();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isOpenConfirmModal, setIsOpenConfirmModal] = useState(false);
-  const photoPath = `${nestServerPath}/static/${doc.file_name}`;
+  const photoPath = `${fileServerPath}/${doc.file_name}`;
+  console.log(photoPath)
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsExpanded(!isExpanded);

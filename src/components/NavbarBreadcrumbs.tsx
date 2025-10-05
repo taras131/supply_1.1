@@ -1,9 +1,9 @@
 import React from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import {useLocation, Link, matchPath} from 'react-router-dom';
 import { Breadcrumbs, Typography, styled } from '@mui/material';
 import { breadcrumbsClasses } from '@mui/material/Breadcrumbs';
 import NavigateNextRoundedIcon from '@mui/icons-material/NavigateNextRounded';
-import {IRouteConfig, routesConfig} from "../config/routes";
+import {routes} from "../utils/routes";
 
 const StyledBreadcrumbs = styled(Breadcrumbs)(({ theme }) => ({
   margin: theme.spacing(1, 0),
@@ -16,6 +16,51 @@ const StyledBreadcrumbs = styled(Breadcrumbs)(({ theme }) => ({
   },
 }));
 
+// Конфигурация хлебных крошек с иерархией
+const breadcrumbConfig: Record<string, { label: string; parent?: string }> = {
+  [routes.main]: { label: 'Главная' },
+
+  // Счета
+  [routes.invoices]: { label: 'Счета', parent: routes.main },
+  [routes.invoicesDetails]: { label: 'Подробности', parent: routes.invoices },
+  [routes.invoicesAddNew]: { label: 'Новый счёт', parent: routes.invoices },
+
+  // Поставщики
+  [routes.suppliers]: { label: 'Поставщики', parent: routes.main },
+
+  // Отгрузки
+  [routes.shipments]: { label: 'Отгрузки', parent: routes.main },
+  [routes.shipmentsAddNew]: { label: 'Новая отгрузка', parent: routes.shipments },
+
+  // Заявки
+  [routes.orders]: { label: 'Заявки', parent: routes.main },
+  [routes.ordersDetails]: { label: 'Подробности', parent: routes.orders },
+  [routes.ordersAddNew]: { label: 'Новая заявка', parent: routes.orders },
+
+  // Сотрудники
+  [routes.users]: { label: 'Сотрудники', parent: routes.main },
+  [routes.profile]: { label: 'Профиль', parent: routes.main },
+
+  // Техника - базовая категория
+  '/machinery': { label: 'Техника', parent: routes.main },
+
+  // Техника - подразделы
+  [routes.machinery]: { label: 'Список', parent: '/machinery' },
+  [routes.addNewMachinery]: { label: 'Новая техника', parent: routes.machinery },
+  [routes.machineryDetails]: { label: 'Подробности', parent: routes.machinery },
+
+  [routes.machineryMaintenance]: { label: 'Календарь ТО', parent: '/machinery' },
+  [routes.machineryProblems]: { label: 'Проблемы', parent: '/machinery' },
+  [routes.machineryProblemDetails]: { label: 'Подробности проблемы', parent: routes.machineryProblems },
+  [routes.machineryAddProblem]: { label: 'Новая проблема', parent: routes.machineryProblems },
+
+  [routes.machineryTasks]: { label: 'Задачи', parent: '/machinery' },
+  [routes.machineryTaskDetails]: { label: 'Подробности задачи', parent: routes.machineryTasks },
+  [routes.machineryAddTask]: { label: 'Новая задача', parent: routes.machineryTasks },
+
+  [routes.machineryComments]: { label: 'Заметки', parent: '/machinery' },
+};
+
 interface BreadcrumbItem {
   label: string;
   path: string;
@@ -25,123 +70,70 @@ interface BreadcrumbItem {
 export default function NavbarBreadcrumbs() {
   const location = useLocation();
 
-  // Функция для поиска роута по пути
-  const findRouteByPath = (path: string, routes: IRouteConfig[]): IRouteConfig | null => {
-    for (const route of routes) {
-      // Пропускаем wildcard роуты
-      if (route.path === "*" || route.path === "/*") {
-        continue;
-      }
+  // Функция для поиска соответствующего роута с параметрами
+  const findMatchingRoute = (pathname: string): { routePath: string; config: typeof breadcrumbConfig[string] } | null => {
+    // Сначала проверяем точное соответствие
+    if (breadcrumbConfig[pathname]) {
+      return { routePath: pathname, config: breadcrumbConfig[pathname] };
+    }
 
-      // Точное соответствие пути
-      if (route.path === path) {
-        return route;
-      }
-
-      // Поиск в детях
-      if (route.children) {
-        const childRoute = findRouteByPath(path, route.children);
-        if (childRoute) return childRoute;
-      }
-
-      // Проверка динамических роутов (например, /invoices/:id)
-      // Только если путь содержит параметры
-      if (route.path.includes(':')) {
-        try {
-          const dynamicRoutePattern = route.path.replace(/:[^/]+/g, '[^/]+');
-          const regex = new RegExp(`^${dynamicRoutePattern}$`);
-          if (regex.test(path)) {
-            return route;
-          }
-        } catch (error) {
-          console.warn(`Invalid route pattern: ${route.path}`);
-          continue;
+    // Затем проверяем роуты с параметрами
+    for (const [routePath, config] of Object.entries(breadcrumbConfig)) {
+      if (routePath.includes(':')) {
+        const match = matchPath(
+            { path: routePath, end: true },
+            location.pathname
+        );
+        if (match) {
+          return { routePath, config };
         }
       }
     }
-    return null;
-  };
 
-  // Функция для поиска родительского роута
-  const findParentRoute = (targetPath: string, routes: IRouteConfig[]): IRouteConfig | null => {
-    for (const route of routes) {
-      if (route.children) {
-        for (const child of route.children) {
-          if (child.path === targetPath) {
-            return route;
-          }
-        }
-        // Рекурсивный поиск в детях
-        const found = findParentRoute(targetPath, route.children);
-        if (found) return route;
-      }
-    }
     return null;
   };
 
   // Функция для построения иерархии хлебных крошек
   const buildBreadcrumbs = (): BreadcrumbItem[] => {
-    const currentPath = location.pathname;
     const breadcrumbs: BreadcrumbItem[] = [];
+    const currentMatch = findMatchingRoute(location.pathname);
 
-    // Найти текущий роут
-    const currentRoute = findRouteByPath(currentPath, routesConfig);
-
-    if (!currentRoute) {
+    if (!currentMatch) {
       // Если роут не найден, показываем базовую навигацию
-      breadcrumbs.push({
-        label: 'Главная',
-        path: '/',
-        isLast: false
-      });
-      breadcrumbs.push({
+      return [{
         label: 'Страница не найдена',
-        path: currentPath,
+        path: location.pathname,
         isLast: true
-      });
-      return breadcrumbs;
+      }];
     }
 
-    // Строим иерархию от корня к текущей странице
-    const buildHierarchy = (route: IRouteConfig): BreadcrumbItem[] => {
-      const hierarchy: BreadcrumbItem[] = [];
+    // Функция для построения цепочки родителей
+    const buildParentChain = (routePath: string, config: typeof breadcrumbConfig[string]): BreadcrumbItem[] => {
+      const chain: BreadcrumbItem[] = [];
 
-      // Найти родителя
-      const parent = findParentRoute(route.path, routesConfig);
-      if (parent && parent.path !== route.path) {
-        hierarchy.push(...buildHierarchy(parent));
-        hierarchy.push({
-          label: parent.label,
-          path: parent.path,
-          isLast: false
-        });
+      if (config.parent) {
+        const parentConfig = breadcrumbConfig[config.parent];
+        if (parentConfig) {
+          chain.push(...buildParentChain(config.parent, parentConfig));
+          chain.push({
+            label: parentConfig.label,
+            path: config.parent,
+            isLast: false
+          });
+        }
       }
 
-      return hierarchy;
+      return chain;
     };
 
-    // Получить всю иерархию
-    const hierarchy = buildHierarchy(currentRoute);
+    // Строим цепочку родителей
+    const parentChain = buildParentChain(currentMatch.routePath, currentMatch.config);
+    breadcrumbs.push(...parentChain);
 
-    // Добавить главную страницу в начало, если её нет
-    if (hierarchy.length === 0 || hierarchy[0].path !== '/') {
-      const homeRoute = findRouteByPath('/', routesConfig);
-      if (homeRoute && currentRoute.path !== '/') {
-        breadcrumbs.push({
-          label: homeRoute.label,
-          path: homeRoute.path,
-          isLast: false
-        });
-      }
-    }
-
-    // Добавить иерархию
-    breadcrumbs.push(...hierarchy);
-
-    // Добавить текущую страницу
+    // Добавляем текущую страницу
     breadcrumbs.push({
-      label: currentRoute.label,
-      path: currentRoute.path,
+      label: currentMatch.config.label,
+      path: location.pathname, // Используем реальный путь с параметрами
       isLast: true
     });
 
@@ -158,7 +150,7 @@ export default function NavbarBreadcrumbs() {
         {breadcrumbs.map((crumb, index) => (
             crumb.isLast ? (
                 <Typography
-                    key={`${crumb.path}-${index}`}
+                    key={index}
                     variant="body1"
                     sx={{ color: 'text.primary', fontWeight: 600 }}
                 >
@@ -166,15 +158,12 @@ export default function NavbarBreadcrumbs() {
                 </Typography>
             ) : (
                 <Link
-                    key={`${crumb.path}-${index}`}
+                    key={index}
                     to={crumb.path}
-                    style={{
-                      textDecoration: 'none',
-                      color: 'inherit'
-                    }}
+                    style={{ textDecoration: 'none', color: 'inherit' }}
                 >
                   <Typography
-                      variant="body2"
+                      variant="body1"
                       sx={{
                         '&:hover': {
                           textDecoration: 'underline'
