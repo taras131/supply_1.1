@@ -174,7 +174,7 @@ export default function NavbarBreadcrumbs() {
                     }}
                 >
                   <Typography
-                      variant="body1"
+                      variant="body2"
                       sx={{
                         '&:hover': {
                           textDecoration: 'underline'
