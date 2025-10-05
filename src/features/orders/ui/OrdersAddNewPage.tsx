@@ -81,7 +81,7 @@ const OrdersAddNewPage = () => {
             setEditedValue(prev => ({
                 ...prev,
                 positions: prev.positions.map(p =>
-                    p.id === targetId
+                    `${p.id}` === `${targetId}`
                         ? { ...p, photos: [...(p.photos ?? []), ...fileNames] }
                         : p
                 ),
@@ -110,14 +110,14 @@ const OrdersAddNewPage = () => {
             setEditedValue(prev => {
                 // удаляем файлы синхронно в фоне
                 prev.positions
-                    .find(p => `${p.id}` === id)
+                    .find(p => `${p.id}` === `${id}`)
                     ?.photos?.forEach(photo =>
                     filesAPI.delete(photo).catch(e => console.warn("Failed to delete photo:", photo, e))
                 );
 
                 return {
                     ...prev,
-                    positions: prev.positions.filter(p => `${p.id}` !== id),
+                    positions: prev.positions.filter(p => `${p.id}` !== `${id}`),
                 };
             });
         },
