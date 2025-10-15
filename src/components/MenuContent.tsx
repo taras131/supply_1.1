@@ -16,17 +16,16 @@ import {ExpandLess, ExpandMore} from '@mui/icons-material';
 import Box from "@mui/material/Box";
 import {Badge, Collapse} from "@mui/material";
 import {selectInvoicesUnpaidCount} from "../features/invoices/model/selectors";
-import {selectShipmentsUnReceivingCount} from "../features/shipments/model/selectors";
+import {selectShipmentsCount} from "../features/shipments/model/selectors";
 
 const MenuContent = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const isAuth = useAppSelector(selectIsAuth);
     const invoiceUnPaidCount = useAppSelector(selectInvoicesUnpaidCount);
-    const shipmentUnReceivingCount = useAppSelector(selectShipmentsUnReceivingCount);
+    const shipmentUnReceivingCount = useAppSelector(selectShipmentsCount);
     // Состояние для отслеживания открытых подменю
     const [openSubmenus, setOpenSubmenus] = useState<{ [key: string]: boolean }>({});
-
     // Функция для переключения состояния подменю
     const toggleSubmenu = (path: string) => {
         setOpenSubmenus(prev => ({
@@ -34,7 +33,6 @@ const MenuContent = () => {
             [path]: !prev[path]
         }));
     };
-
     // Проверка, выбран ли элемент или его дочерние элементы
     const isItemSelected = (item: IRouteConfig): boolean => {
         // Проверяем текущий элемент
@@ -42,7 +40,6 @@ const MenuContent = () => {
             {path: item.path, end: false},
             location.pathname
         );
-
         // Проверяем дочерние элементы
         if (item.children) {
             const isChildSelected = item.children.some(child =>
@@ -50,10 +47,8 @@ const MenuContent = () => {
             );
             return isCurrentSelected || isChildSelected;
         }
-
         return isCurrentSelected;
     };
-
     // Проверка, открыто ли подменю (автоматически открываем если выбран дочерний элемент)
     const isSubmenuOpen = (item: IRouteConfig): boolean => {
         const manuallyOpen = openSubmenus[item.path];
@@ -62,7 +57,6 @@ const MenuContent = () => {
         );
         return manuallyOpen || hasSelectedChild || false;
     };
-
     // Рекурсивный компонент для рендеринга пунктов меню
     const renderMenuItem = (item: IRouteConfig, level: number = 0) => {
         const hasChildren = item.children && item.children.length > 0;
@@ -75,16 +69,12 @@ const MenuContent = () => {
                 navigate(item.path);
             }
         };
-        let badgeCount = null;
-        switch (item.path) {
-            case routes.invoices:
-                badgeCount = invoiceUnPaidCount
-                break;
-            case routes.shipments:
-                badgeCount = shipmentUnReceivingCount
-                break;
-            default:
-                badgeCount = null;
+        let badgeCount: number | null = null;
+        if (item.path === routes.invoices) {
+            badgeCount = invoiceUnPaidCount;
+        }
+        if (item.path === routes.shipments) {
+            badgeCount = shipmentUnReceivingCount;
         }
         return (
             <React.Fragment key={item.path}>
@@ -94,6 +84,7 @@ const MenuContent = () => {
                         onClick={handleClick}
                         sx={{
                             pl: 2 + level * 2, // Отступ для вложенности
+                            pr: 2,
                             borderRadius: 1,
                             mx: 0.5,
                             mb: 0.5,
@@ -111,7 +102,7 @@ const MenuContent = () => {
                                 }
                             }}
                         />
-                        {badgeCount && (
+                        {badgeCount !== null && (
                             <Badge
                                 badgeContent={badgeCount}
                                 color="primary"
@@ -146,9 +137,8 @@ const MenuContent = () => {
             routesConfig
                 .filter(route => route.showInMenu)
                 .map(item => renderMenuItem(item)),
-        [routesConfig, location.pathname, openSubmenus]
+        [routesConfig, location.pathname, openSubmenus, invoiceUnPaidCount, shipmentUnReceivingCount]
     );
-
     return (
         <Stack sx={{flexGrow: 1, p: 1, justifyContent: 'space-between'}}>
             <List dense sx={{pt: 0}}>

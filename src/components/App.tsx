@@ -14,6 +14,7 @@ import MessageWindow from "../features/messages/ui/MessageWindow";
 import Message from "../features/messages/ui/Message";
 import {fetchGetInvoicesStatistics} from "../features/invoices/model/actions";
 import {selectIsAuth} from "../features/auth/model/selectors";
+import {fetchGetShipmentsStatistics} from "../features/shipments/model/actions";
 
 function App() {
     const dispatch = useAppDispatch()
@@ -25,6 +26,7 @@ function App() {
         if(isAuth) {
             dispatch(fetchGetAllUsers());
             dispatch(fetchGetInvoicesStatistics());
+            dispatch(fetchGetShipmentsStatistics());
         }
     }, [isAuth, dispatch]);
     const getAllRoutes = (routes: IRouteConfig[]): IRouteConfig[] => {

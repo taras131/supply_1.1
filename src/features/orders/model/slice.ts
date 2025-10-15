@@ -1,6 +1,12 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {IOrder} from "../../../models/iOrders";
-import {fetchAddOrder, fetchGetAllOrders, fetchGetOrderById, fetchUpdateOrder} from "./actions";
+import {
+    fetchAddOrder,
+    fetchGetAllOrders,
+    fetchGetOrderById,
+    fetchGetOrdersForInvoice, fetchGetOrdersForNewInvoice,
+    fetchUpdateOrder
+} from "./actions";
 
 interface IOrdersState {
     list: IOrder[];
@@ -35,6 +41,18 @@ export const OrdersSlice = createSlice({
                 state.isLoading = false;
             })
             .addCase(fetchGetAllOrders.fulfilled, (state, action: PayloadAction<IOrder []>) => {
+                state.list = action.payload.slice().sort((a, b) => (
+                    b.author_date - a.author_date
+                ));
+                state.isLoading = false;
+            })
+            .addCase(fetchGetOrdersForNewInvoice.fulfilled, (state, action: PayloadAction<IOrder []>) => {
+                state.list = action.payload.slice().sort((a, b) => (
+                    b.author_date - a.author_date
+                ));
+                state.isLoading = false;
+            })
+            .addCase(fetchGetOrdersForInvoice.fulfilled, (state, action: PayloadAction<IOrder []>) => {
                 state.list = action.payload.slice().sort((a, b) => (
                     b.author_date - a.author_date
                 ));

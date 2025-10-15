@@ -72,3 +72,22 @@ export const defaultShipment: IShipments = {
     updated_at: "",
     receiving_is_receiving: false,
 }
+
+export interface IShipmentMonthlyStatistics {
+    month: string;
+    current_year: number;
+    previous_year: number;
+    year: number;
+    month_number: number;
+}
+
+
+export interface IShipmentsStatistics {
+    unreceived_by_type: Record<string, number>; // { 'жд': 5, 'авиа': 3 }
+    chart_data: IShipmentMonthlyStatistics[];
+    meta: {
+        current_year: number;
+        previous_year: number;
+        current_month: number;
+    };
+}

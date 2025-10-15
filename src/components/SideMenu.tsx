@@ -7,9 +7,12 @@ import UserAvatar from "../features/users/ui/UserAvatar";
 import {useAppSelector} from "../hooks/redux";
 import {selectCurrentUser} from "../features/users/model/selectors";
 import {drawerWidth} from "../utils/const";
+import Stack from "@mui/material/Stack";
+import {selectCurrentCompanyName} from "../features/companies/model/selectors";
 
 const SideMenu = () => {
     const currentUser = useAppSelector(selectCurrentUser);
+    const companyName = useAppSelector(selectCurrentCompanyName);
     return (
         <Drawer
             variant="permanent"
@@ -22,7 +25,7 @@ const SideMenu = () => {
                     width: drawerWidth,
                     boxSizing: 'border-box',
                 },
-                display: { xs: 'none', md: 'block' },
+                display: {xs: 'none', md: 'block'},
             }}
         >
             <Box
@@ -32,7 +35,9 @@ const SideMenu = () => {
                     p: 1.5,
                 }}
             >
-                {/*  <SelectContent />*/}
+                <Stack sx={{height: "30px", width: "100%"}} alignItems={"center"} justifyContent={"center"}>
+                    {companyName}
+                </Stack>
             </Box>
             <Divider/>
             <Box

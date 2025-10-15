@@ -5,6 +5,7 @@ import {handlerError} from "../../../store/handleError";
 import {setModalMessage} from "../../messages/model/slice";
 import {filesAPI} from "../../files/api";
 import {nestServerPath} from "../../../api";
+import {invoicesAPI} from "../../invoices/api";
 
 interface CreateShipmentDto {
     shipment: INewShipments,
@@ -72,7 +73,6 @@ export const fetchUpdateShipmentInvoices = createAsyncThunk("shipments/update_sh
         try {
             return await shipmentsAPI.updateShipmentInvoices(shipment);
         } catch (e) {
-            console.log(e)
             const msg = handlerError(e);
             dispatch(setModalMessage(msg));
             return rejectWithValue(msg);
@@ -158,3 +158,17 @@ export const fetchDeleteShipmentPhoto = createAsyncThunk("shipments/delete_photo
             return rejectWithValue(msg);
         }
     });
+
+export const fetchGetShipmentsStatistics = createAsyncThunk(
+    "shipments/get_statistics",
+    async (_, {dispatch, rejectWithValue}) => {
+        try {
+            return await shipmentsAPI.getStatistics();
+        } catch (e) {
+            console.log(e)
+            const msg = handlerError(e);
+            dispatch(setModalMessage(msg));
+            return rejectWithValue(msg);
+        }
+    },
+);

@@ -50,11 +50,23 @@ export const fetchGetOrderById = createAsyncThunk("orders/get_by_id",
         }
     });
 
-export const fetchGetOrdersForNewInvoice = createAsyncThunk("orders/get_all", async (_, {
+export const fetchGetOrdersForNewInvoice = createAsyncThunk("orders/get_for_new_invoice", async (_, {
     rejectWithValue, dispatch
 }) => {
     try {
-        return await ordersAPI.getForInvoice();
+        return await ordersAPI.getForNewInvoice();
+    } catch (e) {
+        const msg = handlerError(e);
+        dispatch(setModalMessage(msg));
+        return rejectWithValue(msg);
+    }
+});
+
+export const fetchGetOrdersForInvoice = createAsyncThunk("orders/get_for_invoice", async (invoiceId: string, {
+    rejectWithValue, dispatch
+}) => {
+    try {
+        return await ordersAPI.getForInvoice(invoiceId);
     } catch (e) {
         const msg = handlerError(e);
         dispatch(setModalMessage(msg));
@@ -80,23 +92,4 @@ export const fetchUpdateOrder = createAsyncThunk("orders/update",
         }
     });
 
-/*export const fetchUpdateOrderApproved = createAsyncThunk(
-  "update_order_approved",
-  async (updateApprovedOrderData: IUpdateApprovedOrderData, ThunkAPI) => {
-    try {
-      const res = await ordersAPI.updateOrderApproved(updateApprovedOrderData);
-      return res;
-    } catch (e) {
-      return ThunkAPI.rejectWithValue(handlerError(e));
-    }
-  },
-);*/
 
-/*export const fetchUpdateOrder = createAsyncThunk("update_order", async (order: IOrder, ThunkAPI) => {
-  try {
-    const res = await ordersAPI.updateOrder(order);
-    return res;
-  } catch (e) {
-    return ThunkAPI.rejectWithValue(handlerError(e));
-  }
-});*/

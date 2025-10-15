@@ -91,6 +91,7 @@ const StyledTypography = styled(Typography)(({ theme }) => ({
   marginTop: theme.spacing(1.5),
   marginLeft: theme.spacing(1.7),
   fontWeight: 600,
+  whiteSpace: 'pre-wrap',
 }));
 
 const StyledLabel = styled(InputLabel)(() => ({

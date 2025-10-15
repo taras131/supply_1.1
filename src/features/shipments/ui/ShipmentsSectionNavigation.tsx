@@ -153,6 +153,8 @@ const ShipmentsSectionNavigation: FC<IProps> = ({activeShipmentId, setActiveShip
             <Stack spacing={1}
                    sx={{backgroundColor: 'background.default'}}
                    p={1}
+                   alignItems="center"
+                   justifyContent="center"
             >
                 <SearchTextField
                     placeholder="Поиск..."

@@ -21,7 +21,9 @@ const CardTemplate: FC<IProps> = ({title, children}) => {
             }}
         >
             {title && (
-                <Typography sx={{marginBottom: "36px", fontSize: 20, fontWeight: 600}} variant="h5" color="primary">
+                <Typography sx={{marginBottom: "36px", fontSize: 20, fontWeight: 600}}
+                            variant="h5"
+                            color="primary">
                     {title}
                 </Typography>
             )}

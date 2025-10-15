@@ -1,5 +1,5 @@
-import React, { FC, useEffect, useMemo, useState, useCallback } from 'react';
-import { Box, Card, List, ListItemButton, ListItemText, Stack, Typography } from '@mui/material';
+import React, {FC, useEffect, useMemo, useState, useCallback} from 'react';
+import {Box, Card, List, ListItemButton, ListItemText, Stack, Typography} from '@mui/material';
 import OrderPositionsTable from "../../orders_positions/ui/OrderPositionsTable";
 import {IOrder} from "../../../models/iOrders";
 import {SelectedByOrder} from "./InvoiceAddNewPage";
@@ -7,12 +7,14 @@ import {SelectedByOrder} from "./InvoiceAddNewPage";
 interface IProps {
     orders: IOrder[];
     selectedByOrder: SelectedByOrder; // { [orderId]: string[] }
+    editing?: boolean;
     onPositionsSelectionChange: (orderId: string, positionId: string) => void;
 }
 
 const OrdersSection: FC<IProps> = ({
                                        orders,
                                        selectedByOrder,
+                                       editing = true,
                                        onPositionsSelectionChange,
                                    }) => {
     // Показываем только заявки с позициями
@@ -70,7 +72,7 @@ const OrdersSection: FC<IProps> = ({
     }, [ordersWithPositions, moveSelection]);
 
     return (
-        <Box sx={{ display: 'flex', gap: 2, mt: 2, width: '100%' }}>
+        <Box sx={{display: 'flex', gap: 2, mt: 2, width: '100%'}}>
             {/* Левая колонка со списком заявок */}
             <Card
                 sx={{
@@ -109,13 +111,15 @@ const OrdersSection: FC<IProps> = ({
                                                 <Typography variant="body2" fontWeight={600} noWrap title={order.title}>
                                                     {order.title}
                                                 </Typography>
-                                                <Typography variant="caption" color="text.secondary" sx={{ ml: 1, flexShrink: 0 }}>
+                                                <Typography variant="caption" color="text.secondary"
+                                                            sx={{ml: 1, flexShrink: 0}}>
                                                     {selectedCount}/{total}
                                                 </Typography>
                                             </Stack>
                                         }
                                         secondary={
-                                            <Typography variant="caption" color="text.secondary" noWrap title={order.id}>
+                                            <Typography variant="caption" color="text.secondary" noWrap
+                                                        title={order.id}>
                                                 {order.id}
                                             </Typography>
                                         }
@@ -128,18 +132,18 @@ const OrdersSection: FC<IProps> = ({
             </Card>
 
             {/* Правая колонка: одна таблица активной заявки */}
-            <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Box sx={{flex: 1, minWidth: 0}}>
                 {activeOrder ? (
                     <OrderPositionsTable
                         orderId={activeOrder.id}
                         title={activeOrder.title}
                         rows={activeOrder.positions!}
-                        selectable
+                        selectable={editing}
                         selectedIds={selectedByOrder[activeOrder.id]} // undefined если нет — ОК
                         onToggleChecked={onPositionsSelectionChange}
                     />
                 ) : (
-                    <Card sx={{ p: 3 }}>
+                    <Card sx={{p: 3}}>
                         <Typography color="text.secondary">Нет заявок с позициями</Typography>
                     </Card>
                 )}

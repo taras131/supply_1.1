@@ -1,6 +1,6 @@
 import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from 'react';
 import InvoiceAddNewPageHeader from "./InvoiceAddNewPageHeader";
-import {FormControl, InputLabel, MenuItem, Select, Stack, Typography} from "@mui/material";
+import {FormControl, InputLabel, MenuItem, Select, Typography} from "@mui/material";
 import Card from "@mui/material/Card";
 import {useAppDispatch, useAppSelector} from "../../../hooks/redux";
 import {fetchGetSuppliers} from "../../suppliers/model/actions";

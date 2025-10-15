@@ -6,7 +6,6 @@ const invoicePath =`/invoice`
 
 export const invoicesAPI = {
   add: async (invoice: INewInvoice) => {
-    console.log(invoice)
     const res = await appAPI.post(invoicePath, invoice);
     return res.data;
   },
@@ -24,7 +23,6 @@ export const invoicesAPI = {
     return res.data;
   },
   update: async (invoice: IInvoice) => {
-    console.log(invoice)
     const res = await appAPI.put(invoicePath, invoice);
     return res.data;
   },

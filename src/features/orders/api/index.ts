@@ -21,8 +21,13 @@ export const ordersAPI = {
         const res = await appAPI.get(`${ordersPath}/${orderId}`);
         return await res.data;
     },
-    getForInvoice: async () => {
+    getForNewInvoice: async () => {
         const res = await appAPI.get(`${ordersPath}/for_new_invoice`);
+        return await res.data;
+    },
+    getForInvoice: async (invoiceId: string) => {
+        const res = await appAPI.get(`${ordersPath}/for_invoice/${invoiceId}`);
+        console.log(res)
         return await res.data;
     },
     update: async (order: IOrder) => {

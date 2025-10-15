@@ -1,8 +1,13 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {IShipments, Transporter, TShipmentsType} from "../../../models/iShipments";
+import {IShipments, IShipmentsStatistics, Transporter, TShipmentsType} from "../../../models/iShipments";
 import {ALL} from "../../../utils/const";
-import {fetchAddShipment, fetchGetAllShipment, fetchUpdateShipment, fetchUpdateShipmentInvoices} from "./actions";
-
+import {
+    fetchAddShipment,
+    fetchGetAllShipment,
+    fetchGetShipmentsStatistics,
+    fetchUpdateShipment,
+    fetchUpdateShipmentInvoices
+} from "./actions";
 
 interface IShipmentsState {
     list: IShipments[];
@@ -11,6 +16,7 @@ interface IShipmentsState {
     transporterFilter: Transporter | typeof ALL;
     shipmentTypeFilter: TShipmentsType | typeof ALL;
     search: string;
+    statistics: IShipmentsStatistics | null;
 }
 
 const initialState: IShipmentsState = {
@@ -20,6 +26,7 @@ const initialState: IShipmentsState = {
     transporterFilter: ALL,
     shipmentTypeFilter: ALL,
     search: "",
+    statistics: null,
 };
 
 export const ShipmentSlice = createSlice({
@@ -46,32 +53,43 @@ export const ShipmentSlice = createSlice({
         builder
             .addCase(fetchAddShipment.fulfilled, (state, action: PayloadAction<IShipments>) => {
                 state.list = [action.payload, ...state.list]
+                state.isLoading = false
             })
             .addCase(fetchGetAllShipment.fulfilled, (state, action: PayloadAction<IShipments[]>) => {
                 state.list = action.payload.sort((a, b) => {
                     return b.author_date - a.author_date
                 })
+                state.isLoading = false
             })
             .addCase(fetchUpdateShipment.fulfilled, (state, action: PayloadAction<IShipments>) => {
                 state.list = state.list.map(shipment => shipment.id === action.payload.id
                     ? action.payload
                     : shipment
                 )
+                state.isLoading = false
             })
             .addCase(fetchUpdateShipmentInvoices.fulfilled, (state, action: PayloadAction<IShipments>) => {
                 state.list = [...state.list.map(shipment => shipment.id === action.payload.id
                     ? action.payload
                     : shipment
                 )]
+                state.isLoading = false
+            })
+            .addCase(fetchGetShipmentsStatistics.fulfilled, (state, action: PayloadAction<IShipmentsStatistics>) => {
+                state.statistics = action.payload;
+                state.isLoading = false
             })
             .addCase(fetchAddShipment.pending, (state) => {
-                state.isLoading = false
+                state.isLoading = true
             })
             .addCase(fetchGetAllShipment.pending, (state) => {
-                state.isLoading = false
+                state.isLoading = true
             })
             .addCase(fetchUpdateShipment.pending, (state) => {
-                state.isLoading = false
+                state.isLoading = true
+            })
+            .addCase(fetchGetShipmentsStatistics.pending, (state) => {
+                state.isLoading = true
             })
             .addCase(fetchAddShipment.rejected, (state) => {
                 state.isLoading = false
@@ -80,6 +98,9 @@ export const ShipmentSlice = createSlice({
                 state.isLoading = false
             })
             .addCase(fetchUpdateShipment.rejected, (state) => {
+                state.isLoading = false
+            })
+            .addCase(fetchGetShipmentsStatistics.rejected, (state) => {
                 state.isLoading = false
             })
     }

@@ -18,7 +18,7 @@ const ShipmentsPage = () => {
             <ShipmentsPageHeader/>
             <ShipmentsSection/>
             <ShipmentsHelper/>
-            <AShipmentsMigration/>
+            {/*<AShipmentsMigration/>*/}
         </PageTemplate>
     );
 };

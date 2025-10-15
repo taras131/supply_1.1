@@ -29,4 +29,8 @@ export const shipmentsAPI = {
         })
         return await res.data;
     },
+    getStatistics: async () => {
+        const res = await appAPI.get(`${shipmentsPath}/statistics`);
+        return res.data;
+    },
 };

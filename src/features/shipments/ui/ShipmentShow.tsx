@@ -3,7 +3,17 @@ import Card from "@mui/material/Card";
 import {IShipments} from "../../../models/iShipments";
 import TitleWithValue from "../../../components/TitleWithValue";
 import {convertMillisecondsToDate} from "../../../utils/services";
-import {Button, ButtonGroup, CardHeader, Checkbox, Chip, FormControlLabel, Stack, Typography} from "@mui/material";
+import {
+    alpha,
+    Button,
+    ButtonGroup,
+    CardHeader,
+    Checkbox,
+    Chip,
+    FormControlLabel,
+    Stack,
+    Typography
+} from "@mui/material";
 import {useAppDispatch, useAppSelector} from "../../../hooks/redux";
 import {selectCurrentUserId} from "../../users/model/selectors";
 import {
@@ -24,6 +34,9 @@ import AutorenewIcon from "@mui/icons-material/Autorenew";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import {fileServerPath} from "../../../api";
 import {PhotoGallery} from "../../../components/common/PhotoGallery";
+import MySelectControl from "../../../styles/theme/customizations/MySelectControl";
+import {shipmentTypes} from "../../../utils/const";
+import {theme} from "../../../styles/theme/theme";
 
 interface IProps {
     shipment: IShipments | null;
@@ -72,19 +85,26 @@ const ShipmentShow: FC<IProps> = ({shipment}) => {
     const photoFilePaths = shipment.photo_file_paths
         ? shipment.photo_file_paths.map(fileName => (`${fileServerPath}/${fileName}`))
         : []
+    const shipmentTypeChangeHandler = (e: any) => {
+        if (e.target.value) {
+            dispatch(fetchUpdateShipment({...shipment, type: e.target.value}));
+        }
+    }
     const received = shipment.receiving_is_receiving;
     return (
-        <Card sx={{p: {xs: 1, sm: 2}, minHeight: 100}}>
+        <Card sx={{ minHeight: 100, border: 1, borderColor: alpha(theme.palette.divider,  0.04)}}>
             <CardHeader
-                title={<Stack direction={"row"} spacing={2} alignItems={"center"}>
-                    <Typography component="h2" variant="h5">
-                        {shipment.transporter || "Перевозчик не указан"}
-                    </Typography>
-                    <ShipmentTypeIcon type={shipment.type}
+                title={<Stack direction={"row"}
+                              spacing={2}
+                              alignItems={"center"}>
+                                <Typography component="h2" variant="h5">
+                                    {shipment.transporter || "Перевозчик не указан"}
+                                </Typography>
+                            <ShipmentTypeIcon type={shipment.type}
                                       received={shipment.receiving_is_receiving}/>
-                </Stack>}
+                        </Stack>}
                 subheader={
-                    <Stack direction="row" spacing={1} alignItems={"center"}>
+                    <Stack mt={2} direction="row" spacing={1} alignItems={"center"}>
                         <Typography variant={"subtitle1"}>№</Typography>
                         <EditableSpan value={shipment.lading_number}
                                       onChange={ladingNumberChangeHandler}
@@ -101,10 +121,12 @@ const ShipmentShow: FC<IProps> = ({shipment}) => {
                     pb: 1,
                     "& .MuiCardHeader-title": {fontWeight: 600},
                     "& .MuiCardHeader-subheader": {color: "text.secondary"},
+                    backgroundColor: "background.default",
+                    height: "105px"
                 }}
             />
             <Divider sx={{mb: 2}}/>
-            <CardContent sx={{pt: 0}}>
+            <CardContent sx={{p: {xs: 1, sm: 2},}}>
                 <Box sx={{
                     display: "grid",
                     gridTemplateColumns: "1fr 1fr",
@@ -164,10 +186,21 @@ const ShipmentShow: FC<IProps> = ({shipment}) => {
                                 position: "relative",
                                 display: "flex",
                                 alignItems: "end",
-                                justifyContent: "end",
+                                justifyContent: "space-between",
                                 flexGrow: 1,
-                            }}
+                                gap: 4
+,                            }}
                         >
+                            <MySelectControl value={shipment.type}
+                                             changeHandler={shipmentTypeChangeHandler}
+                                             label={"тип перевозки"}
+                                             name={"type"}
+                                             options={shipmentTypes.map(type => (
+                                                 {id: type.name, title: type.value})
+                                             )}
+                                             size={"small"}
+                                             sx={{width: "130px"}}
+                            />
                             <ButtonGroup fullWidth={false}>
                                 <MyButton
                                     variant="contained"
