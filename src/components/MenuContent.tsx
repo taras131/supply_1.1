@@ -12,15 +12,18 @@ import LoginIcon from '@mui/icons-material/Login';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
 import {useAppSelector} from "../hooks/redux";
 import {selectIsAuth} from "../features/auth/model/selectors";
-import { ExpandLess, ExpandMore } from '@mui/icons-material';
+import {ExpandLess, ExpandMore} from '@mui/icons-material';
 import Box from "@mui/material/Box";
-import {Collapse} from "@mui/material";
+import {Badge, Collapse} from "@mui/material";
+import {selectInvoicesUnpaidCount} from "../features/invoices/model/selectors";
+import {selectShipmentsUnReceivingCount} from "../features/shipments/model/selectors";
 
 const MenuContent = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const isAuth = useAppSelector(selectIsAuth);
-
+    const invoiceUnPaidCount = useAppSelector(selectInvoicesUnpaidCount);
+    const shipmentUnReceivingCount = useAppSelector(selectShipmentsUnReceivingCount);
     // Состояние для отслеживания открытых подменю
     const [openSubmenus, setOpenSubmenus] = useState<{ [key: string]: boolean }>({});
 
@@ -36,14 +39,14 @@ const MenuContent = () => {
     const isItemSelected = (item: IRouteConfig): boolean => {
         // Проверяем текущий элемент
         const isCurrentSelected = !!matchPath(
-            { path: item.path, end: false },
+            {path: item.path, end: false},
             location.pathname
         );
 
         // Проверяем дочерние элементы
         if (item.children) {
             const isChildSelected = item.children.some(child =>
-                !!matchPath({ path: child.path, end: false }, location.pathname)
+                !!matchPath({path: child.path, end: false}, location.pathname)
             );
             return isCurrentSelected || isChildSelected;
         }
@@ -55,7 +58,7 @@ const MenuContent = () => {
     const isSubmenuOpen = (item: IRouteConfig): boolean => {
         const manuallyOpen = openSubmenus[item.path];
         const hasSelectedChild = item.children?.some(child =>
-            !!matchPath({ path: child.path, end: false }, location.pathname)
+            !!matchPath({path: child.path, end: false}, location.pathname)
         );
         return manuallyOpen || hasSelectedChild || false;
     };
@@ -65,7 +68,6 @@ const MenuContent = () => {
         const hasChildren = item.children && item.children.length > 0;
         const isSelected = isItemSelected(item);
         const isOpen = isSubmenuOpen(item);
-
         const handleClick = () => {
             if (hasChildren) {
                 toggleSubmenu(item.path);
@@ -73,10 +75,20 @@ const MenuContent = () => {
                 navigate(item.path);
             }
         };
-
+        let badgeCount = null;
+        switch (item.path) {
+            case routes.invoices:
+                badgeCount = invoiceUnPaidCount
+                break;
+            case routes.shipments:
+                badgeCount = shipmentUnReceivingCount
+                break;
+            default:
+                badgeCount = null;
+        }
         return (
             <React.Fragment key={item.path}>
-                <ListItem disablePadding sx={{ display: "block" }}>
+                <ListItem disablePadding sx={{display: "block"}}>
                     <ListItemButton
                         selected={isSelected && !hasChildren}
                         onClick={handleClick}
@@ -87,7 +99,7 @@ const MenuContent = () => {
                             mb: 0.5,
                         }}
                     >
-                        <ListItemIcon sx={{ minWidth: 40 }}>
+                        <ListItemIcon sx={{minWidth: 40}}>
                             {item.icon}
                         </ListItemIcon>
                         <ListItemText
@@ -99,9 +111,16 @@ const MenuContent = () => {
                                 }
                             }}
                         />
+                        {badgeCount && (
+                            <Badge
+                                badgeContent={badgeCount}
+                                color="primary"
+                                overlap="circular"
+                            />
+                        )}
                         {hasChildren && (
-                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                {isOpen ? <ExpandLess /> : <ExpandMore />}
+                            <Box sx={{display: 'flex', alignItems: 'center'}}>
+                                {isOpen ? <ExpandLess/> : <ExpandMore/>}
                             </Box>
                         )}
                     </ListItemButton>
@@ -131,8 +150,8 @@ const MenuContent = () => {
     );
 
     return (
-        <Stack sx={{ flexGrow: 1, p: 1, justifyContent: 'space-between' }}>
-            <List dense sx={{ pt: 0 }}>
+        <Stack sx={{flexGrow: 1, p: 1, justifyContent: 'space-between'}}>
+            <List dense sx={{pt: 0}}>
                 {mainMenuItems}
             </List>
 
@@ -140,7 +159,7 @@ const MenuContent = () => {
             <List dense>
                 {!isAuth && (
                     <>
-                        <ListItem disablePadding sx={{ display: 'block' }}>
+                        <ListItem disablePadding sx={{display: 'block'}}>
                             <ListItemButton
                                 onClick={() => navigate(routes.login)}
                                 sx={{
@@ -149,13 +168,13 @@ const MenuContent = () => {
                                     mb: 0.5,
                                 }}
                             >
-                                <ListItemIcon sx={{ minWidth: 40 }}>
-                                    <LoginIcon />
+                                <ListItemIcon sx={{minWidth: 40}}>
+                                    <LoginIcon/>
                                 </ListItemIcon>
-                                <ListItemText primary="Вход" />
+                                <ListItemText primary="Вход"/>
                             </ListItemButton>
                         </ListItem>
-                        <ListItem disablePadding sx={{ display: 'block' }}>
+                        <ListItem disablePadding sx={{display: 'block'}}>
                             <ListItemButton
                                 onClick={() => navigate(routes.register)}
                                 sx={{
@@ -164,10 +183,10 @@ const MenuContent = () => {
                                     mb: 0.5,
                                 }}
                             >
-                                <ListItemIcon sx={{ minWidth: 40 }}>
-                                    <AppRegistrationIcon />
+                                <ListItemIcon sx={{minWidth: 40}}>
+                                    <AppRegistrationIcon/>
                                 </ListItemIcon>
-                                <ListItemText primary="Регистрация" />
+                                <ListItemText primary="Регистрация"/>
                             </ListItemButton>
                         </ListItem>
                     </>

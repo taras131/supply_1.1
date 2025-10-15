@@ -17,4 +17,8 @@ export const selectShipmentById = createSelector(
 export const selectShipmentsIsLoading = createSelector([selectShipmentsState],
     (shipmentState) => shipmentState.isLoading);
 
-
+export const selectShipmentsUnReceivingCount = createSelector(
+    [selectShipmentsState],
+    shipmentState =>
+        shipmentState.list.filter(shipment => !shipment.receiving_is_receiving).length || null
+);

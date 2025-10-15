@@ -52,7 +52,9 @@ export const fetchAddInvoice = createAsyncThunk(
             if (invoice.author_date === 0) {
                 invoice.author_date = new Date().getTime()
             }
-            return await invoicesAPI.add(invoice);
+            const res = await invoicesAPI.add(invoice);
+            dispatch(fetchGetInvoicesStatistics());
+            return res;
         } catch (e) {
             console.log(e)
             const msg = handlerError(e);
@@ -120,7 +122,9 @@ export const fetchUpdateInvoice = createAsyncThunk(
     "invoices/update",
     async (invoice: IInvoice, {dispatch, rejectWithValue}) => {
         try {
-            return await invoicesAPI.update(invoice);
+            const res = await invoicesAPI.update(invoice);
+            dispatch(fetchGetInvoicesStatistics());
+            return res;
         } catch (e) {
             const msg = handlerError(e);
             dispatch(setModalMessage(msg));
@@ -200,7 +204,6 @@ export const fetchUploadInvoice = createAsyncThunk(
             const {invoice, file} = uploadData;
             if (invoice.invoice_file_link) {
                 try {
-                    console.log(invoice.invoice_file_link)
                     const fileName = invoice.invoice_file_link.split("/").reverse()[0];
                     const res = await filesAPI.delete(fileName);
                     console.log(res)
@@ -211,7 +214,6 @@ export const fetchUploadInvoice = createAsyncThunk(
             const invoice_in = {...invoice}
             if (file) {
                 const uploadedFile = await filesAPI.upload(file);
-                console.log(uploadedFile)
                 invoice_in.invoice_file_link = `${fileServerPath}/${uploadedFile}`
             }
             return await dispatch(fetchUpdateInvoice(invoice_in)).unwrap();

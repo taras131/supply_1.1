@@ -16,4 +16,7 @@ export const selectInvoicesIsLoading = createSelector([selectInvoicesState],
 export const selectInvoicesStatistics = createSelector([selectInvoicesState],
     (invoiceState) => invoiceState.statistics);
 
+export const selectInvoicesUnpaidCount = createSelector([selectInvoicesState],
+    (invoiceState) => invoiceState.statistics?.unpaid_statistics.count || null);
+
 
