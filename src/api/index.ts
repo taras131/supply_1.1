@@ -1,12 +1,12 @@
 import axios from "axios";
 
-//export const nestServerPath = "/api";
+export const nestServerPath = "/api";
 //export const nestServerPath = "http://localhost:3000/api";
-export const nestServerPath = "http://77.110.104.31/api";
+//export const nestServerPath = "http://77.110.104.31/api";
 
-//export const fileServerPath = "/static";
+export const fileServerPath = "/static";
 //export const fileServerPath = "http://localhost:3000/static";
-export const fileServerPath = "http://77.110.104.31/static";
+//export const fileServerPath = "http://77.110.104.31/static";
 
 export const appAPI = axios.create({
   baseURL: `${nestServerPath}`,
