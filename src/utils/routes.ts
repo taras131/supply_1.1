@@ -24,4 +24,5 @@ export const routes = {
     machineryAddTask: "/machinery/tasks/add_task/:machineryId/",
     machineryComments: "/machinery/comments/",
     machineryMaintenance: "/machinery/maintenance/",
+    technicalLiterature: "/technical_literature/",
 };

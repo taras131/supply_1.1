@@ -31,6 +31,8 @@ import GradingIcon from '@mui/icons-material/Grading';
 import AirlineSeatIndividualSuiteIcon from '@mui/icons-material/AirlineSeatIndividualSuite';
 import ShoppingBasketIcon from '@mui/icons-material/ShoppingBasket';
 import MainPage from "../features/main/ui/MainPage";
+import TechnicalLiteraturePage from "../features/technical_literature/ui/TechnicalLiteraturePage";
+import MenuBookIcon from '@mui/icons-material/MenuBook';
 
 export interface IRouteConfig {
     icon?: React.ReactNode;
@@ -207,6 +209,13 @@ export const routesConfig: IRouteConfig[] = [
         element: <TaskDetailsPage/>,
         label: "Подробности задачи",
         showInMenu: false
+    },
+    {
+        icon: <MenuBookIcon/>,
+        path: routes.technicalLiterature,
+        element: <TechnicalLiteraturePage/>,
+        label: "Тех. литература",
+        showInMenu: true
     },
     {
         icon: <HomeRoundedIcon/>,

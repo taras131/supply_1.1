@@ -8,6 +8,7 @@ import {fileServerPath} from "../../../api";
 import {setOrdersPositions} from "../../orders_positions/model/slice";
 import {setShipments} from "../../shipments/model/slice";
 import {IShipments} from "../../../models/iShipments";
+import {setInvoicesComments} from "../../invoices_comments/model/slice";
 
 function mergeInvoicesPreserveLocal(
     oldArr: IInvoice[],
@@ -97,7 +98,7 @@ export const fetchGetInvoiceById = createAsyncThunk(
     "invoices/get_by_id",
     async (id: string, {dispatch, rejectWithValue}) => {
         try {
-            const {positions, shipment_invoices, ...res} = await invoicesAPI.getById(id);
+            const {positions, shipment_invoices, comments, ...res} = await invoicesAPI.getById(id);
             if (positions) {
                 dispatch(setOrdersPositions(positions));
             }
@@ -108,6 +109,9 @@ export const fetchGetInvoiceById = createAsyncThunk(
                     shipments.push({...shipment, shipment_invoices: [shipment_invoices]});
                 })
                 dispatch(setShipments(shipments));
+            }
+            if (comments) {
+                dispatch(setInvoicesComments(comments));
             }
             return res;
         } catch (e) {

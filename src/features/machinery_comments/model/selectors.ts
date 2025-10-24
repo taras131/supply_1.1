@@ -1,11 +1,14 @@
-import { RootState } from "../../../store";
-import { createSelector } from "@reduxjs/toolkit";
+import {RootState} from "../../../store";
+import {createSelector} from "@reduxjs/toolkit";
 
 const selectMachineryCommentsState = (state: RootState) => state.machineryComments;
 
 export const selectAllMachineryComments = createSelector([selectMachineryCommentsState],
     (machineryCommentsState) => {
-  const active = machineryCommentsState.list.filter((c) => c.is_active !== false);
-  const inactive = machineryCommentsState.list.filter((c) => c.is_active === false);
-  return [...active, ...inactive];
-});
+        const active = machineryCommentsState.list.filter((c) => c.is_active !== false);
+        const inactive = machineryCommentsState.list.filter((c) => c.is_active === false);
+        return [...active, ...inactive];
+    });
+
+export const selectMachineryActiveCommentCount = createSelector([selectMachineryCommentsState],
+    (machineryCommentsState) => machineryCommentsState.list.filter((c) => c.is_active !== false)?.length || null);

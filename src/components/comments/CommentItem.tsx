@@ -1,36 +1,44 @@
-import React, {FC, useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState} from 'react';
 import {CardActions, ListItem, Stack, Typography} from "@mui/material";
-import {defaultMachineryComment, IMachineryComment} from "../../../models/IMachineryComment";
-import PerformerChip from "../../users/ui/PerformerChip";
-import {getUserRoleById} from "../../users/utils/services";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
+import PerformerChip from "../../features/users/ui/PerformerChip";
+import {getUserRoleById} from "../../features/users/utils/services";
 import Divider from "@mui/material/Divider";
-import {useEditor} from "../../../hooks/useEditor";
-import {machineryCommentValidate} from "../../../utils/validators";
-import FieldControl from "../../../components/common/FieldControl";
+import FieldControl from "../common/FieldControl";
+import {formatDateDDMMYYYY} from "../../utils/services";
 import CommentActions from "./CommentActions";
-import {useAppSelector} from "../../../hooks/redux";
-import {selectCurrentUserId} from "../../users/model/selectors";
-import {formatDateDDMMYYYY} from "../../../utils/services";
+import {IMachineryComment} from "../../models/IMachineryComment";
+import {IInvoiceComment} from "../../models/iInvoiceComment";
+import {useAppSelector} from "../../hooks/redux";
+import {selectCurrentUserId} from "../../features/users/model/selectors";
+import {useEditor} from "../../hooks/useEditor";
+import {commentValidate} from "../../utils/validators";
 
-interface IProps {
-    comment: IMachineryComment;
-    isShowMachineryInfo: boolean;
+interface IProps<T extends IMachineryComment | IInvoiceComment> {
+    comment: T;
+    isShowMachineryInfo?: boolean;
 }
 
-const MachineryCommentsItem: FC<IProps> = ({comment, isShowMachineryInfo}) => {
+const CommentItem = <T extends IMachineryComment
+    | IInvoiceComment>({
+                           comment,
+                           isShowMachineryInfo = false
+                       }: IProps<T>) => {
     const [isEdit, setIsEdit] = useState(false);
     const currenUserId = useAppSelector(selectCurrentUserId);
     const memoizedInitialValue = useMemo(
         () => comment,
         [comment]
     );
-    const validate = useMemo(() => machineryCommentValidate(isShowMachineryInfo), [isShowMachineryInfo]);
-    const {editedValue, errors, handleFieldChange, setEditedValue} = useEditor<IMachineryComment>({
+    const validate = useMemo(() => commentValidate<T>(isShowMachineryInfo), [isShowMachineryInfo]);
+    const {editedValue, errors, handleFieldChange, setEditedValue} = useEditor<T>({
         initialValue: memoizedInitialValue,
         validate: validate,
     });
+    useEffect(() => {
+        setEditedValue(comment);
+    }, [setEditedValue, comment])
     const toggleIsEdit = () => {
         setIsEdit((prev) => !prev);
     };
@@ -91,7 +99,7 @@ const MachineryCommentsItem: FC<IProps> = ({comment, isShowMachineryInfo}) => {
                                     ? `изменено: ${formatDateDDMMYYYY(comment.updated_at)}`
                                     : `добавлено: ${formatDateDDMMYYYY(comment.created_at)}`}
                             </Typography>
-                            {comment.machinery && isShowMachineryInfo && (
+                            {'machinery' in comment && comment.machinery && isShowMachineryInfo && (
                                 <Typography
                                     variant="caption"
                                     color="textSecondary"
@@ -110,7 +118,7 @@ const MachineryCommentsItem: FC<IProps> = ({comment, isShowMachineryInfo}) => {
                 </CardContent>
                 <CardActions>
                     {currenUserId === comment.author_id && (
-                        <CommentActions
+                        <CommentActions<T>
                             comment={editedValue}
                             isEdit={isEdit}
                             toggleIsEdit={toggleIsEdit}
@@ -124,4 +132,4 @@ const MachineryCommentsItem: FC<IProps> = ({comment, isShowMachineryInfo}) => {
     );
 };
 
-export default MachineryCommentsItem;
+export default CommentItem;

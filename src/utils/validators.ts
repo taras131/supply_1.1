@@ -10,6 +10,7 @@ import {IMachineryProblem, INewMachineryProblem} from "../models/IMachineryProbl
 import {INewOrder, IOrder} from "../models/iOrders";
 import {IInvoice, INewInvoice} from "../models/iInvoices";
 import {INewShipments, IShipments} from "../models/iShipments";
+import {INewTechnicalLiterature, ITechnicalLiterature} from "../models/ITechnicalLiterature";
 
 export type ValidationErrors = { [key: string]: string | null };
 
@@ -51,14 +52,24 @@ export const docValidate = (doc: INewMachineryDoc) => {
     return errors;
 };
 
-export const machineryCommentValidate =
-    (isShowMachineryInfo = false) =>
-        (comment: INewMachineryComment) => {
-            const errors: ValidationErrors = {};
-            if (comment.text.length < 5) errors.text = "Должно быть не менее 5 символов";
-            if (isShowMachineryInfo && comment.machinery_id === "-1") errors.machinery_id = "Выбирите технику";
-            return errors;
-        };
+export const commentValidate = <T extends { text: string }>(
+    isShowMachineryInfo = false
+) => (comment: T) => {
+    const errors: ValidationErrors = {};
+
+    if (comment.text.length < 5) errors.text = "Должно быть не менее 5 символов";
+
+    // machinery_id только для machinery-комментариев
+    if (
+        isShowMachineryInfo &&
+        "machinery_id" in comment &&
+        comment.machinery_id === "-1"
+    ) {
+        errors.machinery_id = "Выберите технику";
+    }
+
+    return errors;
+};
 
 export const problemValidate = (problem: INewMachineryProblem | IMachineryProblem) => {
     const errors: ValidationErrors = {};
@@ -184,16 +195,22 @@ export const orderValidate = (order: INewOrder | IOrder) => {
 
 export const invoiceValidate = (invoice: INewInvoice | IInvoice) => {
     const errors: ValidationErrors = {};
-    if(invoice.supplier_id === "-1") errors.supplier_id = "выберите поставщика";
-    if(invoice.number.length < 1) errors.number = "введите номер счёта";
-    if(+invoice.amount < 1) errors.amount = "введите сумму";
+    if (invoice.supplier_id === "-1") errors.supplier_id = "выберите поставщика";
+    if (invoice.number.length < 1) errors.number = "введите номер счёта";
+    if (+invoice.amount < 1) errors.amount = "введите сумму";
     return errors;
 }
 
 export const shipmentValidate = (shipment: INewShipments | IShipments) => {
     const errors: ValidationErrors = {};
-    if(shipment.lading_number.length < 2) errors.lading_number = "введите номер накладной";
-    if(shipment.transporter === "-1") errors.transporter = "выбирите перевозчика";
-    if(shipment.type === "-1") errors.type = "выбирите тип отгрузки";
+    if (shipment.lading_number.length < 2) errors.lading_number = "введите номер накладной";
+    if (shipment.transporter === "-1") errors.transporter = "выбирите перевозчика";
+    if (shipment.type === "-1") errors.type = "выбирите тип отгрузки";
     return errors;
 }
+
+export const technicalLiteratureValidate = (literature: INewTechnicalLiterature | ITechnicalLiterature) => {
+    const errors: ValidationErrors = {};
+    if (!literature.brand) errors.brand = "ВВедите марку";
+    return errors;
+};

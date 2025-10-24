@@ -1,12 +1,11 @@
 import React, { ChangeEvent, FC } from "react";
 import FieldControl from "../../../components/common/FieldControl";
 import { problemCategories } from "../../machinery/utils/const";
-import { convertMillisecondsToDate, formatDateDDMMYYYY } from "../../../utils/services";
+import { convertMillisecondsToDate } from "../../../utils/services";
 import {
   IMachineryProblem,
   INewMachineryProblem,
   problemPriority,
-  problemStatus,
 } from "../../../models/IMachineryProblems";
 import { ValidationErrors } from "../../../utils/validators";
 import { SelectChangeEvent, Stack } from "@mui/material";

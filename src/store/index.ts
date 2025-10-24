@@ -15,9 +15,12 @@ import machineryDocsReducer from "../features/machinery_docs/model/slice";
 import machineryProblemsReducer from "../features/machinery_problems/model/slice";
 import machineryTasksReducer from "../features/machinery_tasks/model/slice";
 import machineryCommentsReducer from "../features/machinery_comments/model/slice";
+import invoicesCommentsReducer from "../features/invoices_comments/model/slice";
+import technicalLiteratureReducer from "../features/technical_literature/model/slice";
 
 const rootReducer = combineReducers({
     invoices: InvoicesReducer,
+    invoicesComments: invoicesCommentsReducer,
     suppliers: SuppliersReducer,
     message: MessageReducer,
     auth: authReducer,
@@ -32,6 +35,7 @@ const rootReducer = combineReducers({
     users: usersReducer,
     files: filesReducer,
     companies: companiesReducer,
+    technicalLiterature: technicalLiteratureReducer,
 });
 export const setupStore = () => {
     return configureStore({

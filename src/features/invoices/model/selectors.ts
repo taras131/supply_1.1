@@ -10,6 +10,9 @@ export const selectInvoices = createSelector([selectInvoicesState],
 export const selectCurrentInvoice = createSelector([selectInvoicesState],
     (invoiceState) => invoiceState.current);
 
+export const selectCurrentInvoiceId = createSelector([selectInvoicesState],
+    (invoiceState) => invoiceState.current?.id || null);
+
 export const selectInvoicesIsLoading = createSelector([selectInvoicesState],
     (invoiceState) => invoiceState.isLoading);
 

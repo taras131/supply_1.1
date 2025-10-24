@@ -9,7 +9,7 @@ import {useNavigate} from "react-router-dom";
 import {
     convertMillisecondsToDateWithTextMonths,
 } from "../../../utils/services";
-import { Stack, Typography} from "@mui/material";
+import {Stack, Typography} from "@mui/material";
 
 import {IInvoice} from "../../../models/iInvoices";
 import {selectCurrentUserId} from "../../users/model/selectors";
@@ -20,7 +20,7 @@ import {
     approvedColumn,
     authorDateColumn,
     invoiceFileLinkColumn,
-    invoiceNumberColumn, isShipmentColumn,
+    invoiceNumberColumn, isCommentsColumn, isShipmentColumn,
     paidColumn,
     paymentFileLinkColumn, supplierINNColumn,
     supplierNameColumn,
@@ -55,6 +55,7 @@ const InvoicesTable: FC<IProps> = ({
             paid_date_text: row.paid_is_paid && row.paid_date
                 ? convertMillisecondsToDateWithTextMonths(+row.paid_date)
                 : "",
+            commentsCount: row.comments?.length || null,
         }));
     }, [rows]);
     const onToggleApproved = useCallback((invoice: IInvoice, checked: boolean) => {
@@ -90,6 +91,7 @@ const InvoicesTable: FC<IProps> = ({
             invoiceFileLinkColumn(),
             paymentFileLinkColumn(),
             isShipmentColumn(),
+            isCommentsColumn(),
             approvedColumn(onToggleApproved),
         ],
         [onToggleApproved]

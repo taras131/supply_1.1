@@ -1,4 +1,4 @@
-import {Button, Checkbox, Stack, Typography} from "@mui/material";
+import {Button, Checkbox, Stack, Typography, Badge} from "@mui/material";
 import React from "react";
 import Box from "@mui/material/Box";
 import EditableSelect from "../../../components/common/EditableSelect";
@@ -13,6 +13,7 @@ import {IInvoice} from "../../../models/iInvoices";
 import UploadPayment from "./UploadPayment";
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import IconWrapper from "../../../components/common/IconWrapper";
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 
 export const approvedColumn = (onToggleApproved: (invoice: IInvoice, checked: boolean) => void) => {
     return ({
@@ -282,6 +283,31 @@ export const isShipmentColumn = () => {
                 <LocalShippingIcon/>
             </IconWrapper>)
             : ""),
-        width: 20,
+        width: 15,
+    })
+}
+
+export const isCommentsColumn = () => {
+    return ({
+        field: "commentsCount",
+        headerName: "",
+        disableColumnMenu: true,
+        renderCell: (params: any) => (params.row.commentsCount
+            ? (<IconWrapper>
+                <Badge
+                    badgeContent={params.row.commentsCount}
+                    color="primary"
+                    sx={{
+                        '& .MuiBadge-badge': {
+
+                            padding: '0 4px',
+                        },
+                    }}
+                >
+                    <ChatBubbleOutlineIcon/>
+                </Badge>
+            </IconWrapper>)
+            : ""),
+        width: 15,
     })
 }
