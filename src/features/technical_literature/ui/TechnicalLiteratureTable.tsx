@@ -4,7 +4,7 @@ import {GridEventListener} from '@mui/x-data-grid';
 import DownloadIcon from '@mui/icons-material/Download';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VerifiedIcon from '@mui/icons-material/Verified';
-import {convertMillisecondsToDateWithTextMonths, formatDateDDMMYYYY} from "../../../utils/services";
+import {formatDateDDMMYYYY} from "../../../utils/services";
 import {useAppDispatch, useAppSelector} from "../../../hooks/redux";
 import {selectAllTechnicalLiterature, selectTechnicalLiteratureIsLoading} from "../model/selectors";
 import EditableSelect from "../../../components/common/EditableSelect";
@@ -15,6 +15,7 @@ import ConfirmDeleteDialog from "../../../components/common/ConfirmDeleteDialog"
 import * as React from "react";
 import {fetchDeleteTechnicalLiterature} from "../model/actions";
 import {fileServerPath} from "../../../api";
+import {literatureTypes} from "../../../models/ITechnicalLiterature";
 
 type TLiteratureFilter = 'all' | 'verified' | 'unverified' | 'popular';
 
@@ -25,6 +26,10 @@ const filterOptionLabels: Record<TLiteratureFilter, string> = {
     unverified: 'Непроверённые',
     popular: 'Популярные',
 };
+
+const literatureTypeMap = new Map(
+    literatureTypes.map(type => [type.id, type.title])
+);
 
 interface IProps {
     filterValue?: TLiteratureFilter;
@@ -50,15 +55,7 @@ const literatureTypeColumn = () => ({
     headerName: 'Тип',
     flex: 0.7,
     renderCell: (params: any) => {
-        const typeMap: Record<number, string> = {
-            1: 'Руководство по ремонту',
-            2: 'Каталог запчастей',
-            3: 'Руководство по эксплуатации',
-            4: 'Схема электрическая',
-            5: 'Схема гидравлическая',
-            6: 'Техническое описание',
-        };
-        return typeMap[params.value] || `Тип ${params.value}`;
+        return literatureTypeMap.get(params.value) || `Тип ${params.value}`;
     },
 });
 
