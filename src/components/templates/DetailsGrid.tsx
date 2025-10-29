@@ -11,7 +11,7 @@ const DetailsGrid: FC<IProps> = ({isEditMode = false, children}) => {
         <Box sx={{
             width: "100%",
             display: "grid",
-            gridTemplateColumns: `repeat(auto-fit, minmax(${isEditMode ? 240 : 200}px, 1fr))`,
+            gridTemplateColumns: `repeat(auto-fit, minmax(${isEditMode ? 340 : 400}px, 1fr))`,
             gap: isEditMode ? "14px" : "34px",
             "& > *": {
                 minWidth: isEditMode ? "280px" : "180px",

@@ -14,7 +14,9 @@ export const ordersAPI = {
         return res.data;
     },
     getAll: async () => {
+        console.log("orders getAll")
         const res = await appAPI.get(ordersPath);
+        console.log(res)
         return await res.data;
     },
     getById: async (orderId: string) => {

@@ -211,6 +211,7 @@ export const shipmentValidate = (shipment: INewShipments | IShipments) => {
 
 export const technicalLiteratureValidate = (literature: INewTechnicalLiterature | ITechnicalLiterature) => {
     const errors: ValidationErrors = {};
-    if (!literature.brand) errors.brand = "ВВедите марку";
+    if (+literature.literature_type_id < 0) errors.literature_type_id = "Выберите тип литературы.";
+    if (+literature.machinery_type_id < 0) errors.machinery_type_id = "Выберите тип техники.";
     return errors;
 };

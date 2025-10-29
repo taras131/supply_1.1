@@ -9,6 +9,8 @@ import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
 import React, {useState} from 'react';
 import SideMenuMobile from './SideMenuMobile';
 import MenuButton from "./common/MenuButton";
+import {useAppSelector} from "../hooks/redux";
+import {selectCurrentCompany, selectCurrentCompanyName} from "../features/companies/model/selectors";
 
 const Toolbar = styled(MuiToolbar)({
     width: '100%',
@@ -27,7 +29,7 @@ export default function AppNavbar() {
     const toggleDrawer = (newOpen: boolean) => () => {
         setOpen(newOpen);
     };
-
+    const currentCompanyName = useAppSelector(selectCurrentCompanyName)
     return (
         <AppBar
             position="fixed"
@@ -54,7 +56,7 @@ export default function AppNavbar() {
                     <Stack direction="row" spacing={1} sx={{justifyContent: 'center', mr: 'auto'}}>
                         <CustomIcon/>
                         <Typography variant="h4" component="h1" sx={{color: 'text.primary'}}>
-                            Dashboard
+                            {currentCompanyName || ""}
                         </Typography>
                     </Stack>
                     <MenuButton aria-label="menu" onClick={toggleDrawer(true)}>

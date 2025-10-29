@@ -40,6 +40,7 @@ export interface IRouteConfig {
     element: React.ReactNode;
     label: string; // Название для меню
     showInMenu?: boolean; // Показывать в меню или нет
+    showInDownMenu?: boolean; // Показывать в меню или нет
     children?: IRouteConfig[];
 }
 
@@ -215,7 +216,8 @@ export const routesConfig: IRouteConfig[] = [
         path: routes.technicalLiterature,
         element: <TechnicalLiteraturePage/>,
         label: "Тех. литература",
-        showInMenu: true
+        showInMenu: false,
+        showInDownMenu: true,
     },
     {
         icon: <HomeRoundedIcon/>,

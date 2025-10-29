@@ -1,6 +1,11 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {ITechnicalLiterature} from "../../../models/ITechnicalLiterature";
-import {fetchAddTechnicalLiterature, fetchGetAllTechnicalLiterature} from "./actions";
+import {
+    fetchAddTechnicalLiterature,
+    fetchDeleteTechnicalLiterature,
+    fetchGetAllTechnicalLiterature,
+    fetchUpdateLiterature
+} from "./actions";
 
 interface ITechnicalLiteratureState {
     list: ITechnicalLiterature[];
@@ -43,10 +48,23 @@ export const TechnicalLiteratureSlice = createSlice({
                 state.list = action.payload.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
                 state.isLoading = false;
             })
+            .addCase(fetchUpdateLiterature.fulfilled, (state, action: PayloadAction<ITechnicalLiterature>) => {
+                state.current = action.payload
+                state.list = [...state.list.map(item => item.id === action.payload.id ? action.payload : item)]
+                state.isLoading = false;
+            })
+            .addCase(fetchDeleteTechnicalLiterature.fulfilled, (state, action: PayloadAction<string>) => {
+                state.list = [...state.list.filter(item => item.id !== action.payload)]
+                state.isLoading = false;
+            })
             .addCase(fetchAddTechnicalLiterature.pending, handlePending)
             .addCase(fetchAddTechnicalLiterature.rejected, handleRejected)
             .addCase(fetchGetAllTechnicalLiterature.pending, handlePending)
-            .addCase(fetchGetAllTechnicalLiterature.rejected, handleRejected);
+            .addCase(fetchGetAllTechnicalLiterature.rejected, handleRejected)
+            .addCase(fetchUpdateLiterature.pending, handlePending)
+            .addCase(fetchUpdateLiterature.rejected, handleRejected)
+            .addCase(fetchDeleteTechnicalLiterature.pending, handlePending)
+            .addCase(fetchDeleteTechnicalLiterature.rejected, handleRejected);
     },
 });
 

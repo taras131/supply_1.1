@@ -28,7 +28,10 @@ export const fetchGetAllOrders = createAsyncThunk("orders/get_all", async (_, {
     rejectWithValue, dispatch
 }) => {
     try {
-        return await ordersAPI.getAll();
+        console.log("orders")
+        const res = await ordersAPI.getAll();
+        console.log(res)
+        return res;
     } catch (e) {
         const msg = handlerError(e);
         dispatch(setModalMessage(msg));

@@ -1,6 +1,5 @@
-import {IMachineryComment} from "../../../models/IMachineryComment";
 import {appAPI} from "../../../api";
-import {INewTechnicalLiterature} from "../../../models/ITechnicalLiterature";
+import {INewTechnicalLiterature, ITechnicalLiterature} from "../../../models/ITechnicalLiterature";
 
 const technicalLiteraturePath = `/technical_literature`;
 
@@ -11,8 +10,10 @@ export const technicalLiteratureAPI = {
                 technicalLiteraturePath,
                 {
                     ...literature,
-                    year_from: +literature.year_from,
-                    year_to: +literature.year_to,
+                    year_from: +literature.year_from || 0,
+                    year_to: +literature.year_to || 0,
+                    engine_type_ids: literature.engine_type_ids.map(item => Number(item)),
+                    file_size: +literature.file_size || 0,
                     pages: Number(literature?.pages || 0),
                 });
             return res.data;
@@ -28,9 +29,17 @@ export const technicalLiteratureAPI = {
         const res = await appAPI.get(technicalLiteraturePath);
         return res.data;
     },
-    update: async (book: IMachineryComment) => {
+    update: async (literature: ITechnicalLiterature) => {
+        console.log(literature)
         try {
-            const res = await appAPI.put(`${technicalLiteraturePath}/${book.id}/`, book);
+            const res = await appAPI.put(`${technicalLiteraturePath}/${literature.id}/`, {
+                ...literature,
+                year_from: +literature.year_from || 0,
+                year_to: +literature.year_to || 0,
+                file_size: +literature.file_size || 0,
+                engine_type_ids: literature.engine_type_ids.map(item => Number(item)),
+                pages: Number(literature?.pages || 0),
+            });
             return res.data;
         } catch (error: any) {
             const message =

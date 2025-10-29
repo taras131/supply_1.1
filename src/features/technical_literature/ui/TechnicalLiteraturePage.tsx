@@ -4,6 +4,7 @@ import PageTemplate from "../../../components/templates/PageTemplate";
 import TechnicalLiteratureTable from "./TechnicalLiteratureTable";
 import {useAppDispatch} from "../../../hooks/redux";
 import {fetchGetAllTechnicalLiterature} from "../model/actions";
+import TechnicalLiteratureDetails from "./TechnicalLiteratureDetails";
 
 const TechnicalLiteraturePage = () => {
     const dispatch = useAppDispatch();
@@ -14,6 +15,7 @@ const TechnicalLiteraturePage = () => {
         <PageTemplate>
             <TechnicalLiteraturePageHeader/>
             <TechnicalLiteratureTable/>
+            <TechnicalLiteratureDetails/>
         </PageTemplate>
     );
 };

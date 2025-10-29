@@ -1,15 +1,20 @@
-import {FC, useMemo, useCallback, memo} from 'react';
+import {FC, useMemo, useCallback, memo, useState} from 'react';
 import {Box, Stack, Typography, IconButton, Tooltip} from '@mui/material';
-import {useNavigate} from 'react-router-dom';
 import {GridEventListener} from '@mui/x-data-grid';
 import DownloadIcon from '@mui/icons-material/Download';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VerifiedIcon from '@mui/icons-material/Verified';
-import {convertMillisecondsToDateWithTextMonths} from "../../../utils/services";
+import {convertMillisecondsToDateWithTextMonths, formatDateDDMMYYYY} from "../../../utils/services";
 import {useAppDispatch, useAppSelector} from "../../../hooks/redux";
 import {selectAllTechnicalLiterature, selectTechnicalLiteratureIsLoading} from "../model/selectors";
 import EditableSelect from "../../../components/common/EditableSelect";
 import {MyDataGrid} from "../../../styles/theme/customizations/MyDataGrid";
+import {setCurrentLiterature} from "../model/slice";
+import {selectCurrentUserId} from "../../users/model/selectors";
+import ConfirmDeleteDialog from "../../../components/common/ConfirmDeleteDialog";
+import * as React from "react";
+import {fetchDeleteTechnicalLiterature} from "../model/actions";
+import {fileServerPath} from "../../../api";
 
 type TLiteratureFilter = 'all' | 'verified' | 'unverified' | 'popular';
 
@@ -30,22 +35,20 @@ interface IProps {
 const brandColumn = () => ({
     field: 'brand',
     headerName: 'Марка',
-    flex: 0.8,
-    minWidth: 100,
+    flex: 0.5,
+
 });
 
 const modelColumn = () => ({
     field: 'model',
     headerName: 'Модель',
-    flex: 0.8,
-    minWidth: 100,
+    flex: 0.7,
 });
 
 const literatureTypeColumn = () => ({
     field: 'literature_type_id',
     headerName: 'Тип',
     flex: 0.7,
-    minWidth: 120,
     renderCell: (params: any) => {
         const typeMap: Record<number, string> = {
             1: 'Руководство по ремонту',
@@ -62,23 +65,20 @@ const literatureTypeColumn = () => ({
 const yearRangeColumn = () => ({
     field: 'year_range',
     headerName: 'Годы выпуска',
-    flex: 0.9,
-    minWidth: 120,
+    width: 120,
     renderCell: (params: any) => `${params.row.year_from}-${params.row.year_to}`,
 });
 
 const languageColumn = () => ({
     field: 'language',
     headerName: 'Язык',
-    flex: 0.6,
-    minWidth: 70,
+    width: 60,
 });
 
 const fileSizeColumn = () => ({
     field: 'file_size',
     headerName: 'Размер',
-    flex: 0.7,
-    minWidth: 100,
+    width: 110,
     renderCell: (params: any) => {
         const sizeInMB = (params.value / 1024 / 1024).toFixed(2);
         return `${sizeInMB} МБ`;
@@ -88,8 +88,7 @@ const fileSizeColumn = () => ({
 const pagesColumn = () => ({
     field: 'pages',
     headerName: 'Страниц',
-    flex: 0.6,
-    minWidth: 70,
+    width: 75,
     renderCell: (params: any) => params.value || '-',
 });
 
@@ -104,26 +103,29 @@ const ratingColumn = () => ({
     },
 });
 
+const codeColumn = () => ({
+    field: 'code',
+    headerName: 'Код',
+    minWidth: 80,
+});
+
 const downloadsColumn = () => ({
     field: 'downloads_count',
     headerName: 'Скачиваний',
-    flex: 0.8,
-    minWidth: 100,
+    width: 95,
 });
 
 const createdDateColumn = () => ({
     field: 'created_at',
     headerName: 'Добавлена',
-    flex: 0.9,
-    minWidth: 120,
-    renderCell: (params: any) => convertMillisecondsToDateWithTextMonths(+params.value),
+    width: 110,
+    renderCell: (params: any) => formatDateDDMMYYYY(params.value),
 });
 
 const verifiedColumn = () => ({
     field: 'is_verified',
     headerName: 'Проверена',
-    flex: 0.7,
-    minWidth: 100,
+    width: 100,
     renderCell: (params: any) => (
         params.value ? (
             <Tooltip title="Проверена модератором">
@@ -137,37 +139,39 @@ const verifiedColumn = () => ({
     ),
 });
 
-const actionsColumn = (onDelete: (id: string) => void) => ({
+const actionsColumn = (onDelete: (id: string, e: any) => void, currentUserId: string) => ({
     field: 'actions',
     headerName: 'Действия',
-    flex: 0.6,
-    minWidth: 100,
+    width: 90,
     sortable: false,
     renderCell: (params: any) => (
         <Stack direction="row"
                spacing={0.5}
                sx={{width: '100%', height: '100%'}}
                alignItems={"center"}
-               justifyContent={"center"}>
+               justifyContent={"start"}>
             <Tooltip title="Скачать">
                 <IconButton
                     size="small"
-                    href={params.row.file_url}
+                    href={`${fileServerPath}/${params.row.file_url}`}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
                 >
                     <DownloadIcon fontSize="small"/>
                 </IconButton>
             </Tooltip>
-            <Tooltip title="Удалить">
-                <IconButton
-                    size="small"
-                    onClick={() => onDelete(params.row.id)}
-                    color="error"
-                >
-                    <DeleteIcon fontSize="small"/>
-                </IconButton>
-            </Tooltip>
+            {currentUserId === params.row.author_id && (
+                <Tooltip title="Удалить">
+                    <IconButton
+                        size="small"
+                        onClick={(e) => onDelete(params.row, e)}
+                        color="error"
+                    >
+                        <DeleteIcon fontSize="small"/>
+                    </IconButton>
+                </Tooltip>
+            )}
         </Stack>
     ),
 });
@@ -177,10 +181,26 @@ const TechnicalLiteratureTable: FC<IProps> = ({
                                                   filterChangeHandler,
                                               }) => {
     const dispatch = useAppDispatch();
-    const navigate = useNavigate();
     const rows = useAppSelector(selectAllTechnicalLiterature);
     const isLoading = useAppSelector(selectTechnicalLiteratureIsLoading);
-
+    const currentUserId = useAppSelector(selectCurrentUserId);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [activeRowId, setActiveRowId] = useState<string | null>(null);
+    const openDeleteDialog = (row: any, e: any) => {
+        e.stopPropagation();
+        setActiveRowId(row.id);
+        setDeleteDialogOpen(true);
+    };
+    const closeDeleteDialog = useCallback(() => {
+        setDeleteDialogOpen(false);
+        setActiveRowId(null);
+    }, []);
+    const handleRowClick = useCallback<GridEventListener<"rowClick">>(
+        ({row}) => {
+            dispatch(setCurrentLiterature(row));
+        },
+        [dispatch],
+    );
     // Адаптивные данные строк
     const adaptiveRows = useMemo(() => {
         if (!rows) return [];
@@ -206,62 +226,30 @@ const TechnicalLiteratureTable: FC<IProps> = ({
     }, [rows, filterValue]);
 
     // Обработчик удаления
-    const handleDelete = useCallback(
-        (id: string) => {
-            if (window.confirm('Вы уверены, что хотите удалить литературу?')) {
-                /*dispatch(fetchDeleteTechnicalLiterature(id));*/
-                console.log("remove")
-            }
-        },
-        []
-    );
-
-    // Обработчик клика по строке
-    const handleRowClick = useCallback<GridEventListener<'rowClick'>>(
-        (params, event) => {
-            /*const target = event.target as HTMLElement;
-            const interactive = target.closest(
-                'a, button, [role="button"], .MuiChip-root, [data-interactive="true"]'
-            );
-            if (interactive) return;
-
-            const me = event as React.MouseEvent;
-            if (
-                me.button !== 0 ||
-                me.ctrlKey ||
-                me.metaKey ||
-                me.shiftKey ||
-                me.altKey
-            )
-                return;
-
-            navigate(
-                routes.literatureDetails.replace(':literatureId', params.row.id)
-            );*/
-            console.log("handleRowClick")
-        },
-        []
-    );
-
-    // Колонки таблицы
+    const handleDelete = async () => {
+        if (activeRowId) {
+            await dispatch(fetchDeleteTechnicalLiterature(activeRowId))
+            closeDeleteDialog();
+            setActiveRowId(null);
+        }
+    };
     const columns = useMemo(
         () => [
+            literatureTypeColumn(),
             brandColumn(),
             modelColumn(),
-            literatureTypeColumn(),
+            codeColumn(),
             yearRangeColumn(),
             languageColumn(),
             fileSizeColumn(),
             pagesColumn(),
-            ratingColumn(),
             downloadsColumn(),
             createdDateColumn(),
             verifiedColumn(),
-            actionsColumn(handleDelete),
+            actionsColumn(openDeleteDialog, currentUserId || ""),
         ],
         [handleDelete]
     );
-
     return (
         <Box
             sx={{
@@ -299,6 +287,16 @@ const TechnicalLiteratureTable: FC<IProps> = ({
                 loading={isLoading}
                 onRowClick={handleRowClick}
             />
+            {deleteDialogOpen && (
+                <ConfirmDeleteDialog
+                    open={deleteDialogOpen}
+                    loading={isLoading}
+                    onClose={closeDeleteDialog}
+                    onConfirm={handleDelete}
+                    title="Точно удалить?"
+                    description={"Вы уверены, что хотите удалить книгу? Это действие нельзя отменить."}
+                />
+            )}
         </Box>
     );
 };

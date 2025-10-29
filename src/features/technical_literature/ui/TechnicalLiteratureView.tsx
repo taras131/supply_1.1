@@ -1,8 +1,23 @@
-import {FC} from "react";
-import {engineTypes, machineryTypes, tractionTypes, transmissionTypes} from "../../machinery/utils/const";
-import {INewTechnicalLiterature, ITechnicalLiterature, literatureTypes} from "../../../models/ITechnicalLiterature";
-import {Stack, Box} from "@mui/material";
-import FieldControl from "../../../components/common/FieldControl";
+import {FC, useState} from "react";
+import {
+    engineTypes,
+    machineryTypes,
+    tractionTypes,
+    transmissionTypes
+} from "../../machinery/utils/const";
+import {
+    INewTechnicalLiterature,
+    ITechnicalLiterature,
+    literatureLanguage,
+    literatureTypes
+} from "../../../models/ITechnicalLiterature";
+import {Stack, Box, MenuItem, FormControl, Chip, InputLabel} from "@mui/material";
+import FieldControl, {
+    StyledInput,
+    StyledLabel,
+    StyledSelect,
+    StyledTypography
+} from "../../../components/common/FieldControl";
 import TitleWithValue from "../../../components/TitleWithValue";
 import {formatDateDDMMYYYY} from "../../../utils/services";
 import {ValidationErrors} from "../../../utils/validators";
@@ -21,10 +36,47 @@ const TechnicalLiteratureView: FC<IProps> = ({
                                                  fieldChangeHandler,
 
                                              }) => {
+    const [tagInput, setTagInput] = useState('');
     if (!literature) return null;
+    const handleTagAdd = () => {
+        if (tagInput.trim() && !literature.tags.includes(tagInput.trim())) {
+            fieldChangeHandler({
+                target: {
+                    name: 'tags',
+                    value: [...literature.tags, tagInput.trim()]
+                }
+            });
+            setTagInput('');
+        }
+    };
 
+    const handleTagDelete = (tagToDelete: string) => {
+        fieldChangeHandler({
+            target: {
+                name: 'tags',
+                value: literature.tags.filter(tag => tag !== tagToDelete)
+            }
+        });
+    };
+
+    const handleTagInputKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleTagAdd();
+        }
+    };
+    console.log(literature)
     return (
         <>
+            <FieldControl
+                label="Название"
+                name="description"
+                id="description"
+                value={literature.description || ''}
+                error={errors?.description}
+                isEditMode={isEditMode}
+                onChange={fieldChangeHandler}
+            />
             {/* Основная информация */}
             <Stack direction={{xs: 'column', sm: 'row'}} spacing={2}>
                 <FieldControl
@@ -35,7 +87,6 @@ const TechnicalLiteratureView: FC<IProps> = ({
                     error={errors?.brand}
                     isEditMode={isEditMode}
                     onChange={fieldChangeHandler}
-                    isRequired
                 />
                 <FieldControl
                     label="Модель"
@@ -45,7 +96,6 @@ const TechnicalLiteratureView: FC<IProps> = ({
                     error={errors?.model}
                     isEditMode={isEditMode}
                     onChange={fieldChangeHandler}
-                    isRequired
                 />
             </Stack>
 
@@ -74,7 +124,6 @@ const TechnicalLiteratureView: FC<IProps> = ({
                     isRequired
                 />
             </Stack>
-
             {/* Год выпуска */}
             <Stack direction={{xs: 'column', sm: 'row'}} spacing={2}>
                 <FieldControl
@@ -85,7 +134,6 @@ const TechnicalLiteratureView: FC<IProps> = ({
                     error={errors?.year_from}
                     isEditMode={isEditMode}
                     onChange={fieldChangeHandler}
-                    isRequired
                 />
                 <FieldControl
                     label="Год выпуска по"
@@ -95,23 +143,12 @@ const TechnicalLiteratureView: FC<IProps> = ({
                     error={errors?.year_to}
                     isEditMode={isEditMode}
                     onChange={fieldChangeHandler}
-                    isRequired
                 />
             </Stack>
-
-            {/* Типы двигателя и трансмиссии */}
-            <Stack direction={{xs: 'column', sm: 'row'}} spacing={2}>
-                <FieldControl
-                    label="Тип двигателя"
-                    name="engine_type_id"
-                    id="engine_type_id"
-                    value={literature.engine_type_id}
-                    error={errors?.engine_type_id}
-                    isEditMode={isEditMode}
-                    onChange={fieldChangeHandler}
-                    options={engineTypes}
-                    isRequired
-                />
+            {/* Дополнительные типы */}
+            <Stack direction={{xs: 'column', sm: 'row'}}
+                   spacing={2}
+            >
                 <FieldControl
                     label="Тип трансмиссии"
                     name="transmission_type_id"
@@ -122,12 +159,8 @@ const TechnicalLiteratureView: FC<IProps> = ({
                     onChange={fieldChangeHandler}
                     options={transmissionTypes}
                 />
-            </Stack>
-
-            {/* Дополнительные типы */}
-            <Stack direction={{xs: 'column', sm: 'row'}} spacing={2}>
                 <FieldControl
-                    label="Тип сцепления"
+                    label="Тип движетеля"
                     name="traction_type_id"
                     id="traction_type_id"
                     value={literature.traction_type_id || -1}
@@ -136,58 +169,14 @@ const TechnicalLiteratureView: FC<IProps> = ({
                     onChange={fieldChangeHandler}
                     options={tractionTypes}
                 />
-                {/*  <FieldControl
-                    label="Тип использования"
-                    name="operating_type_id"
-                    id="operating_type_id"
-                    value={literature.operating_type_id}
-                    error={errors?.operating_type_id}
-                    isEditMode={isEditMode}
-                    onChange={fieldChangeHandler}
-                    options={operatingTypes}
-                />*/}
             </Stack>
-
-            {/* Информация о файле */}
-            <Stack direction={{xs: 'column', sm: 'row'}} spacing={2}>
+            <Stack spacing={2} direction={"row"}>
                 <FieldControl
-                    label="Имя файла"
-                    name="file_name"
-                    id="file_name"
-                    value={literature.file_name}
-                    error={errors?.file_name}
-                    isEditMode={isEditMode}
-                    onChange={fieldChangeHandler}
-                    isRequired
-                />
-                <FieldControl
-                    label="URL файла"
-                    name="file_url"
-                    id="file_url"
-                    value={literature.file_url}
-                    error={errors?.file_url}
-                    isEditMode={isEditMode}
-                    onChange={fieldChangeHandler}
-                    isRequired
-                />
-            </Stack>
-
-            {/* Размер файла и количество страниц */}
-            <Stack direction={{xs: 'column', sm: 'row'}} spacing={2}>
-                {!isEditMode && literature.file_size && (
-                    <Box>
-                        <TitleWithValue
-                            title="Размер файла"
-                            value={`${(literature.file_size / 1024 / 1024).toFixed(2)} МБ`}
-                        />
-                    </Box>
-                )}
-                <FieldControl
-                    label="Количество страниц"
-                    name="pages"
-                    id="pages"
-                    value={literature.pages || ''}
-                    error={errors?.pages}
+                    label="Код книги"
+                    name="code"
+                    id="code"
+                    value={literature.code}
+                    error={errors?.code}
                     isEditMode={isEditMode}
                     onChange={fieldChangeHandler}
                 />
@@ -199,101 +188,150 @@ const TechnicalLiteratureView: FC<IProps> = ({
                     error={errors?.language}
                     isEditMode={isEditMode}
                     onChange={fieldChangeHandler}
+                    options={literatureLanguage}
                 />
             </Stack>
+            <FormControl fullWidth>
+                <StyledLabel shrink htmlFor={"engine_type_ids"}>
+                    Типы двигателей
+                </StyledLabel>
+                {isEditMode
+                    ? (<StyledSelect
+                        multiple
+                        variant={"outlined"}
+                        id="engine_type_ids"
+                        name="engine_type_ids"
+                        value={literature.engine_type_ids || []}
+                        onChange={fieldChangeHandler}
+                        error={!!errors?.engine_type_ids}
+                    >
+                        {engineTypes.map(engine => (
+                            <MenuItem key={engine.id} value={engine.id}>
+                                {engine.title}
+                            </MenuItem>
+                        ))}
+                    </StyledSelect>)
+                    : (<StyledTypography>
+                        {literature.engine_type_ids && literature.engine_type_ids.length > 0
+                            ? engineTypes
+                                .filter(engine => literature.engine_type_ids.includes(engine.id))
+                                .map(engine => engine.title)
+                                .join(', ')
+                            : "-------"}
+                    </StyledTypography>)}
+            </FormControl>
+            <Box mt={1}
+                 sx={{
+                     flexGrow: 1,
+                     height: '100%',
+                 }}>
+                <InputLabel htmlFor={"tags"}
+                            sx={{
+                                fontSize: "14px",
 
-            {/* Описание */}
-            <FieldControl
-                label="Описание"
-                name="description"
-                id="description"
-                value={literature.description || ''}
-                error={errors?.description}
-                isEditMode={isEditMode}
-                onChange={fieldChangeHandler}
-                isMultiline
-                sx={{
-                    flexGrow: 1,
-                    height: '100%',
-                }}
-            />
-
-            {/* Теги */}
-            {/*            <FieldControl
-                label="Теги (разделены запятой)"
-                name="tags"
-                id="tags"
-                value={Array.isArray(literature.tags) ? literature.tags.join(', ') : ''}
-                error={errors?.tags}
-                isEditMode={isEditMode}
-                onChange={(e) => {
-                    const tagsArray = e.target.value.split(',').map(tag => tag.trim()).filter(tag => tag);
-                    fieldChangeHandler({
-                        ...e,
-                        target: {
-                            ...e.target,
-                            name: 'tags',
-                            value: tagsArray,
-                        },
-                    });
-                }}
-                isMultiline
-            />*/}
-
-            {/* Информация для просмотра (не редактирования) */}
-            {!isEditMode && 'id' in literature && (
-                <Stack spacing={2}>
-                    <Stack direction={{xs: 'column', sm: 'row'}} spacing={2}>
-                        {literature.is_verified && (
-                            <Box>
-                                <TitleWithValue
-                                    title="Статус"
-                                    value="Проверена модератором"
+                                marginLeft: "5px"
+                            }}>
+                    Теги
+                </InputLabel>
+                {isEditMode ? (
+                    <Stack spacing={1} mt={0.5}>
+                        <StyledInput
+                            id="tags-input"
+                            placeholder="Введите тег и нажмите Enter"
+                            value={tagInput}
+                            onChange={(e) => setTagInput(e.target.value)}
+                            onKeyDown={handleTagInputKeyDown}
+                            size="small"
+                            fullWidth
+                            error={!!errors?.tags}
+                            helperText={errors?.tags}
+                        />
+                        <Box sx={{display: 'flex', flexWrap: 'wrap', gap: 1}}>
+                            {literature.tags && literature.tags.length > 0 ? (
+                                literature.tags.map((tag) => (
+                                    <Chip
+                                        key={tag}
+                                        label={tag}
+                                        onDelete={() => handleTagDelete(tag)}
+                                        color="primary"
+                                        variant="outlined"
+                                    />
+                                ))
+                            ) : (
+                                <StyledTypography>Теги не добавлены</StyledTypography>
+                            )}
+                        </Box>
+                    </Stack>
+                ) : (
+                    <Box sx={{display: 'flex', flexWrap: 'wrap', gap: 1}}>
+                        {literature.tags && literature.tags.length > 0 ? (
+                            literature.tags.map((tag) => (
+                                <Chip
+                                    key={tag}
+                                    label={tag}
+                                    color="primary"
+                                    variant="outlined"
+                                    disabled
                                 />
-                            </Box>
+                            ))
+                        ) : (
+                            <StyledTypography>-------</StyledTypography>
+                        )}
+                    </Box>
+                )}
+            </Box>
+            {!isEditMode && 'id' in literature && (
+                <>
+                    <Stack direction={'row'} spacing={2} justifyContent={"space-between"}>
+                        {literature.is_verified && (
+                            <TitleWithValue
+                                title="Статус"
+                                value="Проверена модератором"
+                            />
                         )}
                         {literature.rating > 0 && (
-                            <Box>
-                                <TitleWithValue
-                                    title="Рейтинг"
-                                    value={`${literature.rating.toFixed(2)} / 5 (${literature.ratings_count} оценок)`}
-                                />
-                            </Box>
+                            <TitleWithValue
+                                title="Рейтинг"
+                                value={`${literature.rating.toFixed(2)} / 5 (${literature.ratings_count} оценок)`}
+                            />
                         )}
                     </Stack>
-
-                    <Stack direction={{xs: 'column', sm: 'row'}} spacing={2}>
-                        <Box>
-                            <TitleWithValue
-                                title="Просмотров"
-                                value={literature.views_count}
-                            />
-                        </Box>
-                        <Box>
-                            <TitleWithValue
-                                title="Скачиваний"
-                                value={literature.downloads_count}
-                            />
-                        </Box>
+                    <Stack direction={'row'} spacing={2} justifyContent={"space-between"}>
+                        <TitleWithValue
+                            title="Просмотров"
+                            value={literature.views_count}
+                        />
+                        <TitleWithValue
+                            title="Скачиваний"
+                            value={literature.downloads_count}
+                        />
                     </Stack>
-
-                    {literature.created_at && (
-                        <Box>
+                    <Stack direction={'row'} spacing={2} justifyContent={"space-between"}>
+                        {literature.created_at && (
                             <TitleWithValue
                                 title="Добавлена"
                                 value={formatDateDDMMYYYY(literature.created_at)}
                             />
-                        </Box>
-                    )}
-
-                    {literature.updated_at && literature.updated_at !== literature.created_at && (
-                        <Box>
+                        )}
+                        {literature.updated_at && (
                             <TitleWithValue
                                 title="Обновлена"
                                 value={formatDateDDMMYYYY(literature.updated_at)}
                             />
-                        </Box>
-                    )}
+                        )}
+                    </Stack>
+                </>
+            )}
+            {literature.file_size && (
+                <Stack direction={"row"} spacing={2} justifyContent={"space-between"}>
+                    <TitleWithValue
+                        title="Размер файла"
+                        value={`${(literature.file_size / 1024 / 1024).toFixed(2)} МБ`}
+                    />
+                    <TitleWithValue
+                        title="Количество страниц"
+                        value={literature.pages || ''}
+                    />
                 </Stack>
             )}
         </>

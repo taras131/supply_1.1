@@ -7,7 +7,6 @@ import {
     Typography,
     Box,
 } from "@mui/material";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import MyButton from "../../styles/theme/customizations/MyButton";
 import HelpCenterIcon from '@mui/icons-material/HelpCenter';
 

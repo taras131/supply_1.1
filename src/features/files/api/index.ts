@@ -1,4 +1,4 @@
-import {appAPI, nestServerPath} from "../../../api";
+import {appAPI} from "../../../api";
 import { transliterate } from "../../../utils/services";
 
 export const filesPath = `/file`;
@@ -20,7 +20,9 @@ export const filesAPI = {
   },
   delete: async (filename: string) => {
     try {
+      console.log(filename)
       const response = await appAPI.delete(`${filesPath}/${filename}`);
+      console.log(response)
       return response.data;
     } catch (e) {
       console.log(e);

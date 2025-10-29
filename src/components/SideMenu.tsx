@@ -8,11 +8,12 @@ import {useAppSelector} from "../hooks/redux";
 import {selectCurrentUser} from "../features/users/model/selectors";
 import {drawerWidth} from "../utils/const";
 import Stack from "@mui/material/Stack";
-import {selectCurrentCompanyName} from "../features/companies/model/selectors";
+import {selectCurrentCompany} from "../features/companies/model/selectors";
+import {fileServerPath} from "../api";
 
 const SideMenu = () => {
     const currentUser = useAppSelector(selectCurrentUser);
-    const companyName = useAppSelector(selectCurrentCompanyName);
+    const company = useAppSelector(selectCurrentCompany);
     return (
         <Drawer
             variant="permanent"
@@ -35,8 +36,30 @@ const SideMenu = () => {
                     p: 1.5,
                 }}
             >
-                <Stack sx={{height: "30px", width: "100%"}} alignItems={"center"} justifyContent={"center"}>
-                    {companyName}
+                <Stack
+                    sx={{height: "30px", width: "100%", backgroundColor: 'transparent'}}
+                    alignItems="center"
+                    justifyContent="center"
+                    direction="row"
+                >
+                    {company && (
+                        <>
+                            {company.logo_path && (
+                                <img
+                                    src={`${fileServerPath}/${company.logo_path}`}
+                                    alt="Company Logo"
+                                    style={{
+                                        width: '40px',
+                                        height: '40px',
+                                        objectFit: 'contain',
+                                        backgroundColor: 'transparent',
+                                        marginRight: "5px"
+                                    }} // Фиксированный размер, сохранение пропорций
+                                />
+                            )}
+                            {company.name}
+                        </>
+                    )}
                 </Stack>
             </Box>
             <Divider/>

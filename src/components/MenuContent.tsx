@@ -17,6 +17,8 @@ import Box from "@mui/material/Box";
 import {Badge, Collapse} from "@mui/material";
 import {selectInvoicesUnpaidCount} from "../features/invoices/model/selectors";
 import {selectShipmentsCount} from "../features/shipments/model/selectors";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
+import TechnicalLiteraturePage from "../features/technical_literature/ui/TechnicalLiteraturePage";
 
 const MenuContent = () => {
     const navigate = useNavigate();
@@ -139,6 +141,12 @@ const MenuContent = () => {
                 .map(item => renderMenuItem(item)),
         [routesConfig, location.pathname, openSubmenus, invoiceUnPaidCount, shipmentUnReceivingCount]
     );
+    const downMenu = useMemo(() =>
+            routesConfig
+                .filter(route => route.showInDownMenu)
+                .map(item => renderMenuItem(item)),
+        [routesConfig, location.pathname]
+    );
     return (
         <Stack sx={{flexGrow: 1, p: 1, justifyContent: 'space-between'}}>
             <List dense sx={{pt: 0}}>
@@ -147,6 +155,7 @@ const MenuContent = () => {
 
             {/* Нижняя часть меню - авторизация */}
             <List dense>
+                {downMenu}
                 {!isAuth && (
                     <>
                         <ListItem disablePadding sx={{display: 'block'}}>

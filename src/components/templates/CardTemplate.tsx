@@ -18,6 +18,7 @@ const CardTemplate: FC<IProps> = ({title, children}) => {
                 display: "flex",
                 flexDirection: "column",
                 height: "100%",
+
             }}
         >
             {title && (

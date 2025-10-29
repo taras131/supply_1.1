@@ -12,7 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 
-const StyledInput = styled(TextField, {
+export const StyledInput = styled(TextField, {
   shouldForwardProp: (prop) => prop !== "isError",
 })<{ isError?: boolean }>(({ theme, isError }) => ({
   "label + &": {
@@ -65,7 +65,7 @@ const StyledInput = styled(TextField, {
   },
 }));
 
-const StyledSelect = styled(Select, {
+export const StyledSelect = styled(Select, {
   shouldForwardProp: (prop) => prop !== "isError",
 })<{ isError?: boolean }>(({ theme, isError }) => ({
   "label + &": {
@@ -87,14 +87,14 @@ const StyledSelect = styled(Select, {
   },
 }));
 
-const StyledTypography = styled(Typography)(({ theme }) => ({
+export const StyledTypography = styled(Typography)(({ theme }) => ({
   marginTop: theme.spacing(1.5),
   marginLeft: theme.spacing(1.7),
   fontWeight: 600,
   whiteSpace: 'pre-wrap',
 }));
 
-const StyledLabel = styled(InputLabel)(() => ({
+export const StyledLabel = styled(InputLabel)(() => ({
   fontSize: "18px",
   fontWeight: 500,
   marginLeft: "-10px",
